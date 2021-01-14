@@ -43,6 +43,7 @@ except ImportError:
         return property(lru_cache(maxsize=1)(fn))
 
 
+import logging
 import warnings
 
 from scipy.linalg import subspace_angles
@@ -110,9 +111,8 @@ def _gram_schmidt_mod(X: np.ndarray, eta: np.ndarray) -> np.ndarray:
     # Raise, if the subspace changed!
     dummy = subspace_angles(X, Xc)
     if not np.allclose(dummy, 0.0, atol=1e-8, rtol=1e-5):
-        # TODO: use the error msg/logging
-        print(Xc)
-        print(X)
+        logging.error(Xc)
+        logging.error(X)
         raise ValueError(
             "The subspace of Q derived by shifting a non-constant first (Schur)vector "
             "to the right and setting the first (Schur) vector equal sqrt(eta) doesn't "
@@ -261,8 +261,7 @@ def _do_schur(
 
     # Raise, if the (Schur)vectors aren't D-orthogonal (don't fullfill the orthogonality condition)!
     if not np.allclose(X.T.dot(X * eta[:, None]), np.eye(X.shape[1]), atol=1e-6, rtol=1e-5):
-        # TODO: use the error msg/logging
-        print(X.T.dot(X * eta[:, None]))
+        logging.error(X.T.dot(X * eta[:, None]))
         raise ValueError("Schur vectors appear to not be D-orthogonal.")
 
     # Raise, if X doesn't fullfill the invariant subspace condition!
@@ -420,7 +419,7 @@ def _objective(alpha: np.ndarray, X: np.ndarray) -> float:
     rot_mat = np.zeros((m, m), dtype=np.float64)
 
     # Sanity checks.
-    if not (alpha.shape[0] == k ** 2):
+    if alpha.shape[0] != k ** 2:
         raise ValueError(
             "The shape of alpha doesn't match with the shape of X: "
             f"It is not a ({k}^2,)-vector, but of dimension {alpha.shape}. X is of shape `{X.shape}`."
@@ -789,9 +788,8 @@ class GPCCA:
                     f"This doesn't match with the dimension of R[{Rdim1}, {Rdim2}]."
                 )
             if Rdim2 < m:
-                # TODO: do we need the P copy?
                 self._p_X, self._p_R, self._p_eigenvalues = _do_schur(
-                    self._P.copy(), eta=self._eta, m=m, z=self._z, method=self._method
+                    self._P, eta=self._eta, m=m, z=self._z, method=self._method
                 )
             else:
                 # if we are using pre-computed decomposition, check splitting
@@ -807,12 +805,10 @@ class GPCCA:
                                 f"Clustering into {m} clusters will split conjugate eigenvalues. "
                                 f"Request one cluster more or less."
                             )
-                        # TODO: use logging
-                        print("INFO: Using pre-computed Schur decomposition")
+                        logging.info("Using pre-computed Schur decomposition")
         else:
-            # TODO: do we need the P copy?
             self._p_X, self._p_R, self._p_eigenvalues = _do_schur(
-                self._P.copy(), eta=self._eta, m=m, z=self._z, method=self._method
+                self._P, eta=self._eta, m=m, z=self._z, method=self._method
             )
 
     def minChi(self, m_min: int, m_max: int) -> List[float]:
