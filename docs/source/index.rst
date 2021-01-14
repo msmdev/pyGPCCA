@@ -1,4 +1,4 @@
-|PyPI| |CI| |Docs| |Coverage|
+|PyPI| |CI| |Coverage|
 
 pyGPCCA - Generalized Perron Cluster Cluster Analysis
 =====================================================
@@ -17,13 +17,12 @@ Generalized Perron Cluster Cluster Analysis program to coarse-grain reversible a
     :target: https://pypi.org/project/pygpcca
     :alt: PyPI
 
+.. TODO: add conda-forge
+.. TODO: add DOI?
+
 .. |CI| image:: https://img.shields.io/github/workflow/status/msmdev/pygpcca/CI/master
     :target: https://github.com/msmdev/pygpcca/actions
     :alt: CI
-
-.. |Docs| image:: https://img.shields.io/readthedocs/pygpcca
-    :target: https://pygpcca.readthedocs.io/en/latest
-    :alt: Documentation
 
 .. |Coverage| image:: https://img.shields.io/codecov/c/github/msmdev/pygpcca/master
     :target: https://codecov.io/gh/msmdev/pygpcca

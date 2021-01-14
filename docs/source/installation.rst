@@ -9,6 +9,10 @@ You can install :mod:`pygpcca` by running::
 
     pip install pygpcca
 
+Conda-forge
+-----------
+TODO.
+
 Development version
 -------------------
 To install the development version of :mod:`pygpcca` from GitHub, run::
