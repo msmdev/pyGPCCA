@@ -1,4 +1,4 @@
-# Python version (translated by Fabian Paul and revised by Bernhard Reuter) 
+# Python version (translated by Fabian Paul and revised by Bernhard Reuter)
 # of the following original work:
 # Title:	Sorting Real Schur Forms
 # Author:	Jan Brandts
@@ -6,24 +6,24 @@
 # http://m2matlabdb.ma.tum.de/download.jsp?MC_ID=3&MP_ID=119
 # http://dx.doi.org/10.1002/nla.274
 # Institution:	University of Amsterdam
-# Description:	In Matlab 6, there exists a command to generate a real Schur 
-# form, wheras another transforms a real Schur form into a complex one. 
-# There do not exist commands to prescribe the order in which the eigenvalues 
+# Description:	In Matlab 6, there exists a command to generate a real Schur
+# form, wheras another transforms a real Schur form into a complex one.
+# There do not exist commands to prescribe the order in which the eigenvalues
 # appear on the diagonal of the upper (quasi-) triangular factor T.
-# For the complex case, a routine is sketched in Golub and Van Loan (1996), 
-# that orders the diagonal of T according to their distance to a target value. 
-# In the reference below, we give a Matlab routine to sort real Schur forms 
+# For the complex case, a routine is sketched in Golub and Van Loan (1996),
+# that orders the diagonal of T according to their distance to a target value.
+# In the reference below, we give a Matlab routine to sort real Schur forms
 # in Matlab. It is based on a block-swapping procedure by Bai and Demmel (1993).
-# Sorting real Schur forms, both partially and completely, has important 
+# Sorting real Schur forms, both partially and completely, has important
 # applications in the computation of real invariant subspaces.
-# Reference:    J.H. Brandts. Matlab code for sorted real Schur forms. 
+# Reference:    J.H. Brandts. Matlab code for sorted real Schur forms.
 # Numerical Linear Algebra with Applications 9(3):249-261 (2002)
 # Keywords:	    Real Schur Form, sorting, Bai-Demmel algorithm, swapping
 # Based on the original Matlab File Version: 1.0
 # -------------------------------------------------------------------------
 # All references to equations or pages made in the comments are referencing
 # Jan Brandts. Matlab Code for Sorted Real Schur Forms. Preprint No. 1180,
-# January, 2001, Universiteit Utrecht, 
+# January, 2001, Universiteit Utrecht,
 # https://www.math.uu.nl/publications/preprints/1180.pdf
 # -------------------------------------------------------------------------
 
@@ -42,17 +42,16 @@ def sort_real_schur(
     Q: np.ndarray, R: np.ndarray, z: str, b: float, inplace: bool = False
 ) -> Tuple[np.ndarray, np.ndarray, List[float]]:
     r"""
-    Function to partially or completely sort the real Schur form `R` and 
-    Schur vectors `Q` of a square matrix `A`. The diagonal blocks of `R` 
-    will be ordered with respect to a target `z`. 
+    Partially or completely sort the real Schur form `R` and  Schur vectors `Q` of a square matrix `A`.
+
+    The diagonal blocks of `R` will be ordered with respect to a target `z`.
+
     The blocks on the diagonal are associated with either real eigenvalues,
-    in case of 1x1 blocks, or pairs of complex eigenvalues, 
-    in case of 2x2 blocks.
+    in case of 1x1 blocks, or pairs of complex eigenvalues, in case of 2x2 blocks.
+
     The number of ordered blocks is determined by a parameter `b`.
-    A vector `ap` warns for inaccuracy of the solution, 
-    if an entry of `ap` exceeds one.
-    This function is based on MATLAB code 
-    originally published by Brandts [Brandts02]_.
+    A vector `ap` warns for inaccuracy of the solution, if an entry of `ap` exceeds one.
+    This function is based on MATLAB code originally published by Brandts [Brandts02]_.
 
     Parameters
     ----------
@@ -62,31 +61,28 @@ def sort_real_schur(
         Quasi-triangular real Schur form `R` such that :math:`AQ = QR`.
     %(z)s
     b
-        Determines the length of the ordering with respect to `z`. 
+        Determines the length of the ordering with respect to `z`.
         Valid options are:
 
             - ``b < 0``: ``-b`` blocks will be sorted.
-            - ``b > 0``: b or ``b+1`` eigenvalues will be sorted, 
+            - ``b > 0``: b or ``b + 1`` eigenvalues will be sorted,
               depending on the sizes of the blocks.
             - ``b = 0``: the whole Schur form will be sorted.
+
     inplace
-        Determines, if the supplied `Q` and `R` matrices are sorted in place
-        (``ìnplace = True``) or if copies are made and sorted 
-        (``inplace = False``; default).
+        Determines, if the supplied `Q` and `R` matrices are sorted in place (``ìnplace = True``) or
+        if copies are made and sorted (``inplace = False``; default).
 
     Returns
     -------
     Tuple of the following:
-    
-        - Q : orthogonal real `(n, n)` Schur vector matrix `Q` such that 
-              :math:`AQ = QR` with the diagonal blocks ordered with 
-              respect to the target `z`.
-        - R : quasi-triangular real `(n, n)` Schur matrix `R` such that 
-              :math:`AQ = QR` with the diagonal blocks ordered with 
-              respect to the target `z`.
-        - ap : A list `ap` warns for inaccuracy of the solution,
-               if an entry of `ap` exceeds one.
-    """
+
+        - Q : orthogonal real `(n, n)` Schur vector matrix `Q` such that :math:`AQ = QR`
+          with the diagonal blocks ordered with respect to the target `z`.
+        - R : quasi-triangular real `(n, n)` Schur matrix `R` such that :math:`AQ = QR`
+          with the diagonal blocks ordered with respect to the target `z`.
+        - ap : A list `ap` warns for inaccuracy of the solution, if an entry of `ap` exceeds one.
+    """  # noqa: D401
     eps = np.finfo(R.dtype).eps
     if not np.all(np.abs(np.tril(R, -2)) <= 100 * eps):
         raise ValueError("R is not block-triangular.")
@@ -198,10 +194,10 @@ def normalize(
     U: np.ndarray, S: np.ndarray, v: Union[slice, List[int]], inplace: bool = False
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Apply a Givens rotation such that the two-by-two diagonal block of `S`
-    situated at diagonal positions ``v[0]``, ``v[1]`` is in standardized
-    form, i.e., the diagonal entries are equal, and the off-diagonal 
-    elements are of opposite sign.
+    Apply a Givens rotation such that the two-by-two diagonal block of `S` situated at diagonal positions \
+    ``v[0]``, ``v[1]`` is in standardized form.
+
+    I.e., the diagonal entries are equal, and the off-diagonal elements are of opposite sign.
 
     Parameters
     ----------
@@ -212,18 +208,16 @@ def normalize(
     v
         List of diagonal positions of the considered block of `S`.
     inplace
-        Determines, if the supplied `U` and `S` matrices are used 
-        in place (``ìnplace = True``) or if copies are made and manipulated  
-        (``inplace = False``; default).
+        Determines, if the supplied `U` and `S` matrices are used in place (``ìnplace = True``) or
+        if copies are made and manipulated (``inplace = False``; default).
 
     Returns
     -------
     Tuple of the following:
-    
-        - U : Orthogonal real matrix. 
-        - S : Quasi-triangular real matrix with the two-by-two diagonal 
-              block of `S` situated at diagonal positions ``v[0]``, 
-              ``v[1]`` in standardized form.
+
+        - U : Orthogonal real matrix.
+        - S : Quasi-triangular real matrix with the two-by-two diagonal block of `S` situated at
+          diagonal positions ``v[0]``, ``v[1]`` in standardized form.
     """
     Q = rot(S[v, :][:, v])  # Determine the Givens rotation needed for standardization -
     if not inplace:
@@ -291,14 +285,14 @@ def rot(X: np.ndarray) -> np.ndarray:
 @d.dedent
 def swaplist(p: Union[np.ndarray, List[float]], s: List[int], z: str, b: float) -> List[int]:
     """
-    Produce a list `v` of swaps of neighboring blocks needed to order the 
-    eigenvalues assembled in the vector `p` from closest to `z` to farthest
-    away from `z`, taking into account the parameter `b`.
-    To do so, Python's sorted(), producing a stable sort, is used to realize 
-    the objective ordering of the diagonal blocks. This objective ordering 
-    can easily be defined, since all eigenvalues can be extracted from the 
-    given real Schur form. This, in turn, results in an objective 
-    permutation of the given ordering, which can be realized by `n` swaps 
+    Produce a list `v` of swaps of neighboring blocks needed to order the eigenvalues assembled in the vector `p` \
+    from closest to `z` to farthest away from `z`, taking into account the parameter `b`.
+
+    To do so, Python's sorted(), producing a stable sort, is used to realize
+    the objective ordering of the diagonal blocks. This objective ordering
+    can easily be defined, since all eigenvalues can be extracted from the
+    given real Schur form. This, in turn, results in an objective
+    permutation of the given ordering, which can be realized by `n` swaps
     of neighboring pairs, to be represented by a swaplist `v`.
 
     p
@@ -307,18 +301,16 @@ def swaplist(p: Union[np.ndarray, List[float]], s: List[int], z: str, b: float) 
         List of the the-top left positions of each block.
     %(z)s
     b
-        Determines the length of the ordering with respect to `z`. 
+        Determines the length of the ordering with respect to `z`.
         Valid options are:
 
             - ``b < 0``: ``-b`` blocks will be sorted.
-            - ``b > 0``: b or ``b+1`` eigenvalues will be sorted, 
-              depending on the sizes of the blocks.
+            - ``b > 0``: b or ``b+1`` eigenvalues will be sorted, depending on the sizes of the blocks.
             - ``b = 0``: the whole Schur form will be sorted.
 
     Returns
     -------
-    Swaplist `v`. ``v[j] = k`` means that in the `j`th swap, the `k`th and 
-    `k+1`th block should be swapped..
+    Swaplist `v`, where ``v[j] = k`` means that in the `j`-th swap, the `k`-th and `k+1`-th block should be swapped.
     """
     p_orig = p  # debug
     n = len(p)
@@ -375,8 +367,7 @@ def swaplist(p: Union[np.ndarray, List[float]], s: List[int], z: str, b: float) 
 @d.dedent
 def select(p: Union[List[str], np.ndarray], z: str) -> Tuple[float, int]:
     """
-    Determine which block is next in the ordering 
-    (needed in :func:`normalize`).
+    Determine which block is next in the ordering (needed in :func:`normalize`).
 
     Parameters
     ----------
@@ -415,8 +406,7 @@ def swap(
     U: np.ndarray, S: np.ndarray, v: List[int], w: List[int], inplace: bool = False
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Swap the two blocks on the diagonal of `S` at positions symbolized by 
-    the entries of `v` and `w`.
+    Swap the two blocks on the diagonal of `S` at positions symbolized by the entries of `v` and `w`.
 
     U
         Orthogonal real matrix.
@@ -431,18 +421,17 @@ def swap(
         or two integers, if one has a two-by-two block) indicating the block
         to swap against the block indicated by `v`.
     inplace
-        Determines, if the supplied `U` and `S` matrices are used 
-        in place (``ìnplace = True``) or if copies are made and manipulated  
+        Determines, if the supplied `U` and `S` matrices are used
+        in place (``ìnplace = True``) or if copies are made and manipulated
         (``inplace = False``; default).
 
     Returns
     -------
     Tuple of the following:
-    
+
         - U : Orthogonal real matrix.
-        - S : Quasi-triangular real matrix with the two blocks on the 
-              diagonal of `S`, at positions symbolized by the entries of 
-              `v` and `w`, swapped.
+        - S : Quasi-triangular real matrix with the two blocks on the diagonal of `S`, at positions symbolized
+          by the entries of `v` and `w`, swapped.
     """
     p, q = S[v, :][:, w].shape  # p and q are block sizes
     Ip = np.eye(p)
@@ -467,7 +456,6 @@ def swap(
     ).T  # De-vectorize the solution back to a block, or, quit Kronecker formulation.
     Q, R = np.linalg.qr(np.vstack((-X, e * Iq)), mode="complete")  # Householder QR-decomposition of X.
     vw = list(v) + list(w)
-    # TODO: move to top for consistency
     if not inplace:
         S = S.copy()
         U = U.copy()
@@ -512,28 +500,26 @@ def swap(
 
 def lu_complpiv(A: np.ndarray, inplace: bool = False) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     r"""
-    Compute the LU-decomposition of a matrix `A` with complete pivoting, 
-    i. e., :math:`PAQ = LU` with permutations `P`, `Q` symbolized by vectors.
+    Compute the LU-decomposition of a matrix `A` with complete pivoting.
+
+    I. e., :math:`PAQ = LU` with permutations `P`, `Q` symbolized by vectors.
 
     Parameters
     ----------
     A
         Square matrix.
     inplace
-        Determines, if the supplied `A` matrix is used in place 
-        (``ìnplace = True``) or if a copy is made and used 
-        (``inplace = False``; default).
+        Determines, if the supplied `A` matrix is used in place (``ìnplace = True``) or
+        if a copy is made and used (``inplace = False``; default).
 
     Returns
     -------
     Tuple of the following:
-    
+
         - L : Lower triangular matrix.
         - U : Upper triangular matrix.
-        - P : Permutation matrix, which, when left-multiplied to `A`, 
-              reorders the rows of `A`.
-        - Q : Permutation matrix, which, when right-multiplied to `A`,
-              reorders the columns of `A`.
+        - P : Permutation matrix, which, when left-multiplied to `A`, reorders the rows of `A`.
+        - Q : Permutation matrix, which, when right-multiplied to `A`, reorders the columns of `A`.
     """
     if not inplace or (__debug__ and expensive_asserts):
         A_inp = A  # debug
@@ -591,7 +577,6 @@ def lu_complpiv(A: np.ndarray, inplace: bool = False) -> Tuple[np.ndarray, np.nd
 # -------------------------------------------------------------------------
 
 
-# TODO: add to tests?
 if __name__ == "__main__":
     import scipy
     import scipy.linalg
@@ -632,7 +617,4 @@ if __name__ == "__main__":
             delta = -np.abs(ev)
         else:
             delta = np.abs(ev - z)
-        assert np.all(delta[0:-1] <= delta[1:] + 100 * eps), (
-            np.max(delta[0:-1] - delta[1:]),
-            delta,
-        )
+        assert np.all(delta[0:-1] <= delta[1:] + 100 * eps), (np.max(delta[0:-1] - delta[1:]), delta)

@@ -75,13 +75,13 @@ def _gram_schmidt_mod(X: np.ndarray, eta: np.ndarray) -> np.ndarray:
     Parameters
     ----------
     X
-        Array of shape `(n, m)` consisting columnwise of the `m` dominant 
+        Array of shape `(n, m)` consisting columnwise of the `m` dominant
         Schur vectors of :math:`\tilde{P} = \mathtt{diag}(\sqrt{\eta}) P \mathtt{diag}(1.0. / \sqrt{eta})`.
     %(eta)s
 
     Returns
     -------
-    Array of shape `(n, m)` with the orthonormalized `m` dominant Schur 
+    Array of shape `(n, m)` with the orthonormalized `m` dominant Schur
     vectors of :math:`\tilde{P}` in columns.
     The elements of the first column are constantly equal :math:`\sqrt{eta}`.
     """
@@ -156,23 +156,23 @@ def _do_schur(
     r"""
     Firstly, a Schur decomposition of the `(n, n)` transition matrix `P`
     is performed, with due regard to the input distribution of states `eta`.
-     
-    In theory `eta` can be an arbitrary distribution as long as it is 
+
+    In theory `eta` can be an arbitrary distribution as long as it is
     a valid probability distribution (i.e., sums up to 1).
     A neutral and valid choice would be the uniform distribution (default).
-    In case of a reversible transition matrix, the stationary distribution 
+    In case of a reversible transition matrix, the stationary distribution
     :math:`\pi` can (but don't has to) be used here.
     In case of a non-reversible `P`, some initial or average distribution of
     the states might be chosen instead of the uniform distribution.
 
     Afterwards the Schur form and Schur vector matrix are sorted by
-    sorting the `m` dominant (default: with the largest magnitude) 
-    eigenvalues to the top left of the Schur form in descending order 
+    sorting the `m` dominant (default: with the largest magnitude)
+    eigenvalues to the top left of the Schur form in descending order
     and correspondingly sorting the associated Schur vectors
     to the left of the Schur vector matrix.
 
-    Finally, nly the top left `(m, m)` part of the sorted Schur form and the 
-    associated left `(n, m)` part of the correspondingly sorted Schur 
+    Finally, nly the top left `(m, m)` part of the sorted Schur form and the
+    associated left `(n, m)` part of the correspondingly sorted Schur
     vector matrix are returned.
 
     Parameters
@@ -180,7 +180,7 @@ def _do_schur(
     %(P)s
     %(eta)s
     %(m)s
-        These correspond to the `m` dominant (default: with the largest 
+        These correspond to the `m` dominant (default: with the largest
         magnitude) eigenvalues.
     %(z)s
     %(method)s
@@ -296,7 +296,7 @@ def _initialize_rot_matrix(X: np.ndarray) -> np.ndarray:
     ----------
     X
         %(Q_sort)s
-        
+
     Returns
     -------
     Initial (non-optimized) rotation matrix of shape `(m, m)`.
@@ -402,14 +402,14 @@ def _objective(alpha: np.ndarray, X: np.ndarray) -> float:
     Parameters
     ----------
     alpha
-        Vector of shape `((m - 1) ^ 2,)` containing the flattened and 
+        Vector of shape `((m - 1) ^ 2,)` containing the flattened and
         cropped rotation matrix ``rot_matrix[1:, 1:]``.
     X
         %(Q_sort)s
 
     Returns
     -------
-    Current value of the objective function :math:`f = m - trace(S)` 
+    Current value of the objective function :math:`f = m - trace(S)`
     (Eq. 16 from [Roeblitz13]_).
     """
     # Dimensions.
@@ -441,7 +441,7 @@ def _objective(alpha: np.ndarray, X: np.ndarray) -> float:
 @d.dedent
 def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
     r"""
-    Optimize the G-PCCA rotation matrix such that the memberships are 
+    Optimize the G-PCCA rotation matrix such that the memberships are
     exclusively non-negative and compute the membership matrix.
 
     Parameters
@@ -460,9 +460,9 @@ def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.nda
     chi
         %(chi_ret)s
     fopt
-        Optimal value of the objective function :math:`f_{opt} = m - \\mathtt{trace}(S)` 
+        Optimal value of the objective function :math:`f_{opt} = m - \\mathtt{trace}(S)`
         (Eq. 16 from [Roeblitz13]_).
-    """  # noqa: E501
+    """
     n, m = X.shape
 
     # Sanity checks.
@@ -553,12 +553,12 @@ def _fill_matrix(rot_matrix: np.ndarray, X: np.ndarray) -> np.ndarray:
 @d.dedent
 def _cluster_by_isa(X: np.ndarray) -> Tuple[np.ndarray, float]:
     """
-    Classification of dynamical data based on `m` orthonormal Schur vectors 
+    Classification of dynamical data based on `m` orthonormal Schur vectors
     of the (row-stochastic) transition matrix.
 
-    Hereby `m` determines the number of clusters to cluster the data into. 
-    The applied method is the Inner Simplex Algorithm (ISA). 
-    Constraint: The Schur vector matrix `X` matrix needs to contain at 
+    Hereby `m` determines the number of clusters to cluster the data into.
+    The applied method is the Inner Simplex Algorithm (ISA).
+    Constraint: The Schur vector matrix `X` matrix needs to contain at
     least `m` Schur vectors.
 
     This function assumes that the state space is fully connected.
@@ -592,11 +592,11 @@ def _cluster_by_isa(X: np.ndarray) -> Tuple[np.ndarray, float]:
 @d.dedent
 def _gpcca_core(X: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
     r"""
-    Core of the G-PCCA [Reuter18]_ spectral clustering method 
+    Core of the G-PCCA [Reuter18]_ spectral clustering method
     with optimized memberships.
 
-    Clusters the dominant `m` Schur vectors of a transition matrix. 
-    This algorithm generates a fuzzy clustering such that the resulting 
+    Clusters the dominant `m` Schur vectors of a transition matrix.
+    This algorithm generates a fuzzy clustering such that the resulting
     membership functions are as crisp (characteristic) as possible.
 
     Parameters
@@ -710,7 +710,7 @@ class GPCCA:
 
     Clusters the dominant `m` Schur vectors of a transition matrix.
 
-    This algorithm generates a fuzzy clustering such that the resulting 
+    This algorithm generates a fuzzy clustering such that the resulting
     membership functions are as crisp (characteristic) as possible.
 
     Parameters
@@ -821,12 +821,12 @@ class GPCCA:
         r"""
         Calculate the minChi indicator (see [Reuter18]_) for every :math:`m \in [m_{min},m_{max}]`.
 
-        The minChi indicator can be used to determine an interval 
-        :math:`I \subset [m_{min},m_{max}]` of good (potentially optimal) 
+        The minChi indicator can be used to determine an interval
+        :math:`I \subset [m_{min},m_{max}]` of good (potentially optimal)
         numbers of clusters.
 
-        Afterwards either one :math:`m \in I`(with maximal `minChi`) or the 
-        whole interval :math:`I` is chosen as input to :meth:`optimize` 
+        Afterwards either one :math:`m \in I`(with maximal `minChi`) or the
+        whole interval :math:`I` is chosen as input to :meth:`optimize`
         for further optimization.
 
         Parameters
@@ -838,7 +838,7 @@ class GPCCA:
 
         Returns
         -------
-        List of minChi indicators for cluster numbers :math:`m \in [m_{min},m_{max}]`, 
+        List of minChi indicators for cluster numbers :math:`m \in [m_{min},m_{max}]`,
         see [Roeblitz13]_, [Reuter18]_.
         """
         # Validate Input.
@@ -869,26 +869,26 @@ class GPCCA:
         r"""
         Full G-PCCA [Reuter18]_ spectral clustering method with optimized memberships.
 
-        It also has the option to optimize the number of clusters 
+        It also has the option to optimize the number of clusters
         (macrostates) `m` as well.
 
-        If a single integer `m` is given, the method clusters the dominant 
-        `m` Schur vectors of the :attr:`transition_matrix`. 
-        The algorithm generates a fuzzy clustering such that the resulting 
-        membership functions `chi` are as crisp (characteristic) as 
+        If a single integer `m` is given, the method clusters the dominant
+        `m` Schur vectors of the :attr:`transition_matrix`.
+        The algorithm generates a fuzzy clustering such that the resulting
+        membership functions `chi` are as crisp (characteristic) as
         possible, given `m`.
 
-        Instead of a single number of clusters `m`, a :class:`tuple` 
-        containing a minimum and a maximum number of clusters can be given. 
+        Instead of a single number of clusters `m`, a :class:`tuple`
+        containing a minimum and a maximum number of clusters can be given.
         This results in repeated execution of the G-PCCA core algorithm
-        for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings 
+        for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings
         the sharpest/crispest one (with maximal `crispness`) will be selected.
 
         Parameters
         ----------
         %(m_optimize)s
 
-            See :meth:`minChi` for selection of good (potentially optimal) 
+            See :meth:`minChi` for selection of good (potentially optimal)
             number of clusters.
 
         Returns
@@ -1070,11 +1070,11 @@ class GPCCA:
     @property
     def memberships(self) -> OArray:
         """
-        Array of shape `(n, m)` containing the membership (or probability) 
+        Array of shape `(n, m)` containing the membership (or probability)
         of each state (to be assigned) to each cluster.
 
         The rows sum to 1.
-        """  # noqa: E501
+        """
         return self._chi
 
     @property
@@ -1082,7 +1082,7 @@ class GPCCA:
         """
         Optimized rotation matrix.
 
-        Array of shape `(m, m)` which rotates the dominant Schur vectors 
+        Array of shape `(m, m)` which rotates the dominant Schur vectors
         to yield the G-PCCA :attr:`memberships`, i.e. `chi = X * rot_matrix`.
         """
         return self._rot_matrix
@@ -1100,16 +1100,16 @@ class GPCCA:
     def schur_matrix(self) -> OArray:
         r"""
         Ordered top left part of shape `(m, m)` of the real Schur matrix of `P`.
-        
-        The ordered real partial Schur matrix :math:`R` of :math:`P` fulfills 
-        
+
+        The ordered real partial Schur matrix :math:`R` of :math:`P` fulfills
+
         .. math:: \tilde{P} Q = Q R
-        
+
         with the ordered matrix of dominant Schur vectors :math:`Q`.
         """
         return self._R
 
-    @property
+    @property  # type: ignore[misc]
     @d.dedent
     def top_eigenvalues(self) -> OArray:
         """%(eigenvalues_m)s"""
@@ -1156,12 +1156,12 @@ class GPCCA:
         Crisp clustering using G-PCCA.
 
         This is recommended only for visualization purposes.
-        You *cannot* compute any actual quantity of the coarse-grained 
+        You *cannot* compute any actual quantity of the coarse-grained
         kinetics without employing the fuzzy memberships!
 
         Returns
         -------
-        Integer vector of shape `(n,)` containing the metastable state 
+        Integer vector of shape `(n,)` containing the metastable state
         each microstate is located in.
         """
         return None if self.memberships is None else np.argmax(self.memberships, axis=1)
@@ -1172,7 +1172,7 @@ class GPCCA:
         Crisp clustering using G-PCCA.
 
         This is recommended only for visualization purposes.
-        You *cannot* compute any actual quantity of the coarse-grained 
+        You *cannot* compute any actual quantity of the coarse-grained
         kinetics without employing the fuzzy memberships!
 
         Returns

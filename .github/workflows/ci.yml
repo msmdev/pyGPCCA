@@ -158,7 +158,6 @@ jobs:
         -   name: Upload coverage
             if: success()
             env:
-                CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
                 CODECOV_NAME: ${{ matrix.os }}-${{ matrix.python }}-{{ matrix.use_slepc }}
             run: |
                 codecov --no-color --required --flags unittests
