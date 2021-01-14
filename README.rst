@@ -18,10 +18,10 @@ To install the development version of *pyGPCCA* from GitHub, run::
     :target: https://anaconda.org/conda-forge/pygpcca
     :alt: Conda
 
-.. |CI| image:: https://img.shields.io/github/workflow/status/msmdev/pygpcca/CI/master
+.. |CI| image:: https://img.shields.io/github/workflow/status/msmdev/pygpcca/CI/main
     :target: https://github.com/msmdev/pygpcca/actions
     :alt: CI
 
-.. |Coverage| image:: https://img.shields.io/codecov/c/github/msmdev/pygpcca/master
+.. |Coverage| image:: https://img.shields.io/codecov/c/github/msmdev/pygpcca/main
     :target: https://codecov.io/gh/msmdev/pygpcca
     :alt: Coverage
