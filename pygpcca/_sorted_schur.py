@@ -89,8 +89,7 @@ def _check_conj_split(eigenvalues: np.ndarray) -> bool:
 
     Returns
     -------
-    ``True`` if a block of complex conjugate eigenvalues is split,
-    ``False`` otherwise.
+    ``True`` if a block of complex conjugate eigenvalues is split, ``False`` otherwise.
     """
     last_eigenvalue, second_last_eigenvalue = eigenvalues[-1], eigenvalues[-2]
     splits_block = False
@@ -179,8 +178,7 @@ def sorted_krylov_schur(
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     r"""
     Calculate an orthonormal basis of the subspace associated with the `k`
-    dominant eigenvalues of `P` using the Krylov-Schur method as
-    implemented in SLEPc.
+    dominant eigenvalues of `P` using the Krylov-Schur method as implemented in SLEPc.
 
     This functions requires :mod:`petsc4py` and :mod:`slepc4py`.
 
@@ -207,7 +205,7 @@ def sorted_krylov_schur(
     eigenvalues_error
         Array of shape `(k,)` containing the error, based on the residual
         norm, of the `i`th eigenpair at index `i`.
-    """
+    """  # noqa: D205, D400
     from petsc4py import PETSc
     from slepc4py import SLEPc
 
