@@ -30,6 +30,7 @@ import warnings
 
 import pytest
 
+from scipy.sparse import diags
 from numpy.testing import assert_allclose as assert_allclose_np
 import numpy as np
 
@@ -46,12 +47,30 @@ def get_known_input(Tc: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     row = np.sum(Tc, axis=1) > 0.0001
     P = Tc.copy()
     Ts = Tc[row, :]
-    P[row, :] = np.diag(np.true_divide(1.0, np.sum(Ts, axis=1))) @ Ts
+    P[row, :] = np.diag(1.0 / np.sum(Ts, axis=1)) @ Ts
 
     sd = np.sum(Tc, axis=1)
-    sd = np.true_divide(sd, np.sum(sd))
 
-    return P, sd
+    return P, sd / np.sum(sd)
+
+
+def bdc(q: np.ndarray, p: np.ndarray, sparse: bool = True) -> Tuple[np.ndarray, np.ndarray]:
+    """Birth death chain."""
+    q, p = np.asarray(q), np.asarray(p)
+    if q[0] != 0.0:
+        raise ValueError("Probability q[0] must be zero.")
+    if p[-1] != 0.0:
+        raise ValueError("Probability p[-1] must be zero.")
+    if not np.all(q + p <= 1.0):
+        raise ValueError("Probabilities q+p can not exceed one.")
+    r = 1 - q - p
+    P = diags([q[1:], r, p[0:-1]], [-1, 0, 1])
+
+    mu = np.zeros(r.shape[0])
+    mu[0] = 1.0
+    mu[1:] = np.cumprod(p[:-1] / q[1:])
+
+    return (P if sparse else P.A), mu / np.sum(mu)
 
 
 def mu(mu: int):
@@ -2765,15 +2784,66 @@ def count():
 
 
 @pytest.fixture(scope="session")
-def P(count):
+def P(count: np.ndarray) -> np.ndarray:
     P, _ = get_known_input(count)
     return P
 
 
 @pytest.fixture(scope="session")
-def sd(count):
+def sd(count: np.ndarray) -> np.ndarray:
     _, sd = get_known_input(count)
     return sd
+
+
+@pytest.fixture(scope="session")
+def P_mu(P: np.ndarray) -> np.ndarray:
+    return np.array(
+        [
+            0.002187571738471056,
+            0.005423036997058904,
+            0.023420448543298972,
+            0.058285779596956404,
+            0.07249429129236545,
+            0.05405254454504242,
+            0.02835011453613025,
+            0.014649669543955093,
+            0.009497264358463316,
+            0.005873112283083328,
+            0.005118819796296368,
+            0.004124483560128298,
+            0.003571750407440678,
+            0.0036920622896702243,
+            0.004407199335201476,
+            0.0055744492572986064,
+            0.007342640276733729,
+            0.013993296983640196,
+            0.030469625501623968,
+            0.05972086356741919,
+            0.08726492361388036,
+            0.08835621020173381,
+            0.06072468748794482,
+            0.02987120408479474,
+            0.01386374881950853,
+            0.00776921665647811,
+            0.005324104870327323,
+            0.003955418928941411,
+            0.004027280031456168,
+            0.003218799581014265,
+            0.0037458587500202715,
+            0.005387966522927479,
+            0.005832573831546229,
+            0.007677029504691161,
+            0.014593685370313842,
+            0.027832664619951247,
+            0.05385416286668125,
+            0.07425019666813401,
+            0.0585554468893776,
+            0.022629226540465043,
+            0.005929305078818829,
+            0.003087264670715396,
+        ],
+        dtype=np.float64,
+    )
 
 
 # this is an irreducible matrix
