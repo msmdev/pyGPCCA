@@ -756,7 +756,7 @@ class GPCCA:
         self._p_X: OArray = None
         self._p_R: OArray = None
         self._p_eigenvalues: OArray = None
-        # these are the actual, accessed by the properties
+        # these are the actual values, accessed by the properties
         self._X: OArray = None
         self._R: OArray = None
         self._eigenvalues: OArray = None
