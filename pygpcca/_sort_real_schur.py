@@ -288,7 +288,7 @@ def swaplist(p: Union[np.ndarray, List[float]], s: List[int], z: str, b: float) 
     Produce a list `v` of swaps of neighboring blocks needed to order the eigenvalues assembled in the vector `p` \
     from closest to `z` to farthest away from `z`, taking into account the parameter `b`.
 
-    To do so, Python's sorted(), producing a stable sort, is used to realize
+    To do so, Python's :func:`sorted`, producing a stable sort, is used to realize
     the objective ordering of the diagonal blocks. This objective ordering
     can easily be defined, since all eigenvalues can be extracted from the
     given real Schur form. This, in turn, results in an objective

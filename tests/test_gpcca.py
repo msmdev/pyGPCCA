@@ -735,7 +735,7 @@ class TestPETScSLEPc:
             cr = cr[perm, :][:, perm]
             try:
                 assert_allclose(cr, cl, atol=1e-4)
-            except Exception as e:
+            except AssertionError as e:
                 raise RuntimeError(f"Comparing: {left} and {right}.") from e
 
     def test_gpcca_krylov_sparse_eq_dense_count(self, P: np.ndarray, sd: np.ndarray):
@@ -782,7 +782,7 @@ class TestPETScSLEPc:
             cr = cr[perm, :][:, perm]
             try:
                 assert_allclose(cr, cl)
-            except Exception as e:
+            except AssertionError as e:
                 raise RuntimeError(f"Comparing: {left} and {right}.") from e
 
     def _generate_ground_truth_rot_matrices(self):

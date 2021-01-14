@@ -71,6 +71,7 @@ eta
     In theory `eta` can be an arbitrary distribution as long as it is
     a valid probability distribution (i.e., sums up to 1).
     A neutral and valid choice would be the uniform distribution (default).
+
     In case of a reversible transition matrix, the stationary distribution
     :math:`\\pi` can (but don't has to) be used here.
     In case of a non-reversible `P`, some initial or average distribution of

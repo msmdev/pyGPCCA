@@ -84,13 +84,12 @@ def assert_array(
                     raise AssertionError(f"Expected numerical data, but given array has data kind {A.dtype.kind}.")
             elif not A.dtype.kind == kind:
                 raise AssertionError(f"Expected data kind {kind} but given array has data kind {A.dtype.kind}.")
+    except AssertionError:
+        raise
     except Exception as e:
-        if isinstance(e, AssertionError):
-            raise
-        else:  # other exception raised in the test code above
-            raise AssertionError(
-                f"Given argument is not an array of the expected shape or type: {A}, type={type(A).__name__}."
-            ) from e
+        raise AssertionError(
+            f"Given argument is not an array of the expected shape or type: {A}, type={type(A).__name__}."
+        ) from e
 
 
 @d.dedent
