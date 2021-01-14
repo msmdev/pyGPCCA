@@ -101,17 +101,8 @@ jobs:
                 echo "PETSC_DIR=$HOME/petsc-$PC_VERSION" >> $GITHUB_ENV
                 echo "SLEPC_DIR=$HOME/slepc-$SC_VERSION" >> $GITHUB_ENV
                 echo "PETSC_ARCH=arch-darwin-c-opt" >> $GITHUB_ENV
-        -   name: Restore PETSc/SLEPc cache
-            uses: actions/cache@v2
-            id: cache
-            if: matrix.use_slepc == true && runner.os == 'macOS'
-            with:
-                path: |
-                    ~/petsc-*
-                    ~/slepc-*
-                key: petsc-${{ env.PC_VERSION }}-slepc-{{ $env.SC_VERSION }}-${{ hashFiles('**/install_dependencies.sh') }}
         -   name: Install PETSc/SLEPc dev dependencies
-            if: matrix.use_slepc == true && steps.cache.outputs.cache-hit != 'true'
+            if: matrix.use_slepc == true
             run: |
                 ./.scripts/ci/install_dependencies.sh
 
@@ -139,11 +130,6 @@ jobs:
             with:
                 path: .tox
                 key: tox-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('**/install_dependencies.sh', '**/requirements.txt', '**/setup.py', '**/tox.ini') }}
-
-        -   name: Create numpy symlink
-            if: matrix.use_slepc == true && runner.os == 'macOS'
-            run: |
-                ./.scripts/ci/symlink_numpy.sh
 
         -   name: Test
             run: |

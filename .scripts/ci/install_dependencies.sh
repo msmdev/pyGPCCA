@@ -40,6 +40,13 @@ elif [[ "$RUNNER_OS" == "macOS" ]]; then
     install_slepc_macos
 
     popd
+
+    echo "Symlinking numpy"
+    python -m pip install --upgrade pip
+    pip install numpy
+
+    NUMPY_INCLUDE="$(python -c 'import numpy; print(numpy.get_include())')"
+    ln -sfv "$NUMPY_INCLUDE/numpy" "$PETSC_DIR/$PETSC_ARCH/include"
 else
     echo "Invalid OS for PETSc/SLEPc dependencies: $OS"
     exit 42
