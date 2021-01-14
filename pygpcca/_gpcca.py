@@ -196,7 +196,7 @@ def _do_schur(
         %(R_sort)s
     eigenvalues
         %(eigenvalues_m)s
-    """
+    """  # noqa: D205, D400
     # Exceptions
     N1 = P.shape[0]
     N2 = P.shape[1]
@@ -462,7 +462,7 @@ def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.nda
     fopt
         Optimal value of the objective function :math:`f_{opt} = m - \\mathtt{trace}(S)`
         (Eq. 16 from [Roeblitz13]_).
-    """
+    """  # noqa: D205, D400
     n, m = X.shape
 
     # Sanity checks.
@@ -553,8 +553,7 @@ def _fill_matrix(rot_matrix: np.ndarray, X: np.ndarray) -> np.ndarray:
 @d.dedent
 def _cluster_by_isa(X: np.ndarray) -> Tuple[np.ndarray, float]:
     """
-    Classification of dynamical data based on `m` orthonormal Schur vectors
-    of the (row-stochastic) transition matrix.
+    Classification of dynamical data based on `m` orthonormal Schur vectors of the (row-stochastic) transition matrix.
 
     Hereby `m` determines the number of clusters to cluster the data into.
     The applied method is the Inner Simplex Algorithm (ISA).
@@ -592,8 +591,7 @@ def _cluster_by_isa(X: np.ndarray) -> Tuple[np.ndarray, float]:
 @d.dedent
 def _gpcca_core(X: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
     r"""
-    Core of the G-PCCA [Reuter18]_ spectral clustering method
-    with optimized memberships.
+    Core of the G-PCCA [Reuter18]_ spectral clustering method with optimized memberships.
 
     Clusters the dominant `m` Schur vectors of a transition matrix.
     This algorithm generates a fuzzy clustering such that the resulting
@@ -1019,21 +1017,8 @@ class GPCCA:
         # coarse-grain transition matrix
         self._P_coarse = _coarsegrain(self.transition_matrix, eta=self.input_distribution, chi=self.memberships)
 
-        # TODO: if we want to keep this, I'd just return a namedtuple with the last 3 values, since they are not saved
-        # if return_extra:
-        #    return (
-        #        self,
-        #        self.X,
-        #        self.R,
-        #        self.eigenvalues,
-        #        chi_list,
-        #        rot_matrix_list,
-        #        crispness_list,
-        #    )
-
         return self
 
-    # TODO: add docstrings
     @property
     def transition_matrix(self) -> Union[np.ndarray, spmatrix]:
         """Transition matrix (row-stochastic)."""
@@ -1074,7 +1059,7 @@ class GPCCA:
         of each state (to be assigned) to each cluster.
 
         The rows sum to 1.
-        """
+        """  # noqa: D205, D400
         return self._chi
 
     @property
@@ -1112,7 +1097,7 @@ class GPCCA:
     @property  # type: ignore[misc]
     @d.dedent
     def top_eigenvalues(self) -> OArray:
-        """%(eigenvalues_m)s"""
+        """%(eigenvalues_m)s"""  # noqa: D400
         return self._eigenvalues
 
     @property  # type: ignore[misc]

@@ -55,7 +55,8 @@ method
           associated with the `m` dominant eigenvalues of `P` using the
           Krylov-Schur method as implemented in SLEPc.
           This is the fastest choice and especially suitable for very
-          large `P`, but it is still experimental."""
+          large `P`, but it is still experimental.
+"""
 
 tol_krylov = """\
 tol_krylov
