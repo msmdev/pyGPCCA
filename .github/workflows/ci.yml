@@ -143,7 +143,7 @@ jobs:
         -   name: Create numpy symlink
             if: matrix.use_slepc == true && runner.os == 'macOS'
             run: |
-                ./scripts/ci/symlink_numpy.sh
+                ./.scripts/ci/symlink_numpy.sh
 
         -   name: Test
             run: |
