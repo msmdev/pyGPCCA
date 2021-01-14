@@ -59,8 +59,8 @@ def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[np.ndarray, spmatrix]) 
 
     Returns
     -------
-    Nothing, just initializes `M`. If `P` is an :class:`numpy.ndarray`, 
-    `M` will also be dense. If `P` is a :class:`scipy.sparse.spmatrx`, 
+    Nothing, just initializes `M`. If `P` is an :class:`numpy.ndarray`,
+    `M` will also be dense. If `P` is a :class:`scipy.sparse.spmatrx`,
     `M` will become a CSR matrix regardless of `P`'s sparse format.
     """
     if issparse(P):
@@ -77,20 +77,19 @@ def _check_conj_split(eigenvalues: np.ndarray) -> bool:
     """
     Check whether using m eigenvalues cuts through a block of complex conjugates.
 
-    If the last (`m`th) eigenvalue is not real, check whether it 
-    forms a complex conjugate pair with the second-last eigenvalue. 
-    If that is not the case, then choosing `m` clusters would cut through a 
+    If the last (`m`th) eigenvalue is not real, check whether it
+    forms a complex conjugate pair with the second-last eigenvalue.
+    If that is not the case, then choosing `m` clusters would cut through a
     block of complex conjugates.
-    
+
     Parameters
     ----------
     eigenvalues
-        %(eifgenvalues_m)s
-        
+        %(eigenvalues_m)s
+
     Returns
     -------
-    ``True`` if a block of complex conjugate eigenvalues is split, 
-    ``False`` otherwise.
+    ``True`` if a block of complex conjugate eigenvalues is split, ``False`` otherwise.
     """
     last_eigenvalue, second_last_eigenvalue = eigenvalues[-1], eigenvalues[-2]
     splits_block = False
@@ -103,7 +102,7 @@ def _check_conj_split(eigenvalues: np.ndarray) -> bool:
 @d.dedent
 def _check_schur(P: np.ndarray, Q: np.ndarray, R: np.ndarray, eigenvalues: np.ndarray, method: str) -> None:
     """Run a number of checks on the sorted Schur decomposition.
-    
+
     Parameters
     ----------
     %(P)s
@@ -114,7 +113,7 @@ def _check_schur(P: np.ndarray, Q: np.ndarray, R: np.ndarray, eigenvalues: np.nd
     eigenvalues
         %(eigenvalues_m)s
     %(method)s
-    
+
     Returns
     -------
     Nothing.
@@ -178,9 +177,8 @@ def sorted_krylov_schur(
     P: Union[spmatrix, np.ndarray], k: int, z: str = "LM", tol: float = 1e-16
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     r"""
-    Calculate an orthonormal basis of the subspace associated with the `k` 
-    dominant eigenvalues of `P` using the Krylov-Schur method as 
-    implemented in SLEPc.
+    Calculate an orthonormal basis of the subspace associated with the `k`
+    dominant eigenvalues of `P` using the Krylov-Schur method as implemented in SLEPc.
 
     This functions requires :mod:`petsc4py` and :mod:`slepc4py`.
 
@@ -190,14 +188,14 @@ def sorted_krylov_schur(
     %(k)s
     %(z)s
     tol
-        Convergence criterion used by SLEPc internally. If you are dealing 
-        with ill-conditioned matrices, consider decreasing this value to 
+        Convergence criterion used by SLEPc internally. If you are dealing
+        with ill-conditioned matrices, consider decreasing this value to
         get accurate results.
 
     Returns
     -------
     Tuple of the following:
-    
+
     R
         %(R_sort)s
     Q
@@ -205,9 +203,9 @@ def sorted_krylov_schur(
     eigenvalues
         %(eigenvalues_k)s
     eigenvalues_error
-        Array of shape `(k,)` containing the error, based on the residual 
+        Array of shape `(k,)` containing the error, based on the residual
         norm, of the `i`th eigenpair at index `i`.
-    """
+    """  # noqa: D205, D400
     from petsc4py import PETSc
     from slepc4py import SLEPc
 
@@ -224,7 +222,7 @@ def sorted_krylov_schur(
     E.setDimensions(nev=k)
     # set the tolerance used in the convergence criterion
     E.setTolerances(tol=tol)
-    
+
     # Specify which portion of the spectrum is to be sought.
     # LARGEST_MAGNITUDE: Largest magnitude (default).
     # LARGEST_REAL: Largest real parts.
@@ -236,10 +234,10 @@ def sorted_krylov_schur(
         E.setWhichEigenpairs(E.Which.LARGEST_REAL)
     else:
         raise ValueError(f"Invalid spectrum sorting options `{z}`. Valid options are: 'LM', 'LR'.")
-        
+
     # Solve the eigensystem.
     E.solve()
-    
+
     # getInvariantSubspace() gets an orthonormal basis of the computed invariant subspace.
     # It returns a list of vectors.
     # The returned real vectors span an invariant subspace associated with the computed eigenvalues.
@@ -253,11 +251,11 @@ def sorted_krylov_schur(
 
     # Gets the number of converged eigenpairs.
     nconv = E.getConverged()
-    
+
     # Warn, if nconv smaller than k.
     if nconv < k:
         warnings.warn(f"The number of converged eigenpairs is `{nconv}`, but `{k}` were requested.")
-        
+
     # Collect the k dominant eigenvalues.
     eigenvalues = []
     eigenvalues_error = []
@@ -281,9 +279,9 @@ def sorted_brandts_schur(P: np.ndarray, k: int, z: str = "LM") -> Tuple[np.ndarr
     """
     Compute a sorted Schur decomposition.
 
-    This function uses :mod:`scipy` for the decomposition and Brandts' 
+    This function uses :mod:`scipy` for the decomposition and Brandts'
     method (see [Brandts02]_) for the sorting.
-    
+
     Parameters
     ----------
     %(P)s
@@ -293,7 +291,7 @@ def sorted_brandts_schur(P: np.ndarray, k: int, z: str = "LM") -> Tuple[np.ndarr
     Returns
     -------
     Tuple of the following:
-    
+
     R
         %(R_sort)s
     Q
@@ -336,7 +334,7 @@ def sorted_schur(
     Returns
     -------
     Tuple of the following:
-    
+
     R
         %(R_sort)s
     Q
@@ -350,22 +348,18 @@ def sorted_schur(
             warnings.warn(NO_PETSC_SLEPC_FOUND_MSG)
 
     if method != "krylov" and issparse(P):
-        raise ValueError("Sparse implementation is only avaiable for `method='krylov'`.")
+        raise ValueError("Sparse implementation is only available for `method='krylov'`.")
 
     # make sure we have enough eigenvalues to check for block splitting
     n = P.shape[0]
-    if m < n:
-        k = m + 1
-    elif m == n:
-        k = m
-    else:
+    if m > n:
         raise ValueError(f"Requested more groups than states: {m} > {n}.")
 
     # compute the sorted schur decomposition
     if method == "brandts":
-        R, Q, eigenvalues = sorted_brandts_schur(P=P, k=k, z=z)
+        R, Q, eigenvalues = sorted_brandts_schur(P=P, k=m, z=z)
     elif method == "krylov":
-        R, Q, eigenvalues, _ = sorted_krylov_schur(P=P, k=k, z=z, tol=tol_krylov)
+        R, Q, eigenvalues, _ = sorted_krylov_schur(P=P, k=m, z=z, tol=tol_krylov)
     else:
         raise ValueError(f"Unknown method `{method!r}`.")
 

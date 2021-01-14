@@ -545,12 +545,8 @@ class TestGPCCAMatlabUnit:
 
         np.testing.assert_array_equal(kopt, [3] * (6 - skipped) + [7])
 
-    def test_gpcca_brandts_sparse_is_densified(self, P: np.ndarray, sd: np.ndarray):
-
-        with pytest.warns(
-            UserWarning,
-            match=r"Sparse implementation is only avaiable for `method='krylov'`, densifying.",
-        ):
+    def test_gpcca_brandts_sparse_is_not_densified(self, P: np.ndarray, sd: np.ndarray):
+        with pytest.raises(ValueError, match=r"Sparse implementation is only available for `method='krylov'`."):
             GPCCA(csr_matrix(P), eta=sd, method="brandts").optimize(3)
 
     def test_sort_real_schur(self, R_i: np.ndarray):
@@ -739,7 +735,7 @@ class TestPETScSLEPc:
             cr = cr[perm, :][:, perm]
             try:
                 assert_allclose(cr, cl, atol=1e-4)
-            except Exception as e:
+            except AssertionError as e:
                 raise RuntimeError(f"Comparing: {left} and {right}.") from e
 
     def test_gpcca_krylov_sparse_eq_dense_count(self, P: np.ndarray, sd: np.ndarray):
@@ -786,7 +782,7 @@ class TestPETScSLEPc:
             cr = cr[perm, :][:, perm]
             try:
                 assert_allclose(cr, cl)
-            except Exception as e:
+            except AssertionError as e:
                 raise RuntimeError(f"Comparing: {left} and {right}.") from e
 
     def _generate_ground_truth_rot_matrices(self):
