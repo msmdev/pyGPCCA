@@ -85,7 +85,7 @@ def _check_conj_split(eigenvalues: np.ndarray) -> bool:
     Parameters
     ----------
     eigenvalues
-        %(eifgenvalues_m)s
+        %(eigenvalues_m)s
 
     Returns
     -------

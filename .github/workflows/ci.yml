@@ -143,10 +143,7 @@ jobs:
         -   name: Create numpy symlink
             if: matrix.use_slepc == true && runner.os == 'macOS'
             run: |
-                pip install numpy
-                NUMPY_INCLUDE="$(python -c 'import numpy; print(numpy.get_include())')"
-                echo "Numpy header files location: $NUMPY_INCLUDE"
-                ln -s "$NUMPY_INCLUDE/numpy" "$PETSC_DIR/$PETSC_ARCH/include"
+                ./scripts/ci/symlink_numpy.sh
 
         -   name: Test
             run: |
