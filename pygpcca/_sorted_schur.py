@@ -348,22 +348,18 @@ def sorted_schur(
             warnings.warn(NO_PETSC_SLEPC_FOUND_MSG)
 
     if method != "krylov" and issparse(P):
-        raise ValueError("Sparse implementation is only avaiable for `method='krylov'`.")
+        raise ValueError("Sparse implementation is only available for `method='krylov'`.")
 
     # make sure we have enough eigenvalues to check for block splitting
     n = P.shape[0]
-    if m < n:
-        k = m + 1
-    elif m == n:
-        k = m
-    else:
+    if m > n:
         raise ValueError(f"Requested more groups than states: {m} > {n}.")
 
     # compute the sorted schur decomposition
     if method == "brandts":
-        R, Q, eigenvalues = sorted_brandts_schur(P=P, k=k, z=z)
+        R, Q, eigenvalues = sorted_brandts_schur(P=P, k=m, z=z)
     elif method == "krylov":
-        R, Q, eigenvalues, _ = sorted_krylov_schur(P=P, k=k, z=z, tol=tol_krylov)
+        R, Q, eigenvalues, _ = sorted_krylov_schur(P=P, k=m, z=z, tol=tol_krylov)
     else:
         raise ValueError(f"Unknown method `{method!r}`.")
 
