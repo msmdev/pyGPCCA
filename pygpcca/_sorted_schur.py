@@ -4,6 +4,10 @@
 # With contributions of Marius Lange, Michal Klein and Alexander Sikorski.
 # Based on the original MATLAB GPCCA code authored by Bernhard Reuter, Susanna Roeblitz and Marcus Weber,
 # Zuse Institute Berlin, Takustrasse 7, 14195 Berlin
+# We like to thank A. Sikorski and M. Weber for pointing us to SLEPc for partial Schur decompositions of sparse matrices.
+# Further parts of sorted_krylov_schur were developed based on the function krylov_schur 
+# https://github.com/zib-cmd/cmdtools/blob/1c6b6d8e1c35bb487fcf247c5c1c622b4b665b0a/src/cmdtools/analysis/pcca.py#L64,
+# written by Alex Sikorski, as a prototype.
 # --------------------------------------------------
 # If you use this code or parts of it, cite the following reference:
 # ------------------------------------------------------------------
@@ -206,6 +210,10 @@ def sorted_krylov_schur(
         Array of shape `(k,)` containing the error, based on the residual
         norm, of the `i`th eigenpair at index `i`.
     """  # noqa: D205, D400
+    # We like to thank A. Sikorski and M. Weber for pointing us to SLEPc for partial Schur decompositions of sparse matrices.
+    # Further parts of sorted_krylov_schur were developed based on the function krylov_schur 
+    # https://github.com/zib-cmd/cmdtools/blob/1c6b6d8e1c35bb487fcf247c5c1c622b4b665b0a/src/cmdtools/analysis/pcca.py#L64,
+    # written by Alex Sikorski, as a prototype.
     from petsc4py import PETSc
     from slepc4py import SLEPc
 
