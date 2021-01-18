@@ -1,7 +1,7 @@
 # This file is part of pyGPCCA.
 #
 # Copyright (c) 2020 Bernhard Reuter.
-# With contributions of Marius Lange, Michal Klein.
+# With contributions of Marius Lange and Michal Klein.
 # Based on the original MATLAB GPCCA code authored by Bernhard Reuter, Susanna Roeblitz and Marcus Weber,
 # Zuse Institute Berlin, Takustrasse 7, 14195 Berlin
 # We like to thank A. Sikorski and M. Weber for pointing us to SLEPc for partial Schur decompositions of sparse matrices.
