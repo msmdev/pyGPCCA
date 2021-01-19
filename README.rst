@@ -39,19 +39,19 @@ Afterwards pyGPCCA can be imported in Python
 
 pyGPCCA can be used as outlined in the following:
 
-    - Initialize a GPCCA object with a transition matrix `P`:
+    - Initialize a GPCCA object with a transition matrix ``P``:
 
     ``gpcca = gp.GPCCA(P)``
     
-    - Get a list of minChi values for numbers of macrostates `m` in an interval ``[2,30]`` to determine an interval ``[m_min, m_max]`` of (nearly) optimal numbers of macrostates for clustering: 
+    - Get a list of minChi values for numbers of macrostates ``m`` in an interval ``[2,30]`` to determine an interval ``[m_min, m_max]`` of (nearly) optimal numbers of macrostates for clustering: 
 
     ``minChi_list = gpcca.minChi(2, 30)``
 
-    - Optimize the clustering for numbers of macrostates `m` in the previously determined interval ``[m_min, m_max]`` and find the optimal number of macrostates `n_metastable` in the given interval:
+    - Optimize the clustering for numbers of macrostates ``m`` in the previously determined interval ``[m_min, m_max]`` and find the optimal number of macrostates ``n_metastable`` in the given interval:
 
     ``gpcca.optimize({'m_min':2, 'm_max':10})``
     
-    - Afterwards, the optimal number of macrostates `n_metastable` can be accessed via:
+    - Afterwards, the optimal number of macrostates ``n_metastable`` can be accessed via:
     
     ``gpcca.n_metastable``
     
