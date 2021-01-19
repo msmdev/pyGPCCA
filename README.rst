@@ -6,7 +6,7 @@ Generalized Perron Cluster Cluster Analysis program to coarse-grain reversible a
 
 Markov State Models (MSM) enable the identification and analysis of metastable states and related kinetics in a very instructive manner. They are widely used, e.g. to model molecular or cellular kinetics. 
 Common state-of-the-art Markov state modeling methods and tools are very well suited to model reversible processes in closed equilibrium systems. However, most are not well suited to deal with non-reversible or even non-autonomous processes of non-equilibrium systems. 
-To get over this shortcoming, the Generalized Robust Perron Cluster Cluster Analysis (G-PCCA) was developed. The G-PCCA method implemented in the pyGPCCA program readily handles equilibrium as well as non-equilibrium data by utilizing real Schur vectors instead of eigenvectors. pyGPCCA enables the semiautomatic coarse graining of transition matrices representing the dynamics of the system under study. Utilizing pyGPCCA, metastable states as well as cyclic kinetics can be identified and modeled.
+To get over this shortcoming, the Generalized Robust Perron Cluster Cluster Analysis (G-PCCA) was developed. The G-PCCA method implemented in the *pyGPCCA* program readily handles equilibrium as well as non-equilibrium data by utilizing real Schur vectors instead of eigenvectors. *pyGPCCA* enables the semiautomatic coarse graining of transition matrices representing the dynamics of the system under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics can be identified and modeled.
 
 Installation
 ------------
@@ -33,11 +33,11 @@ To install the development version of *pyGPCCA* from GitHub, run::
 Usage
 -----
 
-Afterwards pyGPCCA can be imported in Python
+Afterwards *pyGPCCA* can be imported in Python
 
 ``import pygpcca as gp``
 
-pyGPCCA can be used as outlined in the following:
+*pyGPCCA* can be used as outlined in the following:
 
     - Initialize a GPCCA object with a transition matrix ``P``:
 
