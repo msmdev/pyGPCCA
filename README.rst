@@ -1,7 +1,7 @@
 |PyPI| |Conda| |CI| |Coverage|
 
 pyGPCCA - Generalized Perron Cluster Cluster Analysis
-=====================================================
++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Generalized Perron Cluster Cluster Analysis program to coarse-grain reversible and non-reversible Markov State Models.
 
 Markov State Models (MSM) enable the identification and analysis of metastable states and related kinetics in a
@@ -17,9 +17,8 @@ under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics c
 
 Installation
 ------------
-TODO.
-
-If any problems arise during the installation, please refer to `Installation troubleshooting`_.
+We support multiple ways of installing *pyGPCCA*. If any problems arise during the installation,
+please refer to `Installation troubleshooting`_.
 
 Conda
 =====
@@ -31,12 +30,12 @@ This is the recommended way of installing, since this package also includes `PET
 We use `PETSc`_/`SLEPc`_ internally to speed up the computation of the leading Schur vectors. These are optional
 dependencies - if they're not present, we compute a full Schur decomposition instead and sort it using the method
 introduced by `Brandts (2002)`_. Note that this scales cubically in sample number, making it essential to use
-`PETSc`_/`SLEPc`_ for large sample numbers. `PETSc`_/`SLEPc`_ implement iterative methods to only compute the leading Schur vectors,
-which is computationally much less expensive.
+`PETSc`_/`SLEPc`_ for large sample numbers. `PETSc`_/`SLEPc`_ implement iterative methods to only compute
+the leading Schur vectors, which is computationally much less expensive.
 
 PyPI
 ====
-In order to install *pyGPCCA* from `The Python Package Index <https://pypi.org/project/pygppca>`_, run::
+In order to install *pyGPCCA* from `The Python Package Index <https://pypi.org/project/pygpcca/>`_, run::
 
     pip install pygpcca
     # or with libraries utilizing PETSc/SLEPc
@@ -50,7 +49,6 @@ If you want to use the development version of *pyGPCCA* from `GitHub <https://gi
 
 Usage
 -----
-
 Afterwards *pyGPCCA* can be imported in Python as::
 
   import pygpcca as gp
@@ -61,7 +59,7 @@ Afterwards *pyGPCCA* can be imported in Python as::
 
     gpcca = gp.GPCCA(P)
 
-- Get a list of minChi values for numbers of macrostates ``m`` in an interval ``[2,30]`` to determine an interval
+- Get a list of minChi values for numbers of macrostates ``m`` in an interval ``[2, 30]`` to determine an interval
   ``[m_min, m_max]`` of (nearly) optimal numbers of macrostates for clustering::
 
     minChi_list = gpcca.minChi(2, 30)
@@ -85,10 +83,22 @@ Afterwards *pyGPCCA* can be imported in Python as::
 
 Installation troubleshooting
 ----------------------------
+During the installation of ``petsc``, ``petsc4py``, ``slepc``, and ``slepc4py``, the following error(s) might appear::
+
+    ERROR: Failed building wheel for <package name>
+
+However, this should be fine if in the end, it also outputs::
+
+    Successfully installed <package name>
+
+To quickly verify that the packages have been installed, you can run::
+
+    python3 -c "import petsc4py; import slepc4py; print(petsc4py.__version__, slepc4py.__version__)"
 
 Debian-based systems
 ====================
-TODO::
+Below are an alternative steps for installing `PETSc`_/`SLEPc`_, in case any problems arise, especially when installing
+from `PyPI`_::
 
     # install dependencies
     sudo apt-get update -y
@@ -108,7 +118,7 @@ TODO::
 macOS
 =====
 The most robust way is to follow the `PETSc installation guide`_ and the `SLEPc installation guide`_ or to take a look
-at the `steps <./.scripts/ci/install_dependencies.sh>`_ we are using during in our continuous integration on macOS.
+at our continuous integration `steps <./.scripts/ci/install_dependencies.sh>`_ for macOS.
 
 The installation steps can be roughly outlined as::
 
