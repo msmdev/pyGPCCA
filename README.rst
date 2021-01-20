@@ -148,7 +148,7 @@ The installation steps can be roughly outlined as::
 .. |Coverage| image:: https://img.shields.io/codecov/c/github/msmdev/pygpcca/main
     :target: https://codecov.io/gh/msmdev/pygpcca
     :alt: Coverage
-    
+
 .. |Cite| image:: https://img.shields.io/badge/DOI-10.1021%2Facs.jctc.8b00079-blue
     :target: https://doi.org/10.1021/acs.jctc.8b00079
     :alt: Cite
