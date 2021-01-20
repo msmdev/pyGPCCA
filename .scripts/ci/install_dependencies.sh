@@ -10,6 +10,7 @@ function install_petsc_macos {
     ./configure --with-cc=mpicc --with-cxx=mpicxx --with-debugging=0 --with-mpi=1
     make all
     make check
+    # make install  # only to move the files into the appropriate location
 
     popd
 }
@@ -22,6 +23,7 @@ function install_slepc_macos {
     ./configure --with-arpack-dir=/usr/local/Cellar/arpack
     make all
     make check
+    # make install  # only to move into the appropriate location
 
     popd
 }
@@ -41,6 +43,7 @@ elif [[ "$RUNNER_OS" == "macOS" ]]; then
 
     popd
 
+    # this seems to be only necessary on the CI
     echo "Symlinking numpy"
     python -m pip install --upgrade pip
     pip install numpy

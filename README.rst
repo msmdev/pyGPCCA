@@ -17,25 +17,33 @@ under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics c
 
 Installation
 ------------
-To install the development version of *pyGPCCA* from GitHub, run::
+TODO.
+
+If any problems arise during the installation, please refer to `Installation troubleshooting`_.
+
+Conda
+=====
+*pyGPCCA* is available as a `conda package <https://anaconda.org/conda-forge/pygpcca>`_ and can be installed as::
+
+    conda install -c conda-forge pygpcca
+
+TODO: better explain why it's recommended (easier to install) and why PETSc/SLEPc is good (large problems)
+
+This is the recommended way of installing, since this package also includes `PETSc`_/`SLEPc`_ libraries.
+
+PyPI
+====
+In order to install *pyGPCCA* from `The Python Package Index <https://pypi.org/project/pygppca>`_, run::
+
+    pip install pygpcca
+    # or with libraries utilizing PETSc/SLEPc
+    pip install pygpcca[slepc]
+
+Development version
+===================
+If you want to use the development version of *pyGPCCA* from `GitHub <https://github.com/msmdev/pygpcca>`_, run::
 
     pip install git+https://github.com/msmdev/pygpcca
-
-.. |PyPI| image:: https://img.shields.io/pypi/v/pygpcca
-    :target: https://pypi.org/project/pygpcca
-    :alt: PyPI
-
-.. |Conda| image:: https://img.shields.io/conda/vn/conda-forge/pygpcca
-    :target: https://anaconda.org/conda-forge/pygpcca
-    :alt: Conda
-
-.. |CI| image:: https://img.shields.io/github/workflow/status/msmdev/pygpcca/CI/main
-    :target: https://github.com/msmdev/pygpcca/actions
-    :alt: CI
-
-.. |Coverage| image:: https://img.shields.io/codecov/c/github/msmdev/pygpcca/main
-    :target: https://codecov.io/gh/msmdev/pygpcca
-    :alt: Coverage
 
 Usage
 -----
@@ -71,3 +79,64 @@ Afterwards *pyGPCCA* can be imported in Python as::
 - The memberships are available via::
 
     gpcca.memberships
+
+Installation troubleshooting
+----------------------------
+
+Debian-based systems
+====================
+TODO::
+
+    # install dependencies
+    sudo apt-get update -y
+    sudo apt-get install gcc gfortran libopenmpi-dev libblas-dev liblapack-dev petsc-dev slepc-dev -y
+
+    # install a message passing interface for Python
+    pip install --user mpi4py
+
+    # install petsc and and petsc4py
+    pip install --user petsc
+    pip install --user petsc4py
+
+    # install slepc and slepc4py
+    pip install --user slepc
+    pip install --user slepc4py
+
+macOS
+=====
+The most robust way is to follow the `PETSc installation guide`_ and the `SLEPc installation guide`_ or to take a look
+at the `steps <./.scripts/ci/install_dependencies.sh>`_ we are using during in our continuous integration on macOS.
+
+The installation steps can be roughly outlined as::
+
+    # install dependencies
+    brew install gcc open-mpi openblas lapack arpack
+
+    # follow the PETSc installation steps
+    # follow the SLEPc installation steps
+
+    # install petsc4py
+    pip install --user petsc4py
+    # install slepc4py
+    pip install --user petsc4py
+
+.. |PyPI| image:: https://img.shields.io/pypi/v/pygpcca
+    :target: https://pypi.org/project/pygpcca
+    :alt: PyPI
+
+.. |Conda| image:: https://img.shields.io/conda/vn/conda-forge/pygpcca
+    :target: https://anaconda.org/conda-forge/pygpcca
+    :alt: Conda
+
+.. |CI| image:: https://img.shields.io/github/workflow/status/msmdev/pygpcca/CI/main
+    :target: https://github.com/msmdev/pygpcca/actions
+    :alt: CI
+
+.. |Coverage| image:: https://img.shields.io/codecov/c/github/msmdev/pygpcca/main
+    :target: https://codecov.io/gh/msmdev/pygpcca
+    :alt: Coverage
+
+.. _`PETSc`: https://www.mcs.anl.gov/petsc/
+.. _`SLEPc`: https://slepc.upv.es/
+.. _`PETSc installation guide`: https://www.mcs.anl.gov/petsc/documentation/installation.html
+.. _`SLEPc installation guide`: https://slepc.upv.es/documentation/instal.htm
