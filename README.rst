@@ -1,4 +1,4 @@
-|PyPI| |Conda| |CI| |Coverage|
+|PyPI| |Conda| |CI| |Coverage| |Cite|
 
 pyGPCCA - Generalized Perron Cluster Cluster Analysis
 =====================================================
@@ -138,6 +138,10 @@ The installation steps can be roughly outlined as::
 .. |Coverage| image:: https://img.shields.io/codecov/c/github/msmdev/pygpcca/main
     :target: https://codecov.io/gh/msmdev/pygpcca
     :alt: Coverage
+    
+.. |Cite| image:: https://img.shields.io/badge/cite-me-important
+    :target: https://doi.org/10.1021/acs.jctc.8b00079
+    :alt: Cite
 
 .. _`PETSc`: https://www.mcs.anl.gov/petsc/
 .. _`SLEPc`: https://slepc.upv.es/
