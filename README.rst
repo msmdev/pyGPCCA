@@ -31,8 +31,8 @@ This is the recommended way of installing, since this package also includes `PET
 We use `PETSc`_/`SLEPc`_ internally to speed up the computation of the leading Schur vectors. These are optional
 dependencies - if they're not present, we compute a full Schur decomposition instead and sort it using the method
 introduced by `Brandts (2002)`_. Note that this scales cubically in sample number, making it essential to use
-`PETSc`_/`SLEPc`_ which implement iterative methods to only compute the leading Schur vectors, which is computationally
-much less expensive.
+`PETSc`_/`SLEPc`_ for large sample numbers. `PETSc`_/`SLEPc`_ implement iterative methods to only compute the leading Schur vectors,
+ which is computationally much less expensive.
 
 PyPI
 ====
