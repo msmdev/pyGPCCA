@@ -9,10 +9,10 @@ very instructive manner. They are widely used, e.g. to model molecular or cellul
 Common state-of-the-art Markov state modeling methods and tools are very well suited to model reversible processes in
 closed equilibrium systems. However, most are not well suited to deal with non-reversible or even non-autonomous
 processes of non-equilibrium systems.
-To get over this shortcoming, the Generalized Robust Perron Cluster Cluster Analysis (G-PCCA) was developed.
+To overcome this limitation, the Generalized Robust Perron Cluster Cluster Analysis (G-PCCA) was developed.
 The G-PCCA method implemented in the *pyGPCCA* program readily handles equilibrium as well as non-equilibrium data by
 utilizing real Schur vectors instead of eigenvectors.
-*pyGPCCA* enables the semiautomatic coarse graining of transition matrices representing the dynamics of the system
+*pyGPCCA* enables the semiautomatic coarse-graining of transition matrices representing the dynamics of the system
 under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics can be identified and modeled.
 
 Installation
@@ -27,9 +27,12 @@ Conda
 
     conda install -c conda-forge pygpcca
 
-TODO: better explain why it's recommended (easier to install) and why PETSc/SLEPc is good (large problems)
-
 This is the recommended way of installing, since this package also includes `PETSc`_/`SLEPc`_ libraries.
+We use `PETSc`_/`SLEPc`_ internally to speed up the computation of the leading Schur vectors. These are optional
+dependencies - if they're not present, we compute a full Schur decomposition instead and sort it using the method
+introduced by `Brandts (2002)`_. Note that this scales cubically in sample number, making it essential to use
+`PETSc`_/`SLEPc`_ which implement iterative methods to only compute the leading Schur vectors, which is computationally
+much less expensive.
 
 PyPI
 ====
@@ -138,5 +141,6 @@ The installation steps can be roughly outlined as::
 
 .. _`PETSc`: https://www.mcs.anl.gov/petsc/
 .. _`SLEPc`: https://slepc.upv.es/
+.. _`Brandts (2002)`: https://doi.org/10.1002/nla.274
 .. _`PETSc installation guide`: https://www.mcs.anl.gov/petsc/documentation/installation.html
 .. _`SLEPc installation guide`: https://slepc.upv.es/documentation/instal.htm
