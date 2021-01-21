@@ -684,7 +684,8 @@ def gpcca_coarsegrain(
         If `None` (default), uniform distribution is used.
     %(z_P)s
     %(method)s
-        See :ref:`Installing PETSc and SLEPc` for more information.
+        See the `installation <https://pygpcca.readthedocs.io/en/latest/installation.html>`_ instructions
+        for more information.
 
     Returns
     -------
@@ -717,7 +718,8 @@ class GPCCA:
         If `None`, uniform distribution is used.
     %(z_P)s
     %(method)s
-        See :ref:`Installing PETSc and SLEPc` for more information.
+        See the `installation <https://pygpcca.readthedocs.io/en/latest/installation.html>`_ instructions
+        for more information.
 
     References
     ----------
