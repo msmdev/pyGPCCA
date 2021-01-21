@@ -1,5 +1,8 @@
 API
 ===
+*pyGPCCA* can be imported as::
+
+  import pygpcca as gp
 
 .. module::pygpcca
 .. currentmodule::pygpcca

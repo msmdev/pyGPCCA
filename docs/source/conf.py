@@ -45,6 +45,7 @@ extensions = [
     "sphinx_autodoc_typehints",
     "sphinx_last_updated_by_git",
     "typed_returns",
+    "nbsphinx",
 ]
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
