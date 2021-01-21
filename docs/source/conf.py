@@ -27,8 +27,8 @@ copyright = f"{datetime.now():%Y}, {author}"  # noqa: A001
 
 # The full version, including alpha/beta/rc tags
 master_doc = "index"
-release = "master"
-version = f"master ({pygpcca.__version__})"
+release = "main"
+version = f"main ({pygpcca.__version__})"
 
 
 # -- General configuration ---------------------------------------------------
@@ -90,10 +90,8 @@ nbsphinx_execute_arguments = [
 ]
 
 
-_href = ""
-_img = ""
 nbsphinx_prolog = r"""
-{% set docname = env.doc2path(env.docname, base=None) %}
+{% set docname = 'docs/source/' + env.doc2path(env.docname, base=None) %}
 .. raw:: html
 
     <div class="note">
