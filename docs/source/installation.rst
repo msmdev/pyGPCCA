@@ -3,8 +3,11 @@ Installation
 :mod:`pygpcca` requires Python version >= 3.6 to run. If any problems arise, please consult the
 `Troubleshooting`_ section.
 
+Installation
+------------
+
 Conda
------
++++++
 *pyGPCCA* is available as a `conda package <https://anaconda.org/conda-forge/pygpcca>`_ and can be installed as::
 
     conda install -c conda-forge pygpcca
@@ -17,7 +20,7 @@ introduced by `Brandts (2002)`_. Note that this scales cubically in sample numbe
 the leading Schur vectors, which is computationally much less expensive.
 
 PyPI
-----
+++++
 In order to install *pyGPCCA* from `The Python Package Index <https://pypi.org/project/pygpcca/>`_, run::
 
     pip install pygpcca
@@ -25,13 +28,13 @@ In order to install *pyGPCCA* from `The Python Package Index <https://pypi.org/p
     pip install pygpcca[slepc]
 
 Development version
--------------------
++++++++++++++++++++
 If you want to use the development version of *pyGPCCA* from `GitHub <https://github.com/msmdev/pygpcca>`_, run::
 
     pip install git+https://github.com/msmdev/pygpcca
 
 Troubleshooting
-===============
+---------------
 During the installation of ``petsc``, ``petsc4py``, ``slepc``, and ``slepc4py``, the following error(s) might appear::
 
     ERROR: Failed building wheel for <package name>
@@ -45,7 +48,7 @@ To quickly verify that the packages have been installed, you can run::
     python3 -c "import petsc4py; import slepc4py; print(petsc4py.__version__, slepc4py.__version__)"
 
 Debian-based systems
---------------------
+++++++++++++++++++++
 Below are an alternative steps for installing `PETSc`_/`SLEPc`_, in case any problems arise, especially when installing
 from `PyPI`_::
 
@@ -65,9 +68,10 @@ from `PyPI`_::
     pip install --user slepc4py
 
 macOS
------
++++++
 The most robust way is to follow the `PETSc installation guide`_ and the `SLEPc installation guide`_ or to take a look
-at our continuous integration `steps <./.scripts/ci/install_dependencies.sh>`_ for macOS.
+at our continuous integration `steps <https://github.com/msmdev/pyGPCCA/blob/main/.scripts/ci/install_dependencies.sh>`_
+for macOS.
 
 The installation steps can be roughly outlined as::
 

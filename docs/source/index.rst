@@ -21,7 +21,7 @@ under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics c
 
     installation
     api
-    usage
+    example
     references
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/pygpcca
