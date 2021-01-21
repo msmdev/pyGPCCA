@@ -67,8 +67,23 @@ setup(
     keywords=sorted(
         {
             "GPCCA",
+            "G-PCCA",
             "Generalized Perron Cluster Cluster Analysis",
             "Markov state model",
+            "Markov state modeling",
+            "coarse-graining",
+            "spectral clustering",
+            "non-equilibrium system",
+            "non-reversible process",
+            "non-autonomous process",
+            "cyclic states",
+            "metastable states",
+            "molecular dynamics",
+            "cellular dynamics",
+            "molecular kinetics",
+            "cellular kinetics",
+            "Schur decomposition",
+            "Schur vectors",
         }
     ),
 )
