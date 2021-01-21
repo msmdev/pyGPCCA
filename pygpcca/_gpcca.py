@@ -1169,3 +1169,9 @@ class GPCCA:
             if self.metastable_assignment is None or self.n_metastable is None
             else [np.where(self.metastable_assignment == i)[0] for i in range(self.n_metastable)]
         )
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}[n={self.transition_matrix.shape[0]}, n_metastable={self.n_metastable}]"
+
+    def __str__(self) -> str:
+        return repr(self)
