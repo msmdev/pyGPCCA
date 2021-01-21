@@ -21,13 +21,14 @@ import pygpcca  # noqa: E402
 needs_sphinx = "3.3"
 # -- Project information -----------------------------------------------------
 
-project = "pygpcca"
+project = "pyGPCCA"
 author = pygpcca.__author__
 copyright = f"{datetime.now():%Y}, {author}"  # noqa: A001
 
 # The full version, including alpha/beta/rc tags
 master_doc = "index"
-release = "0.0.0"
+release = "master"
+version = f"master ({pygpcca.__version__})"
 
 
 # -- General configuration ---------------------------------------------------
@@ -83,6 +84,24 @@ napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 todo_include_todos = False
+nbsphinx_execute_arguments = [
+    "--InlineBackend.figure_formats={'png', 'pdf'}",  # correct figure resize
+    "--InlineBackend.rc={'figure.dpi': 96}",
+]
+
+
+_href = ""
+_img = ""
+nbsphinx_prolog = r"""
+{% set docname = env.doc2path(env.docname, base=None) %}
+.. raw:: html
+
+    <div class="note">
+      Interactive version
+      <a href="https://mybinder.org/v2/gh/msmdev/pygpcca/{{ env.config.release|e }}?filepath={{ docname|e }}"><img alt="Binder badge" src="https://mybinder.org/badge_logo.svg" style="vertical-align:text-bottom">
+      </a>
+    </div>
+"""  # noqa: E501
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
