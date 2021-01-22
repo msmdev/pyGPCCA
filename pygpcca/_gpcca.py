@@ -27,13 +27,20 @@
 __author__ = __maintainer__ = "Bernhard Reuter"
 __email__ = "bernhard.reuter AT uni-tuebingen DOT de"
 __copyright__ = "Copyright 2020, Bernhard Reuter"
-__credits__ = ["Bernhard Reuter", "Marcus Weber", "Susanna Roeblitz", "Marius Lange", "Michal Klein"]
+__credits__ = [
+    "Bernhard Reuter",
+    "Marcus Weber",
+    "Susanna Roeblitz",
+    "Marius Lange",
+    "Michal Klein",
+    "Alexander Sikorski",
+]
 
 
 from typing import Dict, List, Tuple, Union, Callable, Optional, TYPE_CHECKING
 
 try:
-    from functools import cached_property
+    from functools import cached_property  # type: ignore[attr-defined]
 except ImportError:
     from functools import lru_cache
 
