@@ -877,7 +877,7 @@ class GPCCA:
         Instead of a single number of clusters `m`, a :class:`tuple`
         containing a minimum and a maximum number of clusters can be given.
         This results in repeated execution of the G-PCCA core algorithm
-        for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings
+        for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings,
         the sharpest/crispest one (with maximal `crispness`) will be selected.
 
         Parameters

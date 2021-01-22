@@ -43,7 +43,7 @@ Example
 Please refer to our `example usage <https://pygpcca.readthedocs.io/en/latest/example.html>`_ in the documentation.
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/pygpcca
-    :target: https://pypi.org/project/pygpcca
+    :target: https://pypi.org/project/pygpcca/
     :alt: PyPI
 
 .. |Conda| image:: https://img.shields.io/conda/vn/conda-forge/pygpcca
