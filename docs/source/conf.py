@@ -12,6 +12,8 @@ import os
 # -- Path setup --------------------------------------------------------------
 import sys
 
+from sphinx.application import Sphinx
+
 HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE.parent.parent))
 sys.path.insert(0, os.path.abspath("_ext"))
@@ -45,6 +47,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx_autodoc_typehints",
     "sphinx_last_updated_by_git",
+    "sphinx_copybutton",
     "typed_returns",
     "nbsphinx",
 ]
@@ -84,12 +87,11 @@ napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 todo_include_todos = False
+
 nbsphinx_execute_arguments = [
     "--InlineBackend.figure_formats={'png', 'pdf'}",  # correct figure resize
     "--InlineBackend.rc={'figure.dpi': 96}",
 ]
-
-
 nbsphinx_prolog = r"""
 {% set docname = 'docs/source/' + env.doc2path(env.docname, base=None) %}
 .. raw:: html
@@ -110,3 +112,7 @@ html_theme_options = {"navigation_depth": 4, "logo_only": True}
 html_show_sphinx = False
 html_use_smartypants = True
 pygments_style = "sphinx"
+
+
+def setup(app: Sphinx) -> None:
+    app.add_stylesheet("css/custom.css")

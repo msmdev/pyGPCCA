@@ -1,10 +1,10 @@
 Installation
 ============
-:mod:`pygpcca` requires Python version >= 3.6 to run. If any problems arise, please consult the
+*pyGPCCA* requires Python >= 3.6 to run. If any problems arise, please consult the
 `Troubleshooting`_ section.
 
-Installation
-------------
+Methods
+-------
 
 Conda
 +++++
