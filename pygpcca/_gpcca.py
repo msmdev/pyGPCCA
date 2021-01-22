@@ -227,7 +227,7 @@ def _do_schur(
     # Orthonormalize the sorted Schur vectors Q via modified Gram-Schmidt-orthonormalization,
     # if the (Schur)vectors aren't orthogonal!
     if not np.allclose(Q.T.dot(Q * eta[:, None]), np.eye(Q.shape[1]), rtol=1e6 * EPS, atol=1e6 * EPS):
-        warnings.warn("The Schur vectors aren't D-orthogonal so they are D-orthogonalized.")
+        logging.debug("The Schur vectors aren't D-orthogonal so they are D-orthogonalized.")
         Q = _gram_schmidt_mod(Q, eta)
         # Transform the orthonormalized Schur vectors of P_bar back
         # to orthonormalized Schur vectors X of P.
