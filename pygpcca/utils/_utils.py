@@ -66,6 +66,12 @@ def connected_sets(C: Union[np.ndarray, spmatrix], directed: bool = True) -> Lis
     ----------
     .. [1] Tarjan, R E. 1972. Depth-first search and linear graph
         algorithms. SIAM Journal on Computing 1 (2): 146-160.
+
+    Copyright
+    ---------
+    This function origins from MSMTools
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group
+    Freie Universitaet Berlin (GER)
     """
     raise NotImplementedError(type(C))
 
@@ -131,6 +137,12 @@ def is_transition_matrix(T: Union[np.ndarray, spmatrix], tol: float = 1e-12) -> 
     -----
     A valid transition matrix :math:`P=(p_{ij})` has non-negative elements, :math:`p_{ij} \geq 0`, and elements of each
     row sum up to one, :math:`\sum_j p_{ij} = 1`. Matrices wit this property are also called stochastic matrices.
+
+    Copyright
+    ---------
+    This function origins from MSMTools
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group
+    Freie Universitaet Berlin (GER)
     """
     raise NotImplementedError(type(T))
 
@@ -183,6 +195,12 @@ def stationary_distribution(P: Union[np.ndarray, spmatrix]) -> np.ndarray:
     :math:`\lambda=1`,
 
     .. math:: \mu^T T =\mu^T.
+
+    Copyright
+    ---------
+    This function origins from MSMTools
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group
+    Freie Universitaet Berlin (GER)
     """
     raise NotImplementedError(type(P))
 
@@ -249,6 +267,12 @@ def backward_iteration(A: np.ndarray, mu: float, x0: np.ndarray, tol: float = 1e
     Returns
     -------
     Eigenvector to approximate eigenvalue ``mu``.
+
+    Copyright
+    ---------
+    This function origins from MSMTools
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group
+    Freie Universitaet Berlin (GER)
     """
     T = A - mu * np.eye(A.shape[0])
     # LU-factor of T
@@ -283,6 +307,12 @@ def stationary_distribution_from_backward_iteration(P: np.ndarray, eps: float = 
     Returns
     -------
     Stationary vector.
+
+    Copyright
+    ---------
+    This function origins from MSMTools
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group
+    Freie Universitaet Berlin (GER)
     """
     A = np.transpose(P)
     mu = 1.0 - eps
@@ -307,6 +337,12 @@ def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
     Returns
     -------
     Vector of stationary probabilities.
+
+    Copyright
+    ---------
+    This function origins from MSMTools
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group
+    Freie Universitaet Berlin (GER)
     """
     val, L = eig(P, left=True, right=False)
 
