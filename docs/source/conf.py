@@ -4,7 +4,6 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-from typing import List
 from pathlib import Path
 from datetime import datetime
 import os
@@ -63,7 +62,7 @@ templates_path = ["_templates"]
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns: List[str] = []
+exclude_patterns = ["build", "**.ipynb_checkpoints"]
 
 source_suffix = ".rst"
 add_function_parentheses = True
@@ -88,6 +87,7 @@ napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 todo_include_todos = False
 
+nbsphinx_highlight_language = "python3"
 nbsphinx_execute_arguments = [
     "--InlineBackend.figure_formats={'png', 'pdf'}",  # correct figure resize
     "--InlineBackend.rc={'figure.dpi': 96}",
@@ -115,4 +115,4 @@ pygments_style = "sphinx"
 
 
 def setup(app: Sphinx) -> None:
-    app.add_stylesheet("css/custom.css")
+    app.add_css_file("css/custom.css")
