@@ -667,7 +667,7 @@ def gpcca_coarsegrain(
     method: str = DEFAULT_SCHUR_METHOD,
 ) -> np.ndarray:
     r"""
-    Coarse-grains the transition matrix `P` into `m` sets using G-PCCA [Reuter18]_.
+    Coarse-grain the transition matrix `P` into `m` sets using G-PCCA [Reuter18]_.
 
     Performs optimized spectral clustering via G-PCCA and coarse-grains `P`
     such that the dominant Perron eigenvalues are preserved using:
