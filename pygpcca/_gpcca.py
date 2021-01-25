@@ -813,7 +813,7 @@ class GPCCA:
                     else:
                         if _check_conj_split(self._p_eigenvalues[:m]):
                             raise ValueError(
-                                f"Clustering into {m} clusters will split conjugate eigenvalues. "
+                                f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
                                 f"Request one cluster more or less."
                             )
                         logging.info("Using pre-computed Schur decomposition")
@@ -979,12 +979,12 @@ class GPCCA:
                 if _check_conj_split(self._p_eigenvalues[:m]):
                     if len(m_list) == 1:
                         raise ValueError(
-                            f"Clustering into {m} clusters will split conjugate eigenvalues. "
+                            f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
                             f"Request one cluster more or less."
                         )
                     else:
                         warnings.warn(
-                            f"Clustering into {m} clusters will split conjugate eigenvalues. "
+                            f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
                             f"Skipping clustering into {m} clusters."
                         )
                         crispness_list.append(0)
