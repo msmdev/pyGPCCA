@@ -90,10 +90,7 @@ It is given via (Eq. 17 from [Roeblitz13]_):
 
 .. math:: \xi = (m - f_{opt}) / m = \mathtt{trace}(S) / m = \mathtt{trace}(\tilde{D} \chi^T D \chi) / m
 
-with :math:`D` being a diagonal matrix with `eta` on its diagonal and
-
-.. math:: \xi =  \rightarrow \mathtt{max} .
-
+with :math:`D` being a diagonal matrix with `eta` on its diagonal.
 """
 
 Q_sort = """A matrix of shape `(n, m)` with ordered `m` dominant Schur vectors in the columns.
