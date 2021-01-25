@@ -769,11 +769,13 @@ class GPCCA:
         self._X: OArray = None
         self._R: OArray = None
         self._eigenvalues: OArray = None
+        self._top_eigenvalues: OArray = None
 
         self._m_opt: Optional[int] = None
         self._chi: OArray = None
         self._rot_matrix: OArray = None
-        self._crispness: Optional[float] = None
+        self._crispness_opt: Optional[float] = None
+        self._crispness: OArray = None
 
         self._pi: OArray = None
         self._pi_coarse: OArray = None
@@ -902,12 +904,14 @@ class GPCCA:
             - :attr:`coarse_grained_input_distribution`
             - :attr:`coarse_grained_stationary_distribution`
             - :attr:`coarse_grained_transition_matrix`
-            - :attr:`cluster_crispness`
+            - :attr:`n_macrostates_crispness`
+            - :attr:`crispness_values`
             - :attr:`schur_vectors`
             - :attr:`schur_matrix`
             - :attr:`top_eigenvalues`
+            - :attr:`eigenvalues`
             - :attr:`rotation_matrix`
-            - :attr:`n_metastable`
+            - :attr:`n_macrostates`
         """
         n = self._P.shape[0]
 
@@ -1018,10 +1022,12 @@ class GPCCA:
         self._m_opt = min(m_list) + opt_idx
         self._chi = chi_list[opt_idx]
         self._rot_matrix = rot_matrix_list[opt_idx]
-        self._crispness = crispness_list[opt_idx]
+        self._crispness = np.array(crispness_list)
+        self._crispness_opt = crispness_list[opt_idx]
         self._X = self._p_X[:, : self._m_opt]
         self._R = self._p_R[: self._m_opt, : self._m_opt]
-        self._eigenvalues = self._p_eigenvalues[: self._m_opt]
+        self._top_eigenvalues = self._p_eigenvalues[: self._m_opt]
+        self._eigenvalues = self._p_eigenvalues[min(m_list) - 1, max(m_list)]
 
         if TYPE_CHECKING:
             assert isinstance(self.memberships, np.ndarray)
@@ -1052,7 +1058,7 @@ class GPCCA:
         return self._eta
 
     @property
-    def n_metastable(self) -> Optional[int]:
+    def n_macrostates(self) -> Optional[int]:
         """Number of clusters (macrostates) to group the `n` microstates into."""  # noqa: D401
         # TODO: use self.memberships.shape[1] and remove self._m_opt
         return self._m_opt
@@ -1115,13 +1121,36 @@ class GPCCA:
     @property  # type: ignore[misc]
     @d.dedent
     def top_eigenvalues(self) -> OArray:
-        """%(eigenvalues_m)s"""  # noqa: D400
+        """
+        Top :attr:`n_macrostates` eigenvalues.
+
+        %(eigenvalues_m)s
+        """
+        return self._top_eigenvalues
+
+    @property
+    def eigenvalues(self) -> OArray:
+        """Vector containing the eigenvalues of `P` associated to the requested cluster numbers."""
         return self._eigenvalues
 
     @property  # type: ignore[misc]
     @d.dedent
-    def cluster_crispness(self) -> Optional[float]:
-        """%(crispness_ret)s"""  # noqa: D400
+    def n_macrostates_crispness(self) -> Optional[float]:
+        """
+        Crispness for clustering into :attr:`n_macrostates` clusters.
+
+        %(crispness_ret)s
+        """
+        return self._crispness_opt
+
+    @property  # type: ignore[misc]
+    @d.dedent
+    def crispness_values(self) -> OArray:
+        """
+        Vector of crispness values for clustering into the requested cluster numbers.
+
+        %(crispness_ret)s
+        """
         return self._crispness
 
     @property
@@ -1180,12 +1209,12 @@ class GPCCA:
 
         Returns
         -------
-        A list of length equal to :attr:`n_metastable`.
+        A list of length equal to :attr:`n_macrostates`.
 
         Each element is an array with microstate indexes contained in it.
         """
         return (
             None
-            if self.metastable_assignment is None or self.n_metastable is None
-            else [np.where(self.metastable_assignment == i)[0] for i in range(self.n_metastable)]
+            if self.metastable_assignment is None or self.n_macrostates is None
+            else [np.where(self.metastable_assignment == i)[0] for i in range(self.n_macrostates)]
         )
