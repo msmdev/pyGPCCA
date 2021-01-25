@@ -973,10 +973,20 @@ class GPCCA:
                 )
             else:
                 if _check_conj_split(self._p_eigenvalues[:m]):
-                    raise ValueError(
-                        f"Clustering into {m} clusters will split conjugate eigenvalues. "
-                        f"Request one cluster more or less."
-                    )
+                    if len(m_list) == 1:
+                        raise ValueError(
+                            f"Clustering into {m} clusters will split conjugate eigenvalues. "
+                            f"Request one cluster more or less."
+                        )
+                    else:
+                        warnings.warn(
+                            f"Clustering into {m} clusters will split conjugate eigenvalues. "
+                            f"Skipping clustering into {m} clusters."
+                        )
+                        crispness_list.append(0)
+                        chi_list.append(np.zeros((n, m)))
+                        rot_matrix_list.append(np.zeros((m, m)))
+                        continue
 
             # Reduce X according to m and make a work copy.
             # Xm = np.copy(X[:, :m])
@@ -1001,7 +1011,10 @@ class GPCCA:
             chi_list.append(chi)
             rot_matrix_list.append(rot_matrix)
 
-        opt_idx = np.argmax(crispness_list)
+        if np.any(np.array(crispness_list) > 0.0):
+            opt_idx = np.argmax(crispness_list)
+        else:
+            raise ValueError("Clustering wasn't successful. Try different cluster numbers.")
         self._m_opt = min(m_list) + opt_idx
         self._chi = chi_list[opt_idx]
         self._rot_matrix = rot_matrix_list[opt_idx]
