@@ -975,22 +975,20 @@ class GPCCA:
                     f"Can't check complex conjugate block splitting for {m} clusters with only "
                     f"{len(self._p_eigenvalues)} eigenvalues."
                 )
-            else:
-                if _check_conj_split(self._p_eigenvalues[:m]):
-                    if len(m_list) == 1:
-                        raise ValueError(
-                            f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
-                            f"Request one cluster more or less."
-                        )
-                    else:
-                        warnings.warn(
-                            f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
-                            f"Skipping clustering into {m} clusters."
-                        )
-                        crispness_list.append(0)
-                        chi_list.append(np.zeros((n, m)))
-                        rot_matrix_list.append(np.zeros((m, m)))
-                        continue
+            if _check_conj_split(self._p_eigenvalues[:m]):
+                if len(m_list) == 1:
+                    raise ValueError(
+                        f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
+                        f"Request one cluster more or less."
+                    )
+                warnings.warn(
+                    f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
+                    f"Skipping clustering into {m} clusters."
+                )
+                crispness_list.append(0)
+                chi_list.append(np.zeros((n, m)))
+                rot_matrix_list.append(np.zeros((m, m)))
+                continue
 
             # Reduce X according to m and make a work copy.
             # Xm = np.copy(X[:, :m])
