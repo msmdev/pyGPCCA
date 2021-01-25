@@ -1,6 +1,6 @@
 # This file is part of pyGPCCA.
 #
-# The code of the functions below was taken from MSMTools.
+# The code and documentation of the functions below origins (with some adjustments) from MSMTools.
 #
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Freie Universitaet Berlin (GER)
 #
@@ -67,9 +67,9 @@ def connected_sets(C: Union[np.ndarray, spmatrix], directed: bool = True) -> Lis
     .. [1] Tarjan, R E. 1972. Depth-first search and linear graph
         algorithms. SIAM Journal on Computing 1 (2): 146-160.
 
-    Copyright
+    Credits
     ---------
-    This function origins from MSMTools
+    The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
     """
@@ -138,9 +138,9 @@ def is_transition_matrix(T: Union[np.ndarray, spmatrix], tol: float = 1e-12) -> 
     A valid transition matrix :math:`P=(p_{ij})` has non-negative elements, :math:`p_{ij} \geq 0`, and elements of each
     row sum up to one, :math:`\sum_j p_{ij} = 1`. Matrices wit this property are also called stochastic matrices.
 
-    Copyright
+    Credits
     ---------
-    This function origins from MSMTools
+    The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
     """
@@ -196,9 +196,9 @@ def stationary_distribution(P: Union[np.ndarray, spmatrix]) -> np.ndarray:
 
     .. math:: \mu^T T =\mu^T.
 
-    Copyright
+    Credits
     ---------
-    This function origins from MSMTools
+    The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
     """
@@ -268,9 +268,9 @@ def backward_iteration(A: np.ndarray, mu: float, x0: np.ndarray, tol: float = 1e
     -------
     Eigenvector to approximate eigenvalue ``mu``.
 
-    Copyright
+    Credits
     ---------
-    This function origins from MSMTools
+    The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
     """
@@ -308,9 +308,9 @@ def stationary_distribution_from_backward_iteration(P: np.ndarray, eps: float = 
     -------
     Stationary vector.
 
-    Copyright
+    Credits
     ---------
-    This function origins from MSMTools
+    The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
     """
@@ -338,9 +338,9 @@ def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
     -------
     Vector of stationary probabilities.
 
-    Copyright
+    Credits
     ---------
-    This function origins from MSMTools
+    The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
     """
