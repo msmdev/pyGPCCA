@@ -26,7 +26,7 @@ under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics c
     references
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/pygpcca
-    :target: https://pypi.org/project/pygpcca
+    :target: https://pypi.org/project/pygpcca/
     :alt: PyPI
 
 .. |Conda| image:: https://img.shields.io/conda/vn/conda-forge/pygpcca

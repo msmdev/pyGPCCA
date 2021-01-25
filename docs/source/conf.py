@@ -4,7 +4,6 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-from typing import List
 from pathlib import Path
 from datetime import datetime
 import os
@@ -63,7 +62,7 @@ templates_path = ["_templates"]
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns: List[str] = []
+exclude_patterns = ["build", "**.ipynb_checkpoints"]
 
 source_suffix = ".rst"
 add_function_parentheses = True
@@ -88,6 +87,8 @@ napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 todo_include_todos = False
 
+# binder
+nbsphinx_highlight_language = "python3"
 nbsphinx_execute_arguments = [
     "--InlineBackend.figure_formats={'png', 'pdf'}",  # correct figure resize
     "--InlineBackend.rc={'figure.dpi': 96}",
@@ -103,6 +104,15 @@ nbsphinx_prolog = r"""
     </div>
 """  # noqa: E501
 
+# spelling
+spelling_lang = "en_US"
+spelling_warning = True
+spelling_word_list_filename = "spelling_wordlist.txt"
+spelling_add_pypi_package_names = True
+spelling_show_suggestions = True
+# see: https://pyenchant.github.io/pyenchant/api/enchant.tokenize.html
+spelling_filters = ["enchant.tokenize.URLFilter", "enchant.tokenize.EmailFilter"]
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -115,4 +125,4 @@ pygments_style = "sphinx"
 
 
 def setup(app: Sphinx) -> None:
-    app.add_stylesheet("css/custom.css")
+    app.add_css_file("css/custom.css")
