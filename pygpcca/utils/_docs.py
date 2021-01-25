@@ -88,13 +88,13 @@ solution (higher is better). It characterizes how crisp (sharp) the
 decomposition of the state space into `m` clusters is.
 It is given via (Eq. 17 from [Roeblitz13]_):
 
-.. math::
+.. math:: \xi = (m - f_{opt}) / m = \mathtt{trace}(S) / m = \mathtt{trace}(\tilde{D} \chi^T D \chi) / m
 
-    \xi = (m - f_{opt}) / m = \mathtt{trace}(S) / m
-\\
-    = \mathtt{trace}(\tilde{D} \chi^T D \chi) / m \rightarrow \mathtt{max}
+with :math:`D` being a diagonal matrix with `eta` on its diagonal and
 
-with :math:`D` being a diagonal matrix with `eta` on its diagonal."""
+.. math:: \xi =  \rightarrow \mathtt{max} .
+
+"""
 
 Q_sort = """A matrix of shape `(n, m)` with ordered `m` dominant Schur vectors in the columns.
 The constant Schur vector (being constantly 1) is in the first column."""
