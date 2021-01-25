@@ -2,19 +2,19 @@ from docrep import DocstringProcessor
 
 P = """\
 P
-    Transition matrix (row-stochastic)."""
+    The transition matrix (row-stochastic)."""
 
 m = """\
 m
-    Number of clusters to group into."""
+    The number of clusters to group into."""
 
 k = """\
 k
-    Number of eigenvalues and Schur vectors to sort."""
+    The number of eigenvalues and Schur vectors to sort."""
 
 m_optimize = """\
 m
-    Number of clusters or a range where a search for potentially optimal
+    The number of clusters or a range where a search for potentially optimal
     cluster numbers is performed. Valid options are:
 
         - :class:`int`: number of clusters to group into.
@@ -60,14 +60,14 @@ method
 
 tol_krylov = """\
 tol_krylov
-    Convergence criterion used by SLEPc internally.
+    The convergence criterion used by SLEPc internally.
     This is only relevant if you use ``method='krylov'``.
     If you are dealing with ill-conditioned matrices,
     consider decreasing this value to get accurate results."""
 
 eta = """\
 eta
-    Input probability distribution of the (micro)states.
+    The input probability distribution of the (micro)states.
     In theory `eta` can be an arbitrary distribution as long as it is
     a valid probability distribution (i.e., sums up to 1).
     A neutral and valid choice would be the uniform distribution (default).
@@ -77,34 +77,38 @@ eta
     In case of a non-reversible `P`, some initial or average distribution of
     the states might be chosen instead of the uniform distribution."""
 
-chi_ret = """Array of shape `(n, m)` containing the membership (or probability)
+chi_ret = """An array of shape `(n, m)` containing the membership (or probability)
 of each state (to be assigned) to each cluster. The rows sum to 1."""
 
-rot_matrix_ret = """Optimized rotation matrix of shape `(m, m)` that rotates the dominant
+rot_matrix_ret = """The optimized rotation matrix of shape `(m, m)` that rotates the dominant
 Schur vectors to yield the G-PCCA memberships, i.e., ``chi = X * rot_mat``."""
 
-crispness_ret = r"""Crispness :math:`\xi \in [0,1]` quantifying the optimality of the
+crispness_ret = r"""The crispness :math:`\xi \in [0,1]` quantifies the optimality of the
 solution (higher is better). It characterizes how crisp (sharp) the
 decomposition of the state space into `m` clusters is.
 It is given via (Eq. 17 from [Roeblitz13]_):
 
-.. math:: \xi = (m - f_{opt}) / m = \mathtt{trace}(S) / m = \mathtt{trace}(\tilde{D} \chi^T D \chi) / m -> \mathtt{max}
+.. math::
+
+    \xi = (m - f_{opt}) / m = \mathtt{trace}(S) / m
+\\
+    = \mathtt{trace}(\tilde{D} \chi^T D \chi) / m \rightarrow \mathtt{max}
 
 with :math:`D` being a diagonal matrix with `eta` on its diagonal."""
 
-Q_sort = """Matrix of shape `(n, m)` with ordered `m` dominant Schur vectors in the columns.
+Q_sort = """A matrix of shape `(n, m)` with ordered `m` dominant Schur vectors in the columns.
 The constant Schur vector (being constantly 1) is in the first column."""
 
-R_sort = r"""Ordered top left part of shape `(m, m)` of the real Schur matrix of `P`.
+R_sort = r"""The ordered top left part of shape `(m, m)` of the real Schur matrix of `P`.
 The ordered real partial Schur matrix `R` of `P` fulfills
 
 .. math:: \tilde{P} Q = Q R
 
 with the ordered real matrix of dominant Schur vectors `Q`."""
 
-eigenvalues_m = """Array of shape `(m,)` containing the `m` dominant eigenvalues of `P`."""
+eigenvalues_m = """An array of shape `(m,)` containing the `m` dominant eigenvalues of `P`."""
 
-eigenvalues_k = """Array of shape `(k,)` containing the `k` dominant eigenvalues of `P`."""
+eigenvalues_k = """An array of shape `(k,)` containing the `k` dominant eigenvalues of `P`."""
 
 d = DocstringProcessor(
     P=P,
