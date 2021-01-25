@@ -1027,7 +1027,7 @@ class GPCCA:
         self._X = self._p_X[:, : self._m_opt]
         self._R = self._p_R[: self._m_opt, : self._m_opt]
         self._top_eigenvalues = self._p_eigenvalues[: self._m_opt]
-        self._eigenvalues = self._p_eigenvalues[min(m_list) - 1, max(m_list)]
+        self._eigenvalues = self._p_eigenvalues[min(m_list) - 1 : max(m_list)]
 
         if TYPE_CHECKING:
             assert isinstance(self.memberships, np.ndarray)
