@@ -8,7 +8,7 @@ from pygpcca.utils._docs import d
 __all__ = ["ensure_ndarray_or_sparse"]
 
 
-@d.get_sectionsf("assert_array", sections=["Parameters"])
+@d.get_sections(base="assert_array", sections=["Parameters"])
 def assert_array(
     A: Union[np.ndarray, spmatrix],
     shape: Optional[Tuple[int, ...]] = None,

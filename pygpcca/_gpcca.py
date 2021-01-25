@@ -234,7 +234,7 @@ def _do_schur(
     # Orthonormalize the sorted Schur vectors Q via modified Gram-Schmidt-orthonormalization,
     # if the (Schur)vectors aren't orthogonal!
     if not np.allclose(Q.T.dot(Q * eta[:, None]), np.eye(Q.shape[1]), rtol=1e6 * EPS, atol=1e6 * EPS):
-        warnings.warn("The Schur vectors aren't D-orthogonal so they are D-orthogonalized.")
+        logging.debug("The Schur vectors aren't D-orthogonal so they are D-orthogonalized.")
         Q = _gram_schmidt_mod(Q, eta)
         # Transform the orthonormalized Schur vectors of P_bar back
         # to orthonormalized Schur vectors X of P.
@@ -674,7 +674,7 @@ def gpcca_coarsegrain(
     method: str = DEFAULT_SCHUR_METHOD,
 ) -> np.ndarray:
     r"""
-    Coarse-grains the transition matrix `P` into `m` sets using G-PCCA [Reuter18]_.
+    Coarse-grain the transition matrix `P` into `m` sets using G-PCCA [Reuter18]_.
 
     Performs optimized spectral clustering via G-PCCA and coarse-grains `P`
     such that the dominant Perron eigenvalues are preserved using:
@@ -884,7 +884,7 @@ class GPCCA:
         Instead of a single number of clusters `m`, a :class:`tuple`
         containing a minimum and a maximum number of clusters can be given.
         This results in repeated execution of the G-PCCA core algorithm
-        for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings
+        for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings,
         the sharpest/crispest one (with maximal `crispness`) will be selected.
 
         Parameters
@@ -1176,3 +1176,9 @@ class GPCCA:
             if self.metastable_assignment is None or self.n_metastable is None
             else [np.where(self.metastable_assignment == i)[0] for i in range(self.n_metastable)]
         )
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}[n={self.transition_matrix.shape[0]}, n_metastable={self.n_metastable}]"
+
+    def __str__(self) -> str:
+        return repr(self)
