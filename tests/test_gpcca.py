@@ -28,7 +28,6 @@
 from typing import Optional
 from operator import itemgetter
 from itertools import combinations
-import sys
 
 import pytest
 
@@ -51,6 +50,9 @@ from pygpcca._gpcca import (
 )
 from tests.conftest import mu, assert_allclose, get_known_input, skip_if_no_petsc_slepc
 from pygpcca._sort_real_schur import sort_real_schur
+
+# import sys
+
 
 eps = np.finfo(np.float64).eps * 1e10
 
@@ -164,8 +166,8 @@ class TestGPCCAMatlabRegression:
 
 class TestGPCCAMatlabUnit:
     def test_do_schur(self, example_matrix_mu: np.ndarray):
-        if int(example_matrix_mu[2, 4]) == 0 and sys.platform == "darwin":
-            pytest.skip("On macOS this fails, see: https://github.com/msmdev/pyGPCCA/pull/24")
+        # if int(example_matrix_mu[2, 4]) == 0 and sys.platform == "darwin":
+        #    pytest.skip("On macOS this fails, see: https://github.com/msmdev/pyGPCCA/pull/24")
 
         N = 9
         P, sd = get_known_input(example_matrix_mu)
@@ -472,9 +474,9 @@ class TestGPCCAMatlabUnit:
         ks = np.arange(kmin, kmax)
 
         for mu_ in [0, 10, 50, 100, 200, 500, 1000]:
-            if mu_ == 0 and sys.platform == "darwin":
-                skipped = True  # https://github.com/msmdev/pyGPCCA/pull/24
-                continue
+            # if mu_ == 0 and sys.platform == "darwin":
+            #    skipped = True  # https://github.com/msmdev/pyGPCCA/pull/24
+            #    continue
 
             mu_ = mu(mu_)
             P, sd = get_known_input(mu_)
@@ -533,9 +535,9 @@ class TestGPCCAMatlabUnit:
         skipped = False
 
         for m in [0, 10, 50, 100, 200, 500, 1000]:
-            if m == 0 and sys.platform == "darwin":
-                skipped = True
-                continue
+            # if m == 0 and sys.platform == "darwin":
+            #    skipped = True
+            #    continue
             mu_ = mu(m)
             P, sd = get_known_input(mu_)
             g = GPCCA(P, eta=sd)
