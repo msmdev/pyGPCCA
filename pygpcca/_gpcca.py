@@ -1005,7 +1005,7 @@ class GPCCA:
             elif m < n_closed_components:
                 crispness_list.append(-crispness)
                 warnings.warn(
-                    f"Number of macrostate states `({m})` is too small. "
+                    f"Number of macrostates `({m})` is too small. "
                     f"Transition matrix has `{n_closed_components}` disconnected components."
                 )
             else:
@@ -1191,7 +1191,7 @@ class GPCCA:
 
         Returns
         -------
-        Integer vector of shape `(n,)` containing the macrostate state
+        Integer vector of shape `(n,)` containing the macrostate
         each microstate is located in.
         """
         return None if self.memberships is None else np.argmax(self.memberships, axis=1)
