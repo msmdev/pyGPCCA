@@ -28,7 +28,6 @@
 from typing import Optional
 from operator import itemgetter
 from itertools import combinations
-import sys
 
 import pytest
 
@@ -164,9 +163,6 @@ class TestGPCCAMatlabRegression:
 
 class TestGPCCAMatlabUnit:
     def test_do_schur(self, example_matrix_mu: np.ndarray):
-        if int(example_matrix_mu[2, 4]) == 0 and sys.platform == "darwin":
-            pytest.skip("On macOS this fails, see: https://github.com/msmdev/pyGPCCA/pull/24")
-
         N = 9
         P, sd = get_known_input(example_matrix_mu)
         X, RR, _ = _do_schur(P, eta=sd, m=N)
@@ -472,10 +468,6 @@ class TestGPCCAMatlabUnit:
         ks = np.arange(kmin, kmax)
 
         for mu_ in [0, 10, 50, 100, 200, 500, 1000]:
-            if mu_ == 0 and sys.platform == "darwin":
-                skipped = True  # https://github.com/msmdev/pyGPCCA/pull/24
-                continue
-
             mu_ = mu(mu_)
             P, sd = get_known_input(mu_)
             X, _, _ = _do_schur(P, eta=sd, m=kmax)
@@ -533,9 +525,6 @@ class TestGPCCAMatlabUnit:
         skipped = False
 
         for m in [0, 10, 50, 100, 200, 500, 1000]:
-            if m == 0 and sys.platform == "darwin":
-                skipped = True
-                continue
             mu_ = mu(m)
             P, sd = get_known_input(mu_)
             g = GPCCA(P, eta=sd)
@@ -578,10 +567,6 @@ class TestGPCCAMatlabUnit:
 @skip_if_no_petsc_slepc
 class TestPETScSLEPc:
     def test_do_schur_krylov(self, example_matrix_mu: np.ndarray):
-        # TODO: if it passes, remove, otherwise uncomment
-        # if int(example_matrix_mu[2, 4]) == 0 and sys.platform == "darwin":
-        #    pytest.skip("On macOS this fails, see: https://github.com/msmdev/pyGPCCA/pull/24")
-
         N = 9
         P, sd = get_known_input(example_matrix_mu)
 
@@ -602,10 +587,6 @@ class TestPETScSLEPc:
         assert np.max(subspace_angles(X_b, X_k)) < eps
 
     def test_do_schur_sparse(self, example_matrix_mu: np.ndarray):
-        # TODO: if it passes, remove, otherwise uncomment
-        # if int(example_matrix_mu[2, 4]) == 0 and sys.platform == "darwin":
-        #    pytest.skip("On macOS this fails, see: https://github.com/msmdev/pyGPCCA/pull/24")
-
         N = 9
         P, sd = get_known_input(example_matrix_mu)
 
