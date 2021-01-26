@@ -33,6 +33,7 @@ __credits__ = [
     "Susanna Roeblitz",
     "Marius Lange",
     "Michal Klein",
+    "Fabian Paul",
     "Alexander Sikorski",
 ]
 
