@@ -884,6 +884,7 @@ class GPCCA:
         possible, given `m`.
 
         Instead of a single number of clusters `m`, a :class:`tuple`
+        or a :class:`dict` `{'m_min': int, 'm_max': int}`
         containing a minimum and a maximum number of clusters can be given.
         This results in repeated execution of the G-PCCA core algorithm
         for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings
@@ -900,18 +901,26 @@ class GPCCA:
         -------
         Returns self and updates the following attributes:
 
-            - :attr:`memberships`
+
+
+
+            - :attr:`crispness_values`
             - :attr:`coarse_grained_input_distribution`
             - :attr:`coarse_grained_stationary_distribution`
             - :attr:`coarse_grained_transition_matrix`
-            - :attr:`n_macrostates_crispness`
-            - :attr:`crispness_values`
-            - :attr:`schur_vectors`
-            - :attr:`schur_matrix`
-            - :attr:`top_eigenvalues`
-            - :attr:`eigenvalues`
+            - :attr:`dominant_eigenvalues`
+            - :attr:`input_distribution`
+            - :attr:`macrostate_assignment`
+            - :attr:`macrostate_sets`
+            - :attr:`memberships`
+            - :attr:`n_m`
+            - :attr:`optimal_crispness`
             - :attr:`rotation_matrix`
-            - :attr:`n_macrostates`
+            - :attr:`schur_matrix`
+            - :attr:`schur_vectors`
+            - :attr:`stationary_probability`
+            - :attr:`top_eigenvalues`
+            - :attr:`transition_matrix`
         """
         n = self._P.shape[0]
 
@@ -1042,104 +1051,33 @@ class GPCCA:
         return self
 
     @property
-    def transition_matrix(self) -> Union[np.ndarray, spmatrix]:
-        """Transition matrix (row-stochastic)."""
-        return self._P
-
-    @property
-    def input_distribution(self) -> np.ndarray:
-        """
-        Input probability distribution of the (micro)states.
-
-        Vector of shape `(n,)` which sums to 1.
-        """
-        return self._eta
-
-    @property
-    def n_macrostates(self) -> Optional[int]:
-        """Number of clusters (macrostates) to group the `n` microstates into."""  # noqa: D401
-        # TODO: use self.memberships.shape[1] and remove self._m_opt
-        return self._m_opt
-
-    @cached_property
-    def stationary_probability(self) -> OArray:
-        """
-        Stationary probability distribution of the (micro)states.
-
-        Vector of shape `(n,)` which sums to 1.
-        """
-        try:
-            return stationary_distribution(self._P)
-        except ValueError as e:
-            warnings.warn(f"Stationary distribution couldn't be calculated. Reason: {e}.")
-        return None
-
-    @property
-    def memberships(self) -> OArray:
-        """
-        Array of shape `(n, m)` containing the membership (or probability)
-        of each state (to be assigned) to each cluster.
-
-        The rows sum to 1.
-        """  # noqa: D205, D400
-        return self._chi
-
-    @property
-    def rotation_matrix(self) -> OArray:
-        """
-        Optimized rotation matrix.
-
-        Array of shape `(m, m)` which rotates the dominant Schur vectors
-        to yield the G-PCCA :attr:`memberships`, i.e. `chi = X * rot_matrix`.
-        """
-        return self._rot_matrix
-
-    @property
-    def schur_vectors(self) -> OArray:
-        """
-        Array of shape `(n, m)` with `m` sorted Schur vectors in the columns.
-
-        The constant Schur vector is in the first column.
-        """
-        return self._X
-
-    @property
-    def schur_matrix(self) -> OArray:
+    def coarse_grained_transition_matrix(self) -> OArray:
         r"""
-        Ordered top left part of shape `(m, m)` of the real Schur matrix of `P`.
+        Coarse grained transition matrix of shape `(n_m, n_m)`.
 
-        The ordered real partial Schur matrix :math:`R` of :math:`P` fulfills
+        .. math:: P_c = (\chi^T D \chi)^{-1} (\chi^T D P \chi)
 
-        .. math:: \tilde{P} Q = Q R
-
-        with the ordered matrix of dominant Schur vectors :math:`Q`.
+        with :math:`D` being a diagonal matrix with `eta` on its diagonal.
         """
-        return self._R
-
-    @property  # type: ignore[misc]
-    @d.dedent
-    def top_eigenvalues(self) -> OArray:
-        """
-        Top :attr:`n_macrostates` eigenvalues.
-
-        %(eigenvalues_m)s
-        """
-        return self._top_eigenvalues
+        return self._P_coarse
 
     @property
-    def eigenvalues(self) -> OArray:
-        """Vector containing the eigenvalues of `P` associated to the requested cluster numbers."""
-        return self._eigenvalues
+    def coarse_grained_stationary_probability(self) -> OArray:
+        r"""
+        Coarse grained stationary distribution of shape `(n_m,)`.
 
-    @property  # type: ignore[misc]
-    @d.dedent
-    def n_macrostates_crispness(self) -> Optional[float]:
+        .. math:: \pi_c = \chi^T \pi
         """
-        Crispness for clustering into :attr:`n_macrostates` clusters.
+        return self._pi_coarse
 
-        %(crispness_ret)s
+    @property
+    def coarse_grained_input_distribution(self) -> OArray:
+        r"""
+        Coarse grained input distribution of shape `(n_m,)`.
+
+        .. math:: \eta_c = \chi^T \eta
         """
-        return self._crispness_opt
+        return self._eta_coarse
 
     @property  # type: ignore[misc]
     @d.dedent
@@ -1151,34 +1089,24 @@ class GPCCA:
         """
         return self._crispness
 
-    @property
-    def coarse_grained_transition_matrix(self) -> OArray:
-        r"""
-        Coarse grained transition matrix of shape `(m, m)`.
-
-        .. math:: P_c = (\chi^T D \chi)^{-1} (\chi^T D P \chi)
-
-        with :math:`D` being a diagonal matrix with `eta` on its diagonal.
+    @property  # type: ignore[misc]
+    @d.dedent
+    def dominant_eigenvalues(self) -> OArray:
         """
-        return self._P_coarse
+        Dominant :attr:`n_m` eigenvalues of `P`.
 
-    @property
-    def coarse_grained_stationary_probability(self) -> OArray:
-        r"""
-        Coarse grained stationary distribution of shape `(m,)`.
-
-        .. math:: \pi_c = \chi^T \pi
+        Vector of shape `(n_m,)` containing the `n_m` dominant eigenvalues of `P`.
         """
-        return self._pi_coarse
+        return self._top_eigenvalues
 
     @property
-    def coarse_grained_input_distribution(self) -> OArray:
-        r"""
-        Coarse grained input distribution of shape `(m,)`.
-
-        .. math:: \eta_c = \chi^T \eta
+    def input_distribution(self) -> np.ndarray:
         """
-        return self._eta_coarse
+        Input probability distribution of the microstates.
+
+        Vector of shape `(n,)` which sums to 1.
+        """
+        return self._eta
 
     @property
     def macrostate_assignment(self) -> OArray:
@@ -1207,12 +1135,100 @@ class GPCCA:
 
         Returns
         -------
-        A list of length equal to :attr:`n_macrostates`.
+        A list of length equal to :attr:`n_m`.
 
         Each element is an array with microstate indexes contained in it.
         """
         return (
             None
-            if self.macrostate_assignment is None or self.n_macrostates is None
-            else [np.where(self.macrostate_assignment == i)[0] for i in range(self.n_macrostates)]
+            if self.macrostate_assignment is None or self.n_m is None
+            else [np.where(self.macrostate_assignment == i)[0] for i in range(self.n_m)]
         )
+
+    @property
+    def memberships(self) -> OArray:
+        """
+        Array of shape `(n, n_m)` containing the membership (or probability)
+        of each state (to be assigned) to each cluster.
+
+        The rows sum to 1.
+        """  # noqa: D205, D400
+        return self._chi
+
+    @property
+    def n_m(self) -> Optional[int]:
+        """Optimal number of clusters or macrostates to group the `n` microstates into."""
+        # TODO: use self.memberships.shape[1] and remove self._m_opt
+        return self._m_opt
+
+    @property  # type: ignore[misc]
+    @d.dedent
+    def optimal_crispness(self) -> Optional[float]:
+        """
+        Crispness for clustering into :attr:`n_m` clusters.
+
+        %(crispness_ret)s
+        """
+        return self._crispness_opt
+
+    @property
+    def rotation_matrix(self) -> OArray:
+        """
+        Optimized rotation matrix.
+
+        Array of shape `(n_m, n_m)` which rotates the dominant Schur vectors
+        to yield the G-PCCA :attr:`memberships`, i.e. `chi = X * rot_matrix`.
+        """
+        return self._rot_matrix
+
+    @property
+    def schur_matrix(self) -> OArray:
+        r"""
+        Ordered top left part of shape `(n_m, n_m)` of the real Schur matrix of `P`.
+
+        The ordered real partial Schur matrix :math:`R` of :math:`P` fulfills
+
+        .. math:: \tilde{P} Q = Q R
+
+        with the ordered matrix of dominant Schur vectors :math:`Q`.
+        """
+        return self._R
+
+    @property
+    def schur_vectors(self) -> OArray:
+        """
+        Array of shape `(n, n_m)` with `n_m` sorted Schur vectors in the columns.
+
+        The constant Schur vector is in the first column.
+        """
+        return self._X
+
+    @cached_property
+    def stationary_probability(self) -> OArray:
+        """
+        Stationary probability distribution of the microstates.
+
+        Vector of shape `(n,)` which sums to 1.
+        """
+        try:
+            return stationary_distribution(self._P)
+        except ValueError as e:
+            warnings.warn(f"Stationary distribution couldn't be calculated. Reason: {e}.")
+        return None
+
+    @property
+    def top_eigenvalues(self) -> OArray:
+        """
+        Top `m` respective `m_max` eigenvalues of `P`.
+
+        If a single integer `m` was given, the upper `m` eigenvalues are returned.
+
+        If a :class:`tuple` or :class:`dict` containing a minimum `m_min` and maximum number
+        `m_max` of clusters was given, the upper `m_max` eigenvalues are returned.
+        """
+        return self._eigenvalues
+
+    @property
+    def transition_matrix(self) -> Union[np.ndarray, spmatrix]:
+        """Row-stochastic transition matrix."""
+        return self._P
