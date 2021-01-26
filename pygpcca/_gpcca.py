@@ -1005,7 +1005,7 @@ class GPCCA:
             elif m < n_closed_components:
                 crispness_list.append(-crispness)
                 warnings.warn(
-                    f"Number of metastable states `({m})` is too small. "
+                    f"Number of macrostate states `({m})` is too small. "
                     f"Transition matrix has `{n_closed_components}` disconnected components."
                 )
             else:
@@ -1181,7 +1181,7 @@ class GPCCA:
         return self._eta_coarse
 
     @property
-    def metastable_assignment(self) -> OArray:
+    def macrostate_assignment(self) -> OArray:
         """
         Crisp clustering using G-PCCA.
 
@@ -1191,13 +1191,13 @@ class GPCCA:
 
         Returns
         -------
-        Integer vector of shape `(n,)` containing the metastable state
+        Integer vector of shape `(n,)` containing the macrostate state
         each microstate is located in.
         """
         return None if self.memberships is None else np.argmax(self.memberships, axis=1)
 
     @property
-    def metastable_sets(self) -> Optional[List[np.ndarray]]:
+    def macrostate_sets(self) -> Optional[List[np.ndarray]]:
         """
         Crisp clustering using G-PCCA.
 
@@ -1213,6 +1213,6 @@ class GPCCA:
         """
         return (
             None
-            if self.metastable_assignment is None or self.n_macrostates is None
-            else [np.where(self.metastable_assignment == i)[0] for i in range(self.n_macrostates)]
+            if self.macrostate_assignment is None or self.n_macrostates is None
+            else [np.where(self.macrostate_assignment == i)[0] for i in range(self.n_macrostates)]
         )
