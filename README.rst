@@ -1,4 +1,4 @@
-|PyPI| |Conda| |Cite| |CI| |Docs| |Coverage| |License| |GitHubDownloads| |PyPIdownloads| |CondaDownloads|
+|PyPI| |Conda| |Cite| |CI| |Docs| |Coverage| |License| |PyPIdownloads|
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/pygpcca
     :target: https://pypi.org/project/pygpcca/
@@ -26,19 +26,11 @@
 
 .. |License| image:: https://img.shields.io/github/license/msmdev/pyGPCCA?color=green
     :target: https://github.com/msmdev/pyGPCCA/blob/main/LICENSE.txt
-    :alt: GitHub
+    :alt: License
 
-.. |GitHubDownloads| image:: https://img.shields.io/github/downloads/msmdev/pyGPCCA/total?label=github%20downloads
-    :target: https://github.com/msmdev/pyGPCCA/releases/
-    :alt: GitHub all releases
-
-.. |PyPIdownloads| image:: https://img.shields.io/pypi/dm/gpcca?label=pypi%20downloads
-    :target: https://pypi.org/project/pygpcca/
+.. |PyPIdownloads| image:: https://static.pepy.tech/personalized-badge/requests?period=total&units=international_system&left_color=grey&right_color=blue&left_text=pypi%20downloads
+    :target: https://pepy.tech/project/requests
     :alt: PyPI - Downloads
-
-.. |CondaDownloads| image:: https://img.shields.io/conda/dn/conda-forge/pygpcca?label=conda%20downloads
-    :target: https://anaconda.org/conda-forge/pygpcca
-    :alt: Conda
 
 pyGPCCA - Generalized Perron Cluster Cluster Analysis
 =====================================================
@@ -94,7 +86,7 @@ We thank `Marcus Weber`_ and the Computational Molecular Design (`CMD`_) group a
 for the longstanding and productive collaboration in the field of Markov modeling of non-reversible molecular dynamics.
 M. Weber, together with K. Fackeldey, had the original idea to employ Schur vectors instead of eigenvectors in the
 coarse-graining of non-reversible transition matrices. |br|
-Further, we would like to thank `Fabian Paul`_ for valueable discussions regarding the sorting of Schur vectors and his
+Further, we would like to thank `Fabian Paul`_ for valuable discussions regarding the sorting of Schur vectors and his
 effort to translate the original Sorting routine for real Schur forms `SRSchur`_ published by `Jan Brandts`_ from MATLAB
 into `Python code`_,
 M. Weber and `Alexander Sikorski`_ for pointing us to `SLEPc`_ for sorted partial Schur decompositions,
