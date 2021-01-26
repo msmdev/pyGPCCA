@@ -1,7 +1,7 @@
 Acknowledgements
 ================
 We thank `Marcus Weber`_ and the Computational Molecular Design (`CMD`_) group at the Zuse Institute Berlin (`ZIB`_)
-for the longstanding and productive collaboration in the field of Markov modeling of nonreversible molecular dynamics.
+for the longstanding and productive collaboration in the field of Markov modeling of non-reversible molecular dynamics.
 M. Weber, together with K. Fackeldey, had the original idea to employ Schur vectors instead of eigenvectors in the
 coarse-graining of non-reversible transition matrices years ago.
 Further, we would like to thank `Fabian Paul`_ for valueable discussions regarding the sorting of Schur vectors and his
