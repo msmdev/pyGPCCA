@@ -17,7 +17,7 @@ under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics c
 
 If you use *pyGPCCA* or parts of it, please cite `JCTC (2018)`_.
 
-.. _JCTC (2018): https://img.shields.io/badge/DOI-10.1021%2Facs.jctc.8b00079-blue
+.. _JCTC (2018): https://pubs.acs.org/doi/abs/10.1021/acs.jctc.8b00079
 
 .. include:: _key_contributors.rst
 
