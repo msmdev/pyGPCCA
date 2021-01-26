@@ -11,9 +11,8 @@
     installation
     api
     example
+    acknowledgements
     references
-
-.. include:: acknowledgements.rst
 
 .. |br| raw:: html
 
