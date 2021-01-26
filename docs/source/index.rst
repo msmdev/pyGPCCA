@@ -13,3 +13,7 @@
     example
     acknowledgements
     references
+
+.. |br| raw:: html
+
+  <br/>
