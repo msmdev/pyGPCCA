@@ -59,7 +59,7 @@ If you use *pyGPCCA* or parts of it, please cite `JCTC (2018)`_.
     :target: https://github.com/msmdev/pyGPCCA/blob/main/LICENSE.txt
     :alt: GitHub
 
-.. |GitHubDownloads| image:: https://img.shields.io/github/downloads/msmdev/pyGPCCA/total
+.. |GitHubDownloads| image:: https://img.shields.io/github/downloads/msmdev/pyGPCCA/total?label=conda%20downloads
     :target: https://github.com/msmdev/pyGPCCA/releases/
     :alt: GitHub all releases
 
