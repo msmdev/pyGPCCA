@@ -5,7 +5,7 @@ for the longstanding and productive collaboration in the field of Markov modelin
 M. Weber, together with K. Fackeldey, had the original idea to employ Schur vectors instead of eigenvectors in the
 coarse-graining of non-reversible transition matrices years ago.
 Further, we would like to thank `Fabian Paul`_ for valueable discussions regarding the sorting of Schur vectors and his
-effort to translate the original Sorting routine for real Schur forms `SRSChur`_ published by `J. Brandts`_ from MATLAB
+effort to translate the original Sorting routine for real Schur forms `SRSchur`_ published by `Jan Brandts`_ from MATLAB
 into `Python code`_,
 M. Weber and `Alexander Sikorski`_ for pointing us to SLEPc for sorted partial Schur decompositions,
 and A. Sikorski for supplying us with an `code example`_ and guidance how to interface SLEPc in Python.
@@ -15,7 +15,7 @@ and A. Sikorski for supplying us with an `code example`_ and guidance how to int
 .. _`ZIB`: https://www.zib.de/
 .. _`Fabian Paul`: https://github.com/fabian-paul
 .. _`SRSchur`: http://m2matlabdb.ma.tum.de/SRSchur.m?MP_ID=119
-.. _`J. Brandts`: https://doi.org/10.1002/nla.274
+.. _`Jan Brandts`: https://doi.org/10.1002/nla.274
 .. _`Python code`: https://gist.github.com/fabian-paul/14679b43ed27aa25fdb8a2e8f021bad5
 .. _`Alexander Sikorski`: https://www.zib.de/members/sikorski
 .. _`code example`: https://github.com/zib-cmd/cmdtools/blob/1c6b6d8e1c35bb487fcf247c5c1c622b4b665b0a/src/cmdtools/analysis/pcca.py#L64
