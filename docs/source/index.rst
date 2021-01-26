@@ -1,4 +1,4 @@
-|PyPI| |Conda| |Cite| |CI| |Docs| |Coverage| |License|
+|PyPI| |Conda| |Cite| |CI| |Docs| |Coverage| |License| |GitHubDownloads| |PyPIdownloads| |CondaDownloads|
 
 pyGPCCA - Generalized Perron Cluster Cluster Analysis
 =====================================================
@@ -58,6 +58,18 @@ If you use *pyGPCCA* or parts of it, please cite `JCTC (2018)`_.
 .. |License| image:: https://img.shields.io/github/license/msmdev/pyGPCCA?color=green
     :target: https://github.com/msmdev/pyGPCCA/blob/main/LICENSE.txt
     :alt: GitHub
+
+.. |GitHubDownloads| image:: https://img.shields.io/github/downloads/msmdev/pyGPCCA/total
+    :target: https://github.com/msmdev/pyGPCCA/releases/
+    :alt: GitHub all releases
+
+.. |PyPIdownloads| image:: https://img.shields.io/pypi/dm/gpcca?label=pypi%20downloads
+    :target: https://pypi.org/project/pygpcca/
+    :alt: PyPI - Downloads
+
+.. |CondaDownloads| image:: https://img.shields.io/conda/dn/conda-forge/pygpcca?label=conda%20downloads
+    :target: https://anaconda.org/conda-forge/pygpcca
+    :alt: Conda
 
 .. |br| raw:: html
 
