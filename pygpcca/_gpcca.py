@@ -1188,7 +1188,7 @@ class GPCCA:
 
         The ordered real partial Schur matrix :math:`R` of :math:`P` fulfills
 
-        .. math:: \tilde{P} Q = Q R
+        .. math:: P Q = Q R
 
         with the ordered matrix of dominant Schur vectors :math:`Q`.
         """
