@@ -1149,7 +1149,7 @@ class GPCCA:
     def memberships(self) -> OArray:
         """
         Array of shape `(n, n_m)` containing the membership (or probability)
-        of each state (to be assigned) to each cluster.
+        of each microstate (to be assigned) to each macrostate or cluster.
 
         The rows sum to 1.
         """  # noqa: D205, D400
