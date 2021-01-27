@@ -994,9 +994,9 @@ class GPCCA:
                     f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
                     f"Skipping clustering into {m} clusters."
                 )
-                crispness_list.append(np.nan)
-                chi_list.append(np.full((n, m), fill_value=np.nan))
-                rot_matrix_list.append(np.full((m, m), fill_value=np.nan))
+                crispness_list.append(0.0)
+                chi_list.append(np.zeros((n, m)))
+                rot_matrix_list.append(np.zeros((m, m)))
                 continue
 
             # Reduce X according to m and make a work copy.
