@@ -996,7 +996,7 @@ class GPCCA:
                 )
                 crispness_list.append(np.nan)
                 chi_list.append(np.full((n, m), fill_value=np.nan))
-                rot_matrix_list.append(np.full((n, m), fill_value=np.nan))
+                rot_matrix_list.append(np.full((m, m), fill_value=np.nan))
                 continue
 
             # Reduce X according to m and make a work copy.
