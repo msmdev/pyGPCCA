@@ -20,7 +20,7 @@ m
         - :class:`int`: number of clusters to group into.
         - :class:`tuple`: minimal and maximal number of clusters.
         - :class:`dict`: minimal and maximal number of clusters given as
-          {'min': :class:`int`, 'm_max': :class:`int`}."""
+          ``{'m_min': int, 'm_max': int}``."""
 
 z = """\
 z
@@ -45,7 +45,7 @@ method
     Which method to use to determine the invariant subspace. Valid options are:
 
         - 'brandts': perform a full Schur decomposition of `P` utilizing
-          scipy.linalg.schur (without the intrinsic sorting option, since it is
+          ``scipy.linalg.schur`` (without the intrinsic sorting option, since it is
           flawed) and sort the returned Schur form `R` and Schur vector
           matrix `Q` afterwards using a routine published by Brandts
           [Brandts02]_.
@@ -53,35 +53,37 @@ method
           although it is also the slowest choice.
         - 'krylov': calculate an orthonormal basis of the subspace
           associated with the `m` dominant eigenvalues of `P` using the
-          Krylov-Schur method as implemented in SLEPc.
+          Krylov-Schur method as implemented in ``SLEPc``.
           This is the fastest choice and especially suitable for very
           large `P`, but it is still experimental.
 """
 
 tol_krylov = """\
 tol_krylov
-    The convergence criterion used by SLEPc internally.
+    The convergence criterion used by ``SLEPc`` internally.
     This is only relevant if you use ``method='krylov'``.
     If you are dealing with ill-conditioned matrices,
     consider decreasing this value to get accurate results."""
 
-eta = """\
+eta = r"""\
 eta
     The input probability distribution of the (micro)states.
-    In theory `eta` can be an arbitrary distribution as long as it is
+    In theory :math:`\eta` can be an arbitrary distribution as long as it is
     a valid probability distribution (i.e., sums up to 1).
     A neutral and valid choice would be the uniform distribution (default).
 
     In case of a reversible transition matrix, the stationary distribution
-    :math:`\\pi` can (but don't has to) be used here.
+    :math:`\pi` can (but don't has to) be used here.
     In case of a non-reversible `P`, some initial or average distribution of
-    the states might be chosen instead of the uniform distribution."""
+    the states might be chosen instead of the uniform distribution.
 
-chi_ret = """An array of shape `(n, m)` containing the membership (or probability)
-of each state (to be assigned) to each cluster. The rows sum to 1."""
+    Vector of shape `(n,)` which sums to 1."""
 
-rot_matrix_ret = """The optimized rotation matrix of shape `(m, m)` that rotates the dominant
-Schur vectors to yield the G-PCCA memberships, i.e., ``chi = X * rot_mat``."""
+chi_ret = r"""An array of shape `(n, m)` containing the membership :math:`\chi_{ij}` (or probability)
+of each state :math:`i` (to be assigned) to each cluster :math:`j`. The rows sum up to 1."""
+
+rot_matrix_ret = r"""The optimized rotation matrix :math:`A` of shape `(m, m)` that rotates the dominant
+Schur vectors to yield the G-PCCA memberships, i.e., :math:`\chi = X A`."""
 
 crispness_ret = r"""The crispness :math:`\xi \in [0,1]` quantifies the optimality of the
 solution (higher is better). It characterizes how crisp (sharp) the
@@ -90,7 +92,7 @@ It is given via (Eq. 17 from [Roeblitz13]_):
 
 .. math:: \xi = (m - f_{opt}) / m = \mathtt{trace}(S) / m = \mathtt{trace}(\tilde{D} \chi^T D \chi) / m
 
-with :math:`D` being a diagonal matrix with `eta` on its diagonal.
+with :math:`D` being a diagonal matrix with :math:`\eta` on its diagonal.
 """
 
 Q_sort = """A matrix of shape `(n, m)` with ordered `m` dominant Schur vectors in the columns.

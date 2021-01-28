@@ -889,7 +889,7 @@ class GPCCA:
         possible, given `m`.
 
         Instead of a single number of clusters `m`, a :class:`tuple`
-        or a :class:`dict` `{'m_min': int, 'm_max': int}`
+        or a :class:`dict` ``{'m_min': int, 'm_max': int}``
         containing a minimum and a maximum number of clusters can be given.
         This results in repeated execution of the G-PCCA core algorithm
         for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings
@@ -909,10 +909,10 @@ class GPCCA:
 
 
 
-            - :attr:`crispness_values`
             - :attr:`coarse_grained_input_distribution`
             - :attr:`coarse_grained_stationary_distribution`
             - :attr:`coarse_grained_transition_matrix`
+            - :attr:`crispness_values`
             - :attr:`dominant_eigenvalues`
             - :attr:`input_distribution`
             - :attr:`macrostate_assignment`
@@ -1063,15 +1063,13 @@ class GPCCA:
         return self
 
     @property
-    def coarse_grained_transition_matrix(self) -> OArray:
+    def coarse_grained_input_distribution(self) -> OArray:
         r"""
-        Coarse grained transition matrix of shape `(n_m, n_m)`.
+        Coarse grained input distribution of shape `(n_m,)`.
 
-        .. math:: P_c = (\chi^T D \chi)^{-1} (\chi^T D P \chi)
-
-        with :math:`D` being a diagonal matrix with `eta` on its diagonal.
+        .. math:: \eta_c = \chi^T \eta
         """
-        return self._P_coarse
+        return self._eta_coarse
 
     @property
     def coarse_grained_stationary_probability(self) -> OArray:
@@ -1083,13 +1081,15 @@ class GPCCA:
         return self._pi_coarse
 
     @property
-    def coarse_grained_input_distribution(self) -> OArray:
+    def coarse_grained_transition_matrix(self) -> OArray:
         r"""
-        Coarse grained input distribution of shape `(n_m,)`.
+        Coarse grained transition matrix of shape `(n_m, n_m)`.
 
-        .. math:: \eta_c = \chi^T \eta
+        .. math:: P_c = (\chi^T D \chi)^{-1} (\chi^T D P \chi)
+
+        with :math:`D` being a diagonal matrix with :math:`\eta` on its diagonal.
         """
-        return self._eta_coarse
+        return self._P_coarse
 
     @property  # type: ignore[misc]
     @d.dedent
@@ -1113,8 +1113,17 @@ class GPCCA:
 
     @property
     def input_distribution(self) -> np.ndarray:
-        """
-        Input probability distribution of the microstates.
+        r"""
+        Input probability distribution of the (micro)states.
+
+        In theory :math:`\eta` can be an arbitrary distribution as long as it is
+        a valid probability distribution (i.e., sums up to 1).
+        A neutral and valid choice would be the uniform distribution (default).
+
+        In case of a reversible transition matrix, the stationary distribution
+        :math:`\pi` can (but don't has to) be used here.
+        In case of a non-reversible `P`, some initial or average distribution of
+        the states might be chosen instead of the uniform distribution.
 
         Vector of shape `(n,)` which sums to 1.
         """
@@ -1159,9 +1168,9 @@ class GPCCA:
 
     @property
     def memberships(self) -> OArray:
-        """
-        Array of shape `(n, n_m)` containing the membership (or probability)
-        of each microstate (to be assigned) to each macrostate or cluster.
+        r"""
+        Array of shape `(n, n_m)` containing the membership :math:`\chi_{ij}` (or probability)
+        of each microstate :math:`i` (to be assigned) to each macrostate or cluster :math:`j`.
 
         The rows sum to 1.
         """  # noqa: D205, D400
@@ -1185,18 +1194,18 @@ class GPCCA:
 
     @property
     def rotation_matrix(self) -> OArray:
-        """
-        Optimized rotation matrix.
+        r"""
+        Optimized rotation matrix :math:`A`.
 
         Array of shape `(n_m, n_m)` which rotates the dominant Schur vectors
-        to yield the G-PCCA :attr:`memberships`, i.e. `chi = X * rot_matrix`.
+        to yield the G-PCCA :attr:`memberships`, i.e. :math:`\chi = X A`.
         """
         return self._rot_matrix
 
     @property
     def schur_matrix(self) -> OArray:
         r"""
-        Ordered top left part of shape `(n_m, n_m)` of the real Schur matrix of `P`.
+        Ordered top left part of shape `(n_m, n_m)` of the real Schur matrix of :math:`P`.
 
         The ordered real partial Schur matrix :math:`R` of :math:`P` fulfills
 
@@ -1208,8 +1217,8 @@ class GPCCA:
 
     @property
     def schur_vectors(self) -> OArray:
-        """
-        Array of shape `(n, n_m)` with `n_m` sorted Schur vectors in the columns.
+        r"""
+        Array :math:`Q` of shape `(n, n_m)` with `n_m` sorted Schur vectors in the columns.
 
         The constant Schur vector is in the first column.
         """
@@ -1217,8 +1226,8 @@ class GPCCA:
 
     @cached_property
     def stationary_probability(self) -> OArray:
-        """
-        Stationary probability distribution of the microstates.
+        r"""
+        Stationary probability distribution :math:`\pi` of the microstates.
 
         Vector of shape `(n,)` which sums to 1.
         """
@@ -1242,5 +1251,5 @@ class GPCCA:
 
     @property
     def transition_matrix(self) -> Union[np.ndarray, spmatrix]:
-        """Row-stochastic transition matrix."""
+        """Row-stochastic transition matrix `P`."""
         return self._P

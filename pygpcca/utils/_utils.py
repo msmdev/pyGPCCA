@@ -167,7 +167,7 @@ def _itms(T: np.ndarray, tol: float = 1e-12) -> bool:
 @d.dedent
 def stationary_distribution(P: Union[np.ndarray, spmatrix]) -> np.ndarray:
     r"""
-    Compute stationary distribution of stochastic matrix ``P``.
+    Compute stationary distribution of stochastic matrix `P`.
 
     Parameters
     ----------
@@ -179,10 +179,10 @@ def stationary_distribution(P: Union[np.ndarray, spmatrix]) -> np.ndarray:
 
     Notes
     -----
-    The stationary distribution :math:`\mu` is the left eigenvector corresponding to the non-degenerate eigenvalue
-    :math:`\lambda=1`,
+    The stationary distribution :math:`\pi` is the left eigenvector corresponding to the non-degenerate eigenvalue
+    :math:`\lambda=1` of a reversible transition matrix :math:`P`,
 
-    .. math:: \mu^T T =\mu^T.
+    .. math:: \pi^T P =\pi^T.
     """
     raise NotImplementedError(type(P))
 
@@ -295,7 +295,7 @@ def stationary_distribution_from_backward_iteration(P: np.ndarray, eps: float = 
 @d.dedent
 def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
     r"""
-    Compute stationary distribution of stochastic matrix ``P``.
+    Compute stationary distribution of stochastic matrix `P`.
 
     The stationary distribution is the left eigenvector corresponding to the
     non-degenerate eigenvalue :math:`\lambda=1`.
