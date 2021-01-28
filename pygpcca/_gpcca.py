@@ -485,8 +485,6 @@ def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.nda
         raise ValueError("The dimensions of the rotation matrix don't match with the number of Schur vectors.")
     if rot_matrix.shape[0] < 2:
         raise ValueError(f"Expected the rotation matrix to be at least of shape (2, 2), found {rot_matrix.shape}.")
-    if n == m:
-        raise ValueError(f"There is no point in clustering {n} points into {m} clusters.")
 
     # Reduce optimization problem to size (m-1)^2 by cropping the first row and first column from rot_matrix
     rot_crop_matrix = rot_matrix[1:, 1:]
@@ -1030,7 +1028,14 @@ class GPCCA:
             rot_matrix_list.append(rot_matrix)
 
         if np.any(np.array(crispness_list) > 0.0):
-            opt_idx = np.argmax(crispness_list)
+            if len(m_list) > 1 and max(m_list) == n:
+                warnings.warn(
+                    f"Clustering {n} data points into {max(m_list)} clusters is always perfectly crisp. "
+                    f"Thus m={max(m_list)} won't be included in the search for the optimal cluster number."
+                )
+                opt_idx = np.argmax(crispness_list[:-1])
+            else:
+                opt_idx = np.argmax(crispness_list)
         else:
             raise ValueError("Clustering wasn't successful. Try different cluster numbers.")
         self._m_opt = min(m_list) + opt_idx
