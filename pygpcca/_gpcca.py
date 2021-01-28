@@ -990,11 +990,6 @@ class GPCCA:
                     f"{len(self._p_eigenvalues)} eigenvalues."
                 )
             if _check_conj_split(self._p_eigenvalues[:m]):
-                if len(m_list) == 1:
-                    raise ValueError(
-                        f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
-                        f"Request one cluster more or less."
-                    )
                 warnings.warn(
                     f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
                     f"Skipping clustering into {m} clusters."

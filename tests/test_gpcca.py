@@ -439,18 +439,6 @@ class TestGPCCAMatlabUnit:
         ):
             _indexsearch(scvecs)
 
-    def test_opt_soft_shape_error_5(self):
-        # test assertion for schur vector (N,k)-matrix with k=N
-        A = np.zeros((4, 4), dtype=np.float64)
-        scvecs = np.zeros((4, 4))
-        scvecs[:, 0] = 1.0
-
-        with pytest.raises(
-            ValueError,
-            match=rf"There is no point in clustering {A.shape[0]} points into {A.shape[1]} clusters.",
-        ):
-            _opt_soft(scvecs, A)
-
     def test_opt_soft_nelder_mead_mu0(self, svecs_mu0: np.ndarray, A_mu0: np.ndarray):
         A, chi, fopt = _opt_soft(svecs_mu0, A_mu0)
 
@@ -847,3 +835,175 @@ class TestCustom:
             np.testing.assert_allclose(X[:, 0], 1.0)
 
             assert np.max(subspace_angles(P_i @ X, X @ RR)) < eps
+
+    @pytest.mark.parametrize("method", ["krylov", "brandts"])
+    def test_P_2_LM(
+        self,
+        P_2: np.ndarray,
+        minChi_P_2_LM: np.ndarray,
+        crispness_values_P_2_LM: np.ndarray,
+        optimal_crispness_P_2_LM: np.float64,
+        n_m_P_2_LM: np.int64,
+        top_eigenvalues_P_2_LM: np.ndarray,
+        method: str,
+    ):
+        if method == "krylov":
+            pytest.importorskip("mpi4py")
+            pytest.importorskip("petsc4py")
+            pytest.importorskip("slepc4py")
+
+        g = GPCCA(P_2, eta=None, z="LM", method=method)
+
+        # The following very crude minChi testing is necessary,
+        # since the initial guess for the rotation matrix and thus minChi can vary.
+        minChi = g.minChi(2, 12)
+        assert len(minChi) == len(minChi_P_2_LM)
+        assert minChi[0] > -1e-08
+        assert minChi[1] > -1e-08
+        assert minChi[10] > -1e-08
+
+        g.optimize({"m_min": 2, "m_max": 12})
+        n_m = g.n_m
+
+        assert_allclose(g.crispness_values, crispness_values_P_2_LM)
+        assert_allclose(g.optimal_crispness, optimal_crispness_P_2_LM)
+        assert_allclose(n_m, n_m_P_2_LM)
+        assert_allclose(g.top_eigenvalues, top_eigenvalues_P_2_LM)
+        assert_allclose(g.dominant_eigenvalues, top_eigenvalues_P_2_LM[:n_m])
+
+    def test_split_warning_LM(self, P_2: np.ndarray):
+
+        g = GPCCA(P_2, eta=None, z="LM")
+
+        with pytest.warns(
+            UserWarning,
+            match="Clustering into 4 clusters will split complex conjugate eigenvalues. "
+            "Skipping clustering into 4 clusters.",
+        ):
+            g.optimize({"m_min": 2, "m_max": 5})
+        with pytest.warns(
+            UserWarning,
+            match="Clustering into 6 clusters will split complex conjugate eigenvalues. "
+            "Skipping clustering into 6 clusters.",
+        ):
+            g.optimize({"m_min": 5, "m_max": 7})
+        with pytest.warns(
+            UserWarning,
+            match="Clustering into 9 clusters will split complex conjugate eigenvalues. "
+            "Skipping clustering into 9 clusters.",
+        ):
+            g.optimize({"m_min": 8, "m_max": 11})
+        with pytest.warns(
+            UserWarning,
+            match="Clustering 12 data points into 12 clusters is always perfectly crisp. "
+            "Thus m=12 won't be included in the search for the optimal cluster number.",
+        ):
+            g.optimize({"m_min": 11, "m_max": 12})
+
+    def test_split_raise_LM(self, P_2: np.ndarray):
+
+        g = GPCCA(P_2, eta=None, z="LM")
+
+        with pytest.raises(
+            ValueError,
+            match="Clustering into 4 clusters will split complex conjugate eigenvalues. "
+            "Request one cluster more or less.",
+        ):
+            g.optimize(4)
+        with pytest.raises(
+            ValueError,
+            match="Clustering into 6 clusters will split complex conjugate eigenvalues. "
+            "Request one cluster more or less.",
+        ):
+            g.optimize(6)
+        with pytest.raises(
+            ValueError,
+            match="Clustering into 9 clusters will split complex conjugate eigenvalues. "
+            "Request one cluster more or less.",
+        ):
+            g.optimize(9)
+
+    @pytest.mark.parametrize("method", ["krylov", "brandts"])
+    def test_P_2_LR(
+        self,
+        P_2: np.ndarray,
+        minChi_P_2_LR: np.ndarray,
+        crispness_values_P_2_LR: np.ndarray,
+        optimal_crispness_P_2_LR: np.float64,
+        n_m_P_2_LR: np.int64,
+        top_eigenvalues_P_2_LR: np.ndarray,
+        method: str,
+    ):
+        if method == "krylov":
+            pytest.importorskip("mpi4py")
+            pytest.importorskip("petsc4py")
+            pytest.importorskip("slepc4py")
+
+        g = GPCCA(P_2, eta=None, z="LR", method=method)
+
+        # The following very crude minChi testing is necessary,
+        # since the initial guess for the rotation matrix and thus minChi can vary.
+        minChi = g.minChi(2, 12)
+        assert len(minChi) == len(minChi_P_2_LR)
+        assert minChi[0] > -1e-08
+        assert minChi[1] > -1e-08
+        assert minChi[3] > -1e-01
+        assert minChi[10] > -1e-08
+
+        g.optimize({"m_min": 2, "m_max": 12})
+        n_m = g.n_m
+
+        assert_allclose(g.crispness_values, crispness_values_P_2_LR)
+        assert_allclose(g.optimal_crispness, optimal_crispness_P_2_LR)
+        assert_allclose(n_m, n_m_P_2_LR)
+        assert_allclose(g.top_eigenvalues, top_eigenvalues_P_2_LR)
+        assert_allclose(g.dominant_eigenvalues, top_eigenvalues_P_2_LR[:n_m])
+
+    def test_split_warning_LR(self, P_2: np.ndarray):
+
+        g = GPCCA(P_2, eta=None, z="LR")
+
+        with pytest.warns(
+            UserWarning,
+            match="Clustering into 7 clusters will split complex conjugate eigenvalues. "
+            "Skipping clustering into 7 clusters.",
+        ):
+            g.optimize({"m_min": 2, "m_max": 8})
+        with pytest.warns(
+            UserWarning,
+            match="Clustering into 9 clusters will split complex conjugate eigenvalues. "
+            "Skipping clustering into 9 clusters.",
+        ):
+            g.optimize({"m_min": 8, "m_max": 10})
+        with pytest.warns(
+            UserWarning,
+            match="Clustering into 11 clusters will split complex conjugate eigenvalues. "
+            "Skipping clustering into 11 clusters.",
+        ):
+            g.optimize({"m_min": 10, "m_max": 12})
+
+    def test_split_raise_LR(self, P_2: np.ndarray):
+
+        g = GPCCA(P_2, eta=None, z="LR")
+
+        with pytest.raises(
+            ValueError,
+            match="Clustering into 7 clusters will split complex conjugate eigenvalues. "
+            "Request one cluster more or less.",
+        ):
+            g.optimize(7)
+        with pytest.raises(
+            ValueError,
+            match="Clustering into 9 clusters will split complex conjugate eigenvalues. "
+            "Request one cluster more or less.",
+        ):
+            g.optimize(9)
+        with pytest.raises(
+            ValueError,
+            match="Clustering into 11 clusters will split complex conjugate eigenvalues. "
+            "Request one cluster more or less.",
+        ):
+            g.optimize(11)
+
+    # TODO: Find a way to test for ValueError("Clustering wasn't successful. Try different cluster numbers."),
+    # if none of the values in crispness_list is >0.0.

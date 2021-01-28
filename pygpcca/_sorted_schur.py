@@ -384,7 +384,8 @@ def sorted_schur(
     if m < n:
         if _check_conj_split(eigenvalues[:m]):
             raise ValueError(
-                f"Clustering into {m} clusters will split conjugate eigenvalues. Request one cluster more or less."
+                f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
+                "Request one cluster more or less."
             )
         Q, R, eigenvalues = Q[:, :m], R[:m, :m], eigenvalues[:m]
 

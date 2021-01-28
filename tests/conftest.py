@@ -3013,7 +3013,7 @@ def minChi_P_2_LM() -> np.ndarray:
 
 
 @pytest.fixture(scope="session")
-def crispness_P_2_LM() -> np.ndarray:
+def crispness_values_P_2_LM() -> np.ndarray:
     return np.array(
         [
             0.741514717000221,
@@ -3084,7 +3084,7 @@ def minChi_P_2_LR() -> np.ndarray:
 
 
 @pytest.fixture(scope="session")
-def crispness_P_2_LR() -> np.ndarray:
+def crispness_values_P_2_LR() -> np.ndarray:
     return np.array(
         [
             0.741514717000221,
