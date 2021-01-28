@@ -459,7 +459,7 @@ class TestGPCCAMatlabUnit:
         ks = np.arange(kmin, kmax)
 
         for mu_ in [0, 10, 50, 100, 200, 500, 1000]:
-            if mu == 0 and platform.system() == "Darwin":
+            if mu_ == 0 and platform.system() == "Darwin":
                 skipped = True  # numpy.linalg.LinAlgError: Singular matrix in _sort_real_schur.py: 450: in swap
                 continue
             mu_ = mu(mu_)
@@ -502,9 +502,8 @@ class TestGPCCAMatlabUnit:
 
     def test_cluster_by_isa(self, chi_isa_mu0_n3: np.ndarray, chi_isa_mu100_n3: np.ndarray):
         # chi_sa_mu0_n3 has permuted 2nd and 3d columns when compared to the matlab version
-        for m, chi_exp in zip([0, 100], [chi_isa_mu0_n3, chi_isa_mu100_n3]):
-            mu_ = mu(m)
-            P, sd = get_known_input(mu_)
+        for mu_, chi_exp in zip([0, 100], [chi_isa_mu0_n3, chi_isa_mu100_n3]):
+            P, sd = get_known_input(mu(mu_))
             X, _, _ = _do_schur(P, sd, m=3)
             chi, _ = _cluster_by_isa(X[:, :3])
 
@@ -518,12 +517,11 @@ class TestGPCCAMatlabUnit:
         kopt = []
         skipped = False
 
-        for m in [0, 10, 50, 100, 200, 500, 1000]:
-            if mu == 0 and platform.system() == "Darwin":
+        for mu_ in [0, 10, 50, 100, 200, 500, 1000]:
+            if mu_ == 0 and platform.system() == "Darwin":
                 skipped = True  # numpy.linalg.LinAlgError: Singular matrix in _sort_real_schur.py: 450: in swap
                 continue
-            mu_ = mu(m)
-            P, sd = get_known_input(mu_)
+            P, sd = get_known_input(mu(mu_))
             g = GPCCA(P, eta=sd)
             minChi = g.minChi(kmin, kmax)
 
