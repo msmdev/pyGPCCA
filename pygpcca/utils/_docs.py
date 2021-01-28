@@ -19,8 +19,7 @@ m
 
         - :class:`int`: number of clusters to group into.
         - :class:`tuple`: minimal and maximal number of clusters.
-        - :class:`dict`: minimal and maximal number of clusters given as
-          ``{'m_min': int, 'm_max': int}``."""
+        - :class:`dict`: minimal and maximal number of clusters given as ``{'m_min': int, 'm_max': int}``."""
 
 z = """\
 z
@@ -65,15 +64,15 @@ tol_krylov
     If you are dealing with ill-conditioned matrices,
     consider decreasing this value to get accurate results."""
 
-eta = r"""\
+eta = """\
 eta
     The input probability distribution of the (micro)states.
-    In theory :math:`\eta` can be an arbitrary distribution as long as it is
+    In theory `eta` can be an arbitrary distribution as long as it is
     a valid probability distribution (i.e., sums up to 1).
     A neutral and valid choice would be the uniform distribution (default).
 
     In case of a reversible transition matrix, the stationary distribution
-    :math:`\pi` can (but don't has to) be used here.
+    can (but don't has to) be used here.
     In case of a non-reversible `P`, some initial or average distribution of
     the states might be chosen instead of the uniform distribution.
 
