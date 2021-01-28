@@ -2993,6 +2993,26 @@ def P_i(
 
 
 @pytest.fixture(scope="session")
+def minChi_P_2_LM() -> np.ndarray:
+    return np.array(
+        [
+            -1.6653345369377348e-16,
+            -2.255418698866725e-16,
+            -0.9923508699724691,
+            -0.9972757370249341,
+            -0.926802576904497,
+            -0.2705117206956666,
+            -0.3360447945215935,
+            -0.2973036186306221,
+            -0.29104047575515346,
+            -0.42902208201892694,
+            -3.5809019888001215e-16,
+        ],
+        dtype=np.float64,
+    )
+
+
+@pytest.fixture(scope="session")
 def crispness_P_2_LM() -> np.ndarray:
     return np.array(
         [
@@ -3006,9 +3026,20 @@ def crispness_P_2_LM() -> np.ndarray:
             0.0,
             0.555131505008172,
             0.537583662460791,
+            0.999999999999994,
         ],
         dtype=np.float64,
     )
+
+
+@pytest.fixture(scope="session")
+def optimal_crispness_P_2_LM() -> np.float64:
+    return 0.8151280474517894
+
+
+@pytest.fixture(scope="session")
+def n_m_P_2_LM() -> np.int64:
+    return 3
 
 
 @pytest.fixture(scope="session")
@@ -3026,8 +3057,29 @@ def top_eigenvalues_P_2_LM() -> np.ndarray:
             -0.431989621331992 + 0.390304675376906j,
             -0.431989621331992 - 0.390304675376906j,
             -0.371262016459619 + 0.0j,
+            -0.25 + 0.0j,
         ],
         dtype=np.complex128,
+    )
+
+
+@pytest.fixture(scope="session")
+def minChi_P_2_LR() -> np.ndarray:
+    return np.array(
+        [
+            -1.6653345369377348e-16,
+            -2.255418698866725e-16,
+            -0.050736153733740706,
+            -0.09885481857040812,
+            -0.10891702506635076,
+            -0.22400607297199995,
+            -0.04715799116142339,
+            -0.8673086537165552,
+            -0.992031454915766,
+            -0.9881639104412867,
+            -4.996003610813204e-16,
+        ],
+        dtype=np.float64,
     )
 
 
@@ -3044,9 +3096,21 @@ def crispness_P_2_LR() -> np.ndarray:
             0.834142688699839,
             0.0,
             0.315166752037852,
+            0.0,
+            0.999999999999994,
         ],
         dtype=np.float64,
     )
+
+
+@pytest.fixture(scope="session")
+def optimal_crispness_P_2_LR() -> np.float64:
+    return 0.8341426886998387
+
+
+@pytest.fixture(scope="session")
+def n_m_P_2_LR() -> np.int64:
+    return 8
 
 
 @pytest.fixture(scope="session")
@@ -3063,6 +3127,8 @@ def top_eigenvalues_P_2_LR() -> np.ndarray:
             -0.431989621331992 - 0.390304675376906j,
             -0.482771464851169 + 0.489085740769071j,
             -0.482771464851169 - 0.489085740769071j,
+            -0.49366904637718 + 0.473927878052129j,
+            -0.49366904637718 - 0.473927878052129j,
         ],
         dtype=np.complex128,
     )
