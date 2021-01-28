@@ -11,7 +11,7 @@
     installation
     api
     example
-    acknowledgements
+    acknowledgments
     references
 
 .. |br| raw:: html

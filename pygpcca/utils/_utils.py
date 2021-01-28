@@ -68,7 +68,7 @@ def connected_sets(C: Union[np.ndarray, spmatrix], directed: bool = True) -> Lis
         algorithms. SIAM Journal on Computing 1 (2): 146-160.
 
     Credits
-    ---------
+    -------
     The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
@@ -139,7 +139,7 @@ def is_transition_matrix(T: Union[np.ndarray, spmatrix], tol: float = 1e-12) -> 
     row sum up to one, :math:`\sum_j p_{ij} = 1`. Matrices wit this property are also called stochastic matrices.
 
     Credits
-    ---------
+    -------
     The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
@@ -197,7 +197,7 @@ def stationary_distribution(P: Union[np.ndarray, spmatrix]) -> np.ndarray:
     .. math:: \pi^T P =\pi^T.
 
     Credits
-    ---------
+    -------
     The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
@@ -269,7 +269,7 @@ def backward_iteration(A: np.ndarray, mu: float, x0: np.ndarray, tol: float = 1e
     Eigenvector to approximate eigenvalue ``mu``.
 
     Credits
-    ---------
+    -------
     The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
@@ -309,7 +309,7 @@ def stationary_distribution_from_backward_iteration(P: np.ndarray, eps: float = 
     Stationary vector.
 
     Credits
-    ---------
+    -------
     The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
@@ -339,7 +339,7 @@ def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
     Vector of stationary probabilities.
 
     Credits
-    ---------
+    -------
     The code and docstring of this function origins (with some adjustments) from MSMTools
     Copyright (c) 2015, 2014 Computational Molecular Biology Group
     Freie Universitaet Berlin (GER)
