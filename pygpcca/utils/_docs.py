@@ -44,8 +44,8 @@ method
     Which method to use to determine the invariant subspace. Valid options are:
 
         - 'brandts': perform a full Schur decomposition of `P` utilizing
-          ``scipy.linalg.schur`` (without the intrinsic sorting option, since it is
-          flawed) and sort the returned Schur form `R` and Schur vector
+          :func:`scipy.linalg.schur` (without the intrinsic sorting option,
+          since it is flawed) and sort the returned Schur form `R` and Schur vector
           matrix `Q` afterwards using a routine published by Brandts
           [Brandts02]_.
           This is well tested and thus the default method,
