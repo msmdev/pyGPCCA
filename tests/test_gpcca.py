@@ -986,8 +986,17 @@ class TestCustom:
         ):
             g.optimize(11)
 
-    # TODO: Find a way to test for ValueError("Clustering wasn't successful. Try different cluster numbers."),
-    # if none of the values in crispness_list is >0.0.
+    def test_optimize_range_all_invalid(self, P_2: np.ndarray, mocker):
+
+        g = GPCCA(P_2, eta=None, z="LR")
+
+        mocker.patch(
+            "pygpcca._gpcca._gpcca_core",
+            # chi, rot. mat., crispness
+            return_value=(np.empty((P_2.shape[0], 3)), np.empty_like((3, 3)), 0),
+        )
+        with pytest.raises(ValueError, match=r"Clustering wasn't successful. Try different cluster numbers."):
+            g.optimize([3, P_2.shape[0]])
 
 
 class TestUtils:
