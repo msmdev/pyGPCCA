@@ -1,0 +1,26 @@
+.wy-nav-content {
+    max-width: 1000px;
+}
+
+.wy-side-nav-search {
+    background-color: #2961b9;
+}
+
+.wy-side-nav-search input[type="text"] {
+    border-radius: 6px!important;
+}
+
+.highlight {
+    background: #f6f5f9;
+}
+
+html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) > dt {
+    color: #404040;
+    background-color: #90b2ff45;
+    border-top: solid 4px #2932b9c4;
+}
+
+.rst-content code.literal {
+    color: #404040;
+    font-weight: 700;
+}

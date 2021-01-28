@@ -33,6 +33,7 @@ __credits__ = [
     "Susanna Roeblitz",
     "Marius Lange",
     "Michal Klein",
+    "Fabian Paul",
     "Alexander Sikorski",
 ]
 
@@ -679,7 +680,7 @@ def gpcca_coarsegrain(
     method: str = DEFAULT_SCHUR_METHOD,
 ) -> np.ndarray:
     r"""
-    Coarse-grains the transition matrix `P` into `m` sets using G-PCCA [Reuter18]_.
+    Coarse-grain the transition matrix `P` into `m` sets using G-PCCA [Reuter18]_.
 
     Performs optimized spectral clustering via G-PCCA and coarse-grains `P`
     such that the dominant Perron eigenvalues are preserved using:
@@ -892,7 +893,7 @@ class GPCCA:
         or a :class:`dict` ``{'m_min': int, 'm_max': int}``
         containing a minimum and a maximum number of clusters can be given.
         This results in repeated execution of the G-PCCA core algorithm
-        for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings
+        for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings,
         the sharpest/crispest one (with maximal `crispness`) will be selected.
 
         Parameters
@@ -1248,3 +1249,9 @@ class GPCCA:
     def transition_matrix(self) -> Union[np.ndarray, spmatrix]:
         """Row-stochastic transition matrix `P`."""
         return self._P
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}[n={self.transition_matrix.shape[0]}, n_metastable={self.n_metastable}]"
+
+    def __str__(self) -> str:
+        return repr(self)
