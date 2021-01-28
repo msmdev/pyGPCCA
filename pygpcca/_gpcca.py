@@ -762,8 +762,8 @@ class GPCCA:
         if len(eta) != n:
             raise ValueError(f"eta vector length ({len(eta)}) doesn't match with the shape of " f"P[{n}, {n}].")
 
-        self._P = P
-        self._eta: np.ndarray = eta
+        self._P = P.astype(np.float64)
+        self._eta: np.ndarray = eta.astype(np.float64)
         self._z: str = z
         self._method: str = method
 
