@@ -988,3 +988,16 @@ class TestCustom:
 
     # TODO: Find a way to test for ValueError("Clustering wasn't successful. Try different cluster numbers."),
     # if none of the values in crispness_list is >0.0.
+
+
+class TestUtils:
+    def test_transition_matrix_dtype(self, P_2: np.ndarray):
+        g = GPCCA(P_2, eta=None, z="LR")
+
+        assert g.transition_matrix.dtype == np.float64
+
+    @pytest.mark.parametrize("eta", [None, np.ones((12,), dtype=np.float16) / 12.0])
+    def test_input_distribution_dtype(self, P_2: np.ndarray, eta: Optional[np.ndarray]):
+        g = GPCCA(P_2, eta=eta, z="LR")
+
+        assert g.input_distribution.dtype == np.float64
