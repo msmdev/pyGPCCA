@@ -31,7 +31,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from typing import Tuple, Union
-import warnings
+import sys
+
+if not sys.warnoptions:
+    import os
+    import warnings
+
+    warnings.simplefilter("always", category=UserWarning)  # Change the filter in this process
+    os.environ["PYTHONWARNINGS"] = "always::UserWarning"  # Also affect subprocesses
 
 from scipy.linalg import schur, rsf2csf, subspace_angles
 from scipy.sparse import issparse, spmatrix, csr_matrix, isspmatrix_csr
