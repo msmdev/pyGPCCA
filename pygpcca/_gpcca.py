@@ -1175,7 +1175,6 @@ class GPCCA:
     @property
     def n_m(self) -> Optional[int]:
         """Optimal number of clusters or macrostates to group the `n` microstates into."""
-        # TODO: use self.memberships.shape[1] and remove self._m_opt
         return self._m_opt
 
     @property  # type: ignore[misc]
@@ -1251,7 +1250,7 @@ class GPCCA:
         return self._P
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}[n={self.transition_matrix.shape[0]}, n_metastable={self.n_metastable}]"
+        return f"{self.__class__.__name__}[n={self.transition_matrix.shape[0]}, n_macrostates={self.n_m}]"
 
     def __str__(self) -> str:
         return repr(self)
