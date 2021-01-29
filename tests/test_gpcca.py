@@ -25,10 +25,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Optional
+from typing import Tuple, Optional
 from operator import itemgetter
 from itertools import combinations
-import platform
 
 import pytest
 
@@ -164,8 +163,6 @@ class TestGPCCAMatlabRegression:
 
 class TestGPCCAMatlabUnit:
     def test_do_schur(self, example_matrix_mu: np.ndarray):
-        if int(example_matrix_mu[2, 4]) == 0 and platform.system() == "Darwin":
-            pytest.skip("macOS: numpy.linalg.LinAlgError: Singular matrix.")
         N = 9
         P, sd = get_known_input(example_matrix_mu)
         X, RR, _ = _do_schur(P, eta=sd, m=N)
@@ -455,13 +452,9 @@ class TestGPCCAMatlabUnit:
     def test_opt_soft_nelder_mead_more(self):
         kmin, kmax = 2, 8
         kopt = []
-        skipped = False
         ks = np.arange(kmin, kmax)
 
-        for mu_ in [0, 10, 50, 100, 200, 500, 1000]:
-            if mu_ == 0 and platform.system() == "Darwin":
-                skipped = True  # numpy.linalg.LinAlgError: Singular matrix in _sort_real_schur.py: 450: in swap
-                continue
+        for mu_ in [10, 50, 100, 200, 500, 1000]:
             mu_ = mu(mu_)
             P, sd = get_known_input(mu_)
             X, _, _ = _do_schur(P, eta=sd, m=kmax)
@@ -476,7 +469,7 @@ class TestGPCCAMatlabUnit:
 
             kopt.append(ks[np.argmax(crisp)])
 
-        np.testing.assert_array_equal(kopt, ([] if skipped else [3]) + [3, 3, 3, 2, 2, 7])
+        np.testing.assert_array_equal(kopt, [3, 3, 3, 2, 2, 7])
 
     def test_cluster_by_first_col_not_1(self):
         svecs = np.zeros((4, 3))
@@ -515,19 +508,15 @@ class TestGPCCAMatlabUnit:
     def test_use_minChi(self):
         kmin, kmax = 2, 9
         kopt = []
-        skipped = False
 
-        for mu_ in [0, 10, 50, 100, 200, 500, 1000]:
-            if mu_ == 0 and platform.system() == "Darwin":
-                skipped = True  # numpy.linalg.LinAlgError: Singular matrix in _sort_real_schur.py: 450: in swap
-                continue
+        for mu_ in [10, 50, 100, 200, 500, 1000]:
             P, sd = get_known_input(mu(mu_))
             g = GPCCA(P, eta=sd)
             minChi = g.minChi(kmin, kmax)
 
             kopt.append(kmax - 1 - np.argmax(np.flipud(minChi[1:-1])))
 
-        np.testing.assert_array_equal(kopt, [3] * (6 - skipped) + [7])
+        np.testing.assert_array_equal(kopt, [3] * 5 + [7])
 
     def test_gpcca_brandts_sparse_is_not_densified(self, P: np.ndarray, sd: np.ndarray):
         with pytest.raises(ValueError, match=r"Sparse implementation is only available for `method='krylov'`."):
@@ -1017,3 +1006,8 @@ class TestUtils:
         g = GPCCA(P_2, eta=eta, z="LR")
 
         assert g.input_distribution.dtype == np.float64
+
+    @pytest.mark.parametrize("z", ["LR", "LM"])
+    def test_sort_real_schur_linalg_error(self, QR: Tuple[np.ndarray, np.ndarray], z: str):
+        with pytest.raises(RuntimeError, match=r"Condition number of H is .*\."):
+            _ = sort_real_schur(*QR, z=z, b=0)
