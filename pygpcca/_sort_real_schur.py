@@ -110,6 +110,7 @@ def sort_real_schur(
             p[k] = R[s[k], s[k]]  # if the block is 1x1, only store the eigenvalue
 
     ap = []
+    print("Swaplist:", p)
 
     for k in swaplist(p, s, z, b):  # For k ranging over all neighbor-swaps
         assert k + 2 < len(s)  # debug
