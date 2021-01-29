@@ -83,6 +83,9 @@ def sort_real_schur(
           with the diagonal blocks ordered with respect to the target `z`.
         - ap : A list `ap` warns for inaccuracy of the solution, if an entry of `ap` exceeds one.
     """  # noqa: D401
+    print("Q:", Q)
+    print("R:", R)
+
     eps = np.finfo(R.dtype).eps
     if not np.all(np.abs(np.tril(R, -2)) <= 100 * eps):
         raise ValueError("R is not block-triangular.")
@@ -109,8 +112,8 @@ def sort_real_schur(
             assert s[k + 1] - sk == 1  # debug
             p[k] = R[s[k], s[k]]  # if the block is 1x1, only store the eigenvalue
 
-    print("Q:", Q)
-    print("R:", R)
+    print("Q norm:", Q)
+    print("R norm:", R)
 
     ap = []
     print("p:", p)
