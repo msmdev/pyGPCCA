@@ -1007,7 +1007,6 @@ class TestUtils:
 
         assert g.input_distribution.dtype == np.float64
 
-    @pytest.mark.parametrize("z", ["LR", "LM"])
-    def test_sort_real_schur_linalg_error(self, QR: Tuple[np.ndarray, np.ndarray], z: str):
+    def test_sort_real_schur_linalg_error(self, QR: Tuple[np.ndarray, np.ndarray]):
         with pytest.raises(RuntimeError, match=r"Condition number of H is .*\."):
-            _ = sort_real_schur(*QR, z=z, b=0)
+            _ = sort_real_schur(*QR, z="LM", b=0)
