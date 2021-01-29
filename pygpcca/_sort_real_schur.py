@@ -95,7 +95,8 @@ def sort_real_schur(
         i for i in range(R.shape[0] + 1) if i not in r + 1
     ]  # construct from them a vector s with the-top left positions of each block
 
-    p = np.empty((len(s) - 1,), dtype=np.complex64)
+    # p = np.empty((len(s) - 1,), dtype=np.complex64)
+    p = [0.0] * (len(s) - 1)
 
     for k in range(1, len(s) - 1):  # debug
         assert R[s[k], s[k] - 1] <= 100 * eps  # debug
