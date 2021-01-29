@@ -6,7 +6,7 @@ try:
     from pygpcca import __email__, __author__, __version__, __maintainer__
 except ImportError:
     __author__ = __maintainer__ = "Bernhard Reuter"
-    __version__ = "0.0.0"
+    __version__ = "1.0.0"
     __email__ = "bernhard-reuter@gmx.de"
 
 setup(
