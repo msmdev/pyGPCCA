@@ -25,7 +25,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Tuple, Optional
+from typing import Optional
 from operator import itemgetter
 from itertools import combinations
 
@@ -1006,7 +1006,3 @@ class TestUtils:
         g = GPCCA(P_2, eta=eta, z="LR")
 
         assert g.input_distribution.dtype == np.float64
-
-    def test_sort_real_schur_linalg_error(self, QR: Tuple[np.ndarray, np.ndarray]):
-        with pytest.raises(RuntimeError, match=r"Condition number of H is .*\."):
-            _ = sort_real_schur(*QR, z="LM", b=0)
