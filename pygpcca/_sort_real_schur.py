@@ -109,10 +109,15 @@ def sort_real_schur(
             assert s[k + 1] - sk == 1  # debug
             p[k] = R[s[k], s[k]]  # if the block is 1x1, only store the eigenvalue
 
-    ap = []
-    print("Swaplist:", p)
+    print("Q:", Q)
+    print("R:", R)
 
-    for k in swaplist(p, s, z, b):  # For k ranging over all neighbor-swaps
+    ap = []
+    print("p:", p)
+    sl = swaplist(p, s, z, b)  # For k ranging over all neighbor-swaps
+    print("swaplist:", sl)
+
+    for k in sl:
         assert k + 2 < len(s)  # debug
         v = list(range(s[k], s[k + 1]))  # collect the coordinates of the blocks
         w = list(range(s[k + 1], s[k + 2]))
