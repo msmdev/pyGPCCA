@@ -84,8 +84,8 @@ def sort_real_schur(
           with the diagonal blocks ordered with respect to the target `z`.
         - ap : A list `ap` warns for inaccuracy of the solution, if an entry of `ap` exceeds one.
     """  # noqa: D401
-    pprint("Q:", Q)
-    pprint("R:", R)
+    pprint(Q)
+    pprint(R)
 
     eps = np.finfo(R.dtype).eps
     if not np.all(np.abs(np.tril(R, -2)) <= 100 * eps):
@@ -112,9 +112,6 @@ def sort_real_schur(
         else:  # (the one with the positive imaginary part is sufficient)
             assert s[k + 1] - sk == 1  # debug
             p[k] = R[s[k], s[k]]  # if the block is 1x1, only store the eigenvalue
-
-    pprint("Q norm:", Q)
-    pprint("R norm:", R)
 
     ap = []
     print("p:", p)
