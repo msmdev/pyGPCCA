@@ -116,7 +116,7 @@ def sort_real_schur(
     ap = []
     sl = swaplist(p, s, z, b)  # For k ranging over all neighbor-swaps
     pprint(p)
-    pprint(swaplist)
+    pprint(sl)
 
     for k in sl:
         assert k + 2 < len(s)  # debug
