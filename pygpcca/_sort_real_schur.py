@@ -448,6 +448,9 @@ def swap(
     for k in range(p * q - 1):  # Implement permutation P of the LU-decomposition PAQ=LU ...
         sigp[[k, P[k]]] = sigp[[P[k], k]].copy()
     r = e * r[sigp]  # ... scale and permute the right-hand side.
+    print("r", r)
+    print("L cond:", np.linalg.cond(L), "mat:", L)
+    print("H cond:", np.linalg.cond(H), "mat:", H)
     x = np.linalg.solve(H, np.linalg.solve(L, r))  # and solve the two triangular systems.
     sigq = np.arange(p * q)
     for k in range(p * q - 1):  # Implement permutation Q of the LU-decomposition PAQ=LU ...
