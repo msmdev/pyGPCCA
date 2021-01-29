@@ -34,7 +34,7 @@ import numpy as np
 from pygpcca.utils._docs import d
 
 __all__ = ["sort_real_schur"]
-expensive_asserts = False
+expensive_asserts = True
 
 
 @d.dedent
