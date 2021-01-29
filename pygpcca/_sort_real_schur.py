@@ -84,6 +84,7 @@ def sort_real_schur(
           with the diagonal blocks ordered with respect to the target `z`.
         - ap : A list `ap` warns for inaccuracy of the solution, if an entry of `ap` exceeds one.
     """  # noqa: D401
+    np.set_printoptions(formatter={"float": "{: 0.30f}".format})
     pprint(Q)
     print(Q.dtype)
     pprint(R)
