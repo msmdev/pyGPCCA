@@ -1225,6 +1225,6 @@ class TestUtils:
         )
         from pygpcca._sort_real_schur import sort_real_schur
 
-        _ = sort_real_schur(Q, R, "LR", 0)
+        _ = sort_real_schur(Q, R, "LM", 0)
 
         raise RuntimeError("testing")
