@@ -55,7 +55,7 @@ jobs:
 
         -   name: Linting
             run: |
-                tox -e lint
+                tox -e lint,readme
         -   name: Documentation check
             run: |
                 echo "Uncomment me below once the badges are working..."
