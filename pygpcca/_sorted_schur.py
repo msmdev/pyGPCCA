@@ -31,7 +31,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from typing import Tuple, Union
-import warnings
+import sys
+
+if not sys.warnoptions:
+    import os
+    import warnings
+
+    warnings.simplefilter("always", category=UserWarning)  # Change the filter in this process
+    os.environ["PYTHONWARNINGS"] = "always::UserWarning"  # Also affect subprocesses
 
 from scipy.linalg import schur, rsf2csf, subspace_angles
 from scipy.sparse import issparse, spmatrix, csr_matrix, isspmatrix_csr
@@ -257,7 +264,7 @@ def sorted_krylov_schur(
     # Get the schur form
     R = E.getDS().getMat(SLEPc.DS.MatType.A)
     R.view()
-    R = R.getDenseArray().astype(np.float32)
+    R = R.getDenseArray().astype(np.float64)
 
     # Gets the number of converged eigenpairs.
     nconv = E.getConverged()
@@ -377,7 +384,8 @@ def sorted_schur(
     if m < n:
         if _check_conj_split(eigenvalues[:m]):
             raise ValueError(
-                f"Clustering into {m} clusters will split conjugate eigenvalues. Request one cluster more or less."
+                f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
+                "Request one cluster more or less."
             )
         Q, R, eigenvalues = Q[:, :m], R[:m, :m], eigenvalues[:m]
 

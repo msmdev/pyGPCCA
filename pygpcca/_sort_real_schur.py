@@ -94,7 +94,8 @@ def sort_real_schur(
     s = [
         i for i in range(R.shape[0] + 1) if i not in r + 1
     ]  # construct from them a vector s with the-top left positions of each block
-    p = np.empty((len(s) - 1,), dtype=np.complex64)
+
+    p = np.empty((len(s) - 1,), dtype=np.complex128)
 
     for k in range(1, len(s) - 1):  # debug
         assert R[s[k], s[k] - 1] <= 100 * eps  # debug
@@ -446,7 +447,10 @@ def swap(
     for k in range(p * q - 1):  # Implement permutation P of the LU-decomposition PAQ=LU ...
         sigp[[k, P[k]]] = sigp[[P[k], k]].copy()
     r = e * r[sigp]  # ... scale and permute the right-hand side.
-    x = np.linalg.solve(H, np.linalg.solve(L, r))  # and solve the two triangular systems.
+    try:
+        x = np.linalg.solve(H, np.linalg.solve(L, r))  # and solve the two triangular systems.
+    except np.linalg.LinAlgError as e:
+        raise RuntimeError(f"Condition number of H is {np.linalg.cond(H)}.") from e
     sigq = np.arange(p * q)
     for k in range(p * q - 1):  # Implement permutation Q of the LU-decomposition PAQ=LU ...
         sigq[[k, Q[k]]] = sigq[[Q[k], k]].copy()

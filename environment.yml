@@ -1,0 +1,6 @@
+name: pygpcca
+
+dependencies:
+-   matplotlib
+-   pip:
+    -   git+https://github.com/msmdev/pygpcca

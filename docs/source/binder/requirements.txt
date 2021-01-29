@@ -1,3 +1,0 @@
-# TODO: once this is on PyPI, use PyPI version
-git+https://github.com/msmdev/pyGPCCA
-matplotlib

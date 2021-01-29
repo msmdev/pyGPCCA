@@ -471,7 +471,7 @@ def count_Pc():
     )
 
 
-@pytest.fixture(params=[0, 10, 50, 100, 200, 500, 1000])
+@pytest.fixture(params=[10, 50, 100, 200, 500, 1000])
 def example_matrix_mu(request):
     mu = request.param
 
@@ -2990,6 +2990,148 @@ def P_i(
     P_7: np.ndarray,
 ) -> np.ndarray:
     return locals()[request.param]
+
+
+@pytest.fixture(scope="session")
+def minChi_P_2_LM() -> np.ndarray:
+    return np.array(
+        [
+            -1.6653345369377348e-16,
+            -2.255418698866725e-16,
+            -0.9923508699724691,
+            -0.9972757370249341,
+            -0.926802576904497,
+            -0.2705117206956666,
+            -0.3360447945215935,
+            -0.2973036186306221,
+            -0.29104047575515346,
+            -0.42902208201892694,
+            -3.5809019888001215e-16,
+        ],
+        dtype=np.float64,
+    )
+
+
+@pytest.fixture(scope="session")
+def crispness_values_P_2_LM() -> np.ndarray:
+    return np.array(
+        [
+            0.741514717000221,
+            0.815128047451789,
+            0.0,
+            0.385871540187622,
+            0.0,
+            0.416280490635965,
+            0.417889634858996,
+            0.0,
+            0.555131505008172,
+            0.537583662460791,
+            0.999999999999994,
+        ],
+        dtype=np.float64,
+    )
+
+
+@pytest.fixture(scope="session")
+def optimal_crispness_P_2_LM() -> np.float64:
+    return 0.8151280474517894
+
+
+@pytest.fixture(scope="session")
+def n_m_P_2_LM() -> np.int64:
+    return 3
+
+
+@pytest.fixture(scope="session")
+def top_eigenvalues_P_2_LM() -> np.ndarray:
+    return np.array(
+        [
+            1.0 + 0.0j,
+            0.965542929702337 + 0.0j,
+            0.884042792993727 + 0.0j,
+            -0.482771464851169 + 0.489085740769071j,
+            -0.482771464851169 - 0.489085740769071j,
+            -0.49366904637718 + 0.473927878052129j,
+            -0.49366904637718 - 0.473927878052129j,
+            0.588536558884235 + 0.0j,
+            -0.431989621331992 + 0.390304675376906j,
+            -0.431989621331992 - 0.390304675376906j,
+            -0.371262016459619 + 0.0j,
+            -0.25 + 0.0j,
+        ],
+        dtype=np.complex128,
+    )
+
+
+@pytest.fixture(scope="session")
+def minChi_P_2_LR() -> np.ndarray:
+    return np.array(
+        [
+            -1.6653345369377348e-16,
+            -2.255418698866725e-16,
+            -0.050736153733740706,
+            -0.09885481857040812,
+            -0.10891702506635076,
+            -0.22400607297199995,
+            -0.04715799116142339,
+            -0.8673086537165552,
+            -0.992031454915766,
+            -0.9881639104412867,
+            -4.996003610813204e-16,
+        ],
+        dtype=np.float64,
+    )
+
+
+@pytest.fixture(scope="session")
+def crispness_values_P_2_LR() -> np.ndarray:
+    return np.array(
+        [
+            0.741514717000221,
+            0.815128047451789,
+            0.81196437708066,
+            0.714517489751501,
+            0.669180515603114,
+            0.0,
+            0.834142688699839,
+            0.0,
+            0.315166752037852,
+            0.0,
+            0.999999999999994,
+        ],
+        dtype=np.float64,
+    )
+
+
+@pytest.fixture(scope="session")
+def optimal_crispness_P_2_LR() -> np.float64:
+    return 0.8341426886998387
+
+
+@pytest.fixture(scope="session")
+def n_m_P_2_LR() -> np.int64:
+    return 8
+
+
+@pytest.fixture(scope="session")
+def top_eigenvalues_P_2_LR() -> np.ndarray:
+    return np.array(
+        [
+            1.0 + 0.0j,
+            0.965542929702337 + 0.0j,
+            0.884042792993727 + 0.0j,
+            0.588536558884235 + 0.0j,
+            -0.25 + 0.0j,
+            -0.371262016459619 + 0.0j,
+            -0.431989621331992 + 0.390304675376906j,
+            -0.431989621331992 - 0.390304675376906j,
+            -0.482771464851169 + 0.489085740769071j,
+            -0.482771464851169 - 0.489085740769071j,
+            -0.49366904637718 + 0.473927878052129j,
+            -0.49366904637718 - 0.473927878052129j,
+        ],
+        dtype=np.complex128,
+    )
 
 
 @pytest.fixture(scope="session")

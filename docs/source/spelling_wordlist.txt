@@ -1,4 +1,5 @@
 scipy
+docstring
 conda
 pygpcca
 pyGPCCA
@@ -22,3 +23,5 @@ Universitaet
 macOS
 Fackeldey
 Röblitz
+Sikorski
+Zuse

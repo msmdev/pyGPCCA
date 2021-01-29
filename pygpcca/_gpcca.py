@@ -51,8 +51,15 @@ except ImportError:
         return property(lru_cache(maxsize=1)(fn))
 
 
+import sys
 import logging
-import warnings
+
+if not sys.warnoptions:
+    import os
+    import warnings
+
+    warnings.simplefilter("always", category=UserWarning)  # Change the filter in this process
+    os.environ["PYTHONWARNINGS"] = "always::UserWarning"  # Also affect subprocesses
 
 from scipy.linalg import subspace_angles
 from scipy.sparse import issparse, spmatrix
@@ -479,8 +486,6 @@ def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.nda
         raise ValueError("The dimensions of the rotation matrix don't match with the number of Schur vectors.")
     if rot_matrix.shape[0] < 2:
         raise ValueError(f"Expected the rotation matrix to be at least of shape (2, 2), found {rot_matrix.shape}.")
-    if n == m:
-        raise ValueError(f"There is no point in clustering {n} points into {m} clusters.")
 
     # Reduce optimization problem to size (m-1)^2 by cropping the first row and first column from rot_matrix
     rot_crop_matrix = rot_matrix[1:, 1:]
@@ -757,8 +762,8 @@ class GPCCA:
         if len(eta) != n:
             raise ValueError(f"eta vector length ({len(eta)}) doesn't match with the shape of " f"P[{n}, {n}].")
 
-        self._P = P
-        self._eta: np.ndarray = eta
+        self._P = P.astype(np.float64)
+        self._eta: np.ndarray = eta.astype(np.float64)
         self._z: str = z
         self._method: str = method
 
@@ -770,11 +775,13 @@ class GPCCA:
         self._X: OArray = None
         self._R: OArray = None
         self._eigenvalues: OArray = None
+        self._top_eigenvalues: OArray = None
 
         self._m_opt: Optional[int] = None
         self._chi: OArray = None
         self._rot_matrix: OArray = None
-        self._crispness: Optional[float] = None
+        self._crispness_opt: Optional[float] = None
+        self._crispness: OArray = None
 
         self._pi: OArray = None
         self._pi_coarse: OArray = None
@@ -812,7 +819,7 @@ class GPCCA:
                     else:
                         if _check_conj_split(self._p_eigenvalues[:m]):
                             raise ValueError(
-                                f"Clustering into {m} clusters will split conjugate eigenvalues. "
+                                f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
                                 f"Request one cluster more or less."
                             )
                         logging.info("Using pre-computed Schur decomposition")
@@ -883,6 +890,7 @@ class GPCCA:
         possible, given `m`.
 
         Instead of a single number of clusters `m`, a :class:`tuple`
+        or a :class:`dict` ``{'m_min': int, 'm_max': int}``
         containing a minimum and a maximum number of clusters can be given.
         This results in repeated execution of the G-PCCA core algorithm
         for :math:`m \in [m_{min},m_{max}]`. Among the resulting clusterings,
@@ -899,16 +907,26 @@ class GPCCA:
         -------
         Returns self and updates the following attributes:
 
-            - :attr:`memberships`
+
+
+
             - :attr:`coarse_grained_input_distribution`
             - :attr:`coarse_grained_stationary_distribution`
             - :attr:`coarse_grained_transition_matrix`
-            - :attr:`cluster_crispness`
-            - :attr:`schur_vectors`
-            - :attr:`schur_matrix`
-            - :attr:`top_eigenvalues`
+            - :attr:`crispness_values`
+            - :attr:`dominant_eigenvalues`
+            - :attr:`input_distribution`
+            - :attr:`macrostate_assignment`
+            - :attr:`macrostate_sets`
+            - :attr:`memberships`
+            - :attr:`n_m`
+            - :attr:`optimal_crispness`
             - :attr:`rotation_matrix`
-            - :attr:`n_metastable`
+            - :attr:`schur_matrix`
+            - :attr:`schur_vectors`
+            - :attr:`stationary_probability`
+            - :attr:`top_eigenvalues`
+            - :attr:`transition_matrix`
         """
         n = self._P.shape[0]
 
@@ -972,12 +990,15 @@ class GPCCA:
                     f"Can't check complex conjugate block splitting for {m} clusters with only "
                     f"{len(self._p_eigenvalues)} eigenvalues."
                 )
-            else:
-                if _check_conj_split(self._p_eigenvalues[:m]):
-                    raise ValueError(
-                        f"Clustering into {m} clusters will split conjugate eigenvalues. "
-                        f"Request one cluster more or less."
-                    )
+            if _check_conj_split(self._p_eigenvalues[:m]):
+                warnings.warn(
+                    f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
+                    f"Skipping clustering into {m} clusters."
+                )
+                crispness_list.append(0.0)
+                chi_list.append(np.zeros((n, m)))
+                rot_matrix_list.append(np.zeros((m, m)))
+                continue
 
             # Reduce X according to m and make a work copy.
             # Xm = np.copy(X[:, :m])
@@ -994,7 +1015,7 @@ class GPCCA:
             elif m < n_closed_components:
                 crispness_list.append(-crispness)
                 warnings.warn(
-                    f"Number of metastable states `({m})` is too small. "
+                    f"Number of macrostates `({m})` is too small. "
                     f"Transition matrix has `{n_closed_components}` disconnected components."
                 )
             else:
@@ -1002,14 +1023,26 @@ class GPCCA:
             chi_list.append(chi)
             rot_matrix_list.append(rot_matrix)
 
-        opt_idx = np.argmax(crispness_list)
+        if np.any(np.array(crispness_list) > 0.0):
+            if len(m_list) > 1 and max(m_list) == n:
+                warnings.warn(
+                    f"Clustering {n} data points into {max(m_list)} clusters is always perfectly crisp. "
+                    f"Thus m={max(m_list)} won't be included in the search for the optimal cluster number."
+                )
+                opt_idx = np.argmax(crispness_list[:-1])
+            else:
+                opt_idx = np.argmax(crispness_list)
+        else:
+            raise ValueError("Clustering wasn't successful. Try different cluster numbers.")
         self._m_opt = min(m_list) + opt_idx
         self._chi = chi_list[opt_idx]
         self._rot_matrix = rot_matrix_list[opt_idx]
-        self._crispness = crispness_list[opt_idx]
+        self._crispness = np.array(crispness_list)
+        self._crispness_opt = crispness_list[opt_idx]
         self._X = self._p_X[:, : self._m_opt]
         self._R = self._p_R[: self._m_opt, : self._m_opt]
-        self._eigenvalues = self._p_eigenvalues[: self._m_opt]
+        self._top_eigenvalues = self._p_eigenvalues[: self._m_opt]
+        self._eigenvalues = self._p_eigenvalues[: max(m_list)]
 
         if TYPE_CHECKING:
             assert isinstance(self.memberships, np.ndarray)
@@ -1026,29 +1059,170 @@ class GPCCA:
         return self
 
     @property
-    def transition_matrix(self) -> Union[np.ndarray, spmatrix]:
-        """Transition matrix (row-stochastic)."""
-        return self._P
+    def coarse_grained_input_distribution(self) -> OArray:
+        r"""
+        Coarse grained input distribution of shape `(n_m,)`.
+
+        .. math:: \eta_c = \chi^T \eta
+        """
+        return self._eta_coarse
+
+    @property
+    def coarse_grained_stationary_probability(self) -> OArray:
+        r"""
+        Coarse grained stationary distribution of shape `(n_m,)`.
+
+        .. math:: \pi_c = \chi^T \pi
+        """
+        return self._pi_coarse
+
+    @property
+    def coarse_grained_transition_matrix(self) -> OArray:
+        r"""
+        Coarse grained transition matrix of shape `(n_m, n_m)`.
+
+        .. math:: P_c = (\chi^T D \chi)^{-1} (\chi^T D P \chi)
+
+        with :math:`D` being a diagonal matrix with :math:`\eta` on its diagonal.
+        """
+        return self._P_coarse
+
+    @property  # type: ignore[misc]
+    @d.dedent
+    def crispness_values(self) -> OArray:
+        """
+        Vector of crispness values for clustering into the requested cluster numbers.
+
+        %(crispness_ret)s
+        """
+        return self._crispness
+
+    @property  # type: ignore[misc]
+    @d.dedent
+    def dominant_eigenvalues(self) -> OArray:
+        """
+        Dominant :attr:`n_m` eigenvalues of `P`.
+
+        Vector of shape `(n_m,)` containing the `n_m` dominant eigenvalues of `P`.
+        """
+        return self._top_eigenvalues
 
     @property
     def input_distribution(self) -> np.ndarray:
-        """
+        r"""
         Input probability distribution of the (micro)states.
+
+        In theory :math:`\eta` can be an arbitrary distribution as long as it is
+        a valid probability distribution (i.e., sums up to 1).
+        A neutral and valid choice would be the uniform distribution (default).
+
+        In case of a reversible transition matrix, the stationary distribution
+        :math:`\pi` can (but don't has to) be used here.
+        In case of a non-reversible `P`, some initial or average distribution of
+        the states might be chosen instead of the uniform distribution.
 
         Vector of shape `(n,)` which sums to 1.
         """
         return self._eta
 
     @property
-    def n_metastable(self) -> Optional[int]:
-        """Number of clusters (macrostates) to group the `n` microstates into."""  # noqa: D401
-        # TODO: use self.memberships.shape[1] and remove self._m_opt
+    def macrostate_assignment(self) -> OArray:
+        """
+        Crisp clustering using G-PCCA.
+
+        This is recommended only for visualization purposes.
+        You *cannot* compute any actual quantity of the coarse-grained
+        kinetics without employing the fuzzy memberships!
+
+        Returns
+        -------
+        Integer vector of shape `(n,)` containing the macrostate
+        each microstate is located in.
+        """
+        return None if self.memberships is None else np.argmax(self.memberships, axis=1)
+
+    @property
+    def macrostate_sets(self) -> Optional[List[np.ndarray]]:
+        """
+        Crisp clustering using G-PCCA.
+
+        This is recommended only for visualization purposes.
+        You *cannot* compute any actual quantity of the coarse-grained
+        kinetics without employing the fuzzy memberships!
+
+        Returns
+        -------
+        A list of length equal to :attr:`n_m`.
+
+        Each element is an array with microstate indexes contained in it.
+        """
+        return (
+            None
+            if self.macrostate_assignment is None or self.n_m is None
+            else [np.where(self.macrostate_assignment == i)[0] for i in range(self.n_m)]
+        )
+
+    @property
+    def memberships(self) -> OArray:
+        r"""
+        Array of shape `(n, n_m)` containing the membership :math:`\chi_{ij}` (or probability)
+        of each microstate :math:`i` (to be assigned) to each macrostate or cluster :math:`j`.
+
+        The rows sum to 1.
+        """  # noqa: D205, D400
+        return self._chi
+
+    @property
+    def n_m(self) -> Optional[int]:
+        """Optimal number of clusters or macrostates to group the `n` microstates into."""
         return self._m_opt
+
+    @property  # type: ignore[misc]
+    @d.dedent
+    def optimal_crispness(self) -> Optional[float]:
+        """
+        Crispness for clustering into :attr:`n_m` clusters.
+
+        %(crispness_ret)s
+        """
+        return self._crispness_opt
+
+    @property
+    def rotation_matrix(self) -> OArray:
+        r"""
+        Optimized rotation matrix :math:`A`.
+
+        Array of shape `(n_m, n_m)` which rotates the dominant Schur vectors
+        to yield the G-PCCA :attr:`memberships`, i.e. :math:`\chi = X A`.
+        """
+        return self._rot_matrix
+
+    @property
+    def schur_matrix(self) -> OArray:
+        r"""
+        Ordered top left part of shape `(n_m, n_m)` of the real Schur matrix of :math:`P`.
+
+        The ordered real partial Schur matrix :math:`R` of :math:`P` fulfills
+
+        .. math:: P Q = Q R
+
+        with the ordered matrix of dominant Schur vectors :math:`Q`.
+        """
+        return self._R
+
+    @property
+    def schur_vectors(self) -> OArray:
+        r"""
+        Array :math:`Q` of shape `(n, n_m)` with `n_m` sorted Schur vectors in the columns.
+
+        The constant Schur vector is in the first column.
+        """
+        return self._X
 
     @cached_property
     def stationary_probability(self) -> OArray:
-        """
-        Stationary probability distribution of the (micro)states.
+        r"""
+        Stationary probability distribution :math:`\pi` of the microstates.
 
         Vector of shape `(n,)` which sums to 1.
         """
@@ -1059,127 +1233,24 @@ class GPCCA:
         return None
 
     @property
-    def memberships(self) -> OArray:
-        """
-        Array of shape `(n, m)` containing the membership (or probability)
-        of each state (to be assigned) to each cluster.
-
-        The rows sum to 1.
-        """  # noqa: D205, D400
-        return self._chi
-
-    @property
-    def rotation_matrix(self) -> OArray:
-        """
-        Optimized rotation matrix.
-
-        Array of shape `(m, m)` which rotates the dominant Schur vectors
-        to yield the G-PCCA :attr:`memberships`, i.e. `chi = X * rot_matrix`.
-        """
-        return self._rot_matrix
-
-    @property
-    def schur_vectors(self) -> OArray:
-        """
-        Array of shape `(n, m)` with `m` sorted Schur vectors in the columns.
-
-        The constant Schur vector is in the first column.
-        """
-        return self._X
-
-    @property
-    def schur_matrix(self) -> OArray:
-        r"""
-        Ordered top left part of shape `(m, m)` of the real Schur matrix of `P`.
-
-        The ordered real partial Schur matrix :math:`R` of :math:`P` fulfills
-
-        .. math:: \tilde{P} Q = Q R
-
-        with the ordered matrix of dominant Schur vectors :math:`Q`.
-        """
-        return self._R
-
-    @property  # type: ignore[misc]
-    @d.dedent
     def top_eigenvalues(self) -> OArray:
-        """%(eigenvalues_m)s"""  # noqa: D400
+        """
+        Top `m` respective `m_max` eigenvalues of `P`.
+
+        If a single integer `m` was given, the upper `m` eigenvalues are returned.
+
+        If a :class:`tuple` or :class:`dict` containing a minimum `m_min` and maximum number
+        `m_max` of clusters was given, the upper `m_max` eigenvalues are returned.
+        """
         return self._eigenvalues
 
-    @property  # type: ignore[misc]
-    @d.dedent
-    def cluster_crispness(self) -> Optional[float]:
-        """%(crispness_ret)s"""  # noqa: D400
-        return self._crispness
-
     @property
-    def coarse_grained_transition_matrix(self) -> OArray:
-        r"""
-        Coarse grained transition matrix of shape `(m, m)`.
-
-        .. math:: P_c = (\chi^T D \chi)^{-1} (\chi^T D P \chi)
-
-        with :math:`D` being a diagonal matrix with `eta` on its diagonal.
-        """
-        return self._P_coarse
-
-    @property
-    def coarse_grained_stationary_probability(self) -> OArray:
-        r"""
-        Coarse grained stationary distribution of shape `(m,)`.
-
-        .. math:: \pi_c = \chi^T \pi
-        """
-        return self._pi_coarse
-
-    @property
-    def coarse_grained_input_distribution(self) -> OArray:
-        r"""
-        Coarse grained input distribution of shape `(m,)`.
-
-        .. math:: \eta_c = \chi^T \eta
-        """
-        return self._eta_coarse
-
-    @property
-    def metastable_assignment(self) -> OArray:
-        """
-        Crisp clustering using G-PCCA.
-
-        This is recommended only for visualization purposes.
-        You *cannot* compute any actual quantity of the coarse-grained
-        kinetics without employing the fuzzy memberships!
-
-        Returns
-        -------
-        Integer vector of shape `(n,)` containing the metastable state
-        each microstate is located in.
-        """
-        return None if self.memberships is None else np.argmax(self.memberships, axis=1)
-
-    @property
-    def metastable_sets(self) -> Optional[List[np.ndarray]]:
-        """
-        Crisp clustering using G-PCCA.
-
-        This is recommended only for visualization purposes.
-        You *cannot* compute any actual quantity of the coarse-grained
-        kinetics without employing the fuzzy memberships!
-
-        Returns
-        -------
-        A list of length equal to :attr:`n_metastable`.
-
-        Each element is an array with microstate indexes contained in it.
-        """
-        return (
-            None
-            if self.metastable_assignment is None or self.n_metastable is None
-            else [np.where(self.metastable_assignment == i)[0] for i in range(self.n_metastable)]
-        )
+    def transition_matrix(self) -> Union[np.ndarray, spmatrix]:
+        """Row-stochastic transition matrix `P`."""
+        return self._P
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}[n={self.transition_matrix.shape[0]}, n_metastable={self.n_metastable}]"
+        return f"{self.__class__.__name__}[n={self.transition_matrix.shape[0]}, n_macrostates={self.n_m}]"
 
     def __str__(self) -> str:
         return repr(self)
