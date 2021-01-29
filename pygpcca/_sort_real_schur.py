@@ -85,7 +85,9 @@ def sort_real_schur(
         - ap : A list `ap` warns for inaccuracy of the solution, if an entry of `ap` exceeds one.
     """  # noqa: D401
     pprint(Q)
+    print(Q.dtype)
     pprint(R)
+    print(R.dtype)
 
     eps = np.finfo(R.dtype).eps
     if not np.all(np.abs(np.tril(R, -2)) <= 100 * eps):
