@@ -99,7 +99,7 @@ def sort_real_schur(
         i for i in range(R.shape[0] + 1) if i not in r + 1
     ]  # construct from them a vector s with the-top left positions of each block
 
-    p = np.empty((len(s) - 1,), dtype=np.complex128)
+    p = np.empty((len(s) - 1,), dtype=np.complex64)
 
     for k in range(1, len(s) - 1):  # debug
         assert R[s[k], s[k] - 1] <= 100 * eps  # debug
@@ -114,9 +114,9 @@ def sort_real_schur(
             p[k] = R[s[k], s[k]]  # if the block is 1x1, only store the eigenvalue
 
     ap = []
-    print("p:", p)
     sl = swaplist(p, s, z, b)  # For k ranging over all neighbor-swaps
-    print("swaplist:", sl)
+    pprint(p)
+    pprint(swaplist)
 
     for k in sl:
         assert k + 2 < len(s)  # debug
