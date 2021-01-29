@@ -7,7 +7,7 @@ try:
 except ImportError:
     __author__ = __maintainer__ = "Bernhard Reuter"
     __version__ = "0.0.0"
-    __email__ = "bernhard.reuter AT uni-tuebingen DOT de"
+    __email__ = "bernhard-reuter@gmx.de"
 
 setup(
     name="pygpcca",
