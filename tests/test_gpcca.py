@@ -166,6 +166,8 @@ class TestGPCCAMatlabUnit:
         N = 9
         P, sd = get_known_input(example_matrix_mu)
         X, RR, _ = _do_schur(P, eta=sd, m=N)
+        if int(example_matrix_mu[2, 4]) == 0:
+            raise RuntimeError("Testing.")
 
         _assert_schur(P, X, RR, N)
 
@@ -456,9 +458,10 @@ class TestGPCCAMatlabUnit:
         ks = np.arange(kmin, kmax)
 
         for mu_ in [0, 10, 50, 100, 200, 500, 1000]:
-            mu_ = mu(mu_)
-            P, sd = get_known_input(mu_)
+            P, sd = get_known_input(mu(mu_))
             X, _, _ = _do_schur(P, eta=sd, m=kmax)
+            if mu_ == 0:
+                raise RuntimeError("Testing.")
 
             crisp = [-np.inf] * (kmax - kmin)
             for j, k in enumerate(range(kmin, kmax)):
@@ -515,6 +518,8 @@ class TestGPCCAMatlabUnit:
             P, sd = get_known_input(mu(mu_))
             g = GPCCA(P, eta=sd)
             minChi = g.minChi(kmin, kmax)
+            if mu_ == 0:
+                raise RuntimeError("Testing.")
 
             kopt.append(kmax - 1 - np.argmax(np.flipud(minChi[1:-1])))
 
