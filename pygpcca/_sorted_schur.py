@@ -9,27 +9,25 @@
 # Further parts of sorted_krylov_schur were developed based on the function krylov_schur
 # https://github.com/zib-cmd/cmdtools/blob/1c6b6d8e1c35bb487fcf247c5c1c622b4b665b0a/src/cmdtools/analysis/pcca.py#L64,
 # written by Alexander Sikorski.
-# --------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------
 # If you use this code or parts of it, cite the following reference:
-# ------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------
 # Reuter, B., Weber, M., Fackeldey, K., Röblitz, S., & Garcia, M. E. (2018).
 # Generalized Markov State Modeling Method for Nonequilibrium Biomolecular Dynamics:
 # Exemplified on Amyloid β Conformational Dynamics Driven by an Oscillating Electric Field.
 # Journal of Chemical Theory and Computation, 14(7), 3579–3594. https://doi.org/10.1021/acs.jctc.8b00079
-# ----------------------------------------------------------------
-# pyGPCCA is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# --------------------------------------------------------------------------------------------------------------------
+# pyGPCCA is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser
+# General Public License as published by the Free Software Foundation, either version 3 of the License,
+# or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU Lesser General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+# You should have received a copy of the GNU Lesser General Public License along with this program.
+# If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------------------------------------------------------
 from typing import Tuple, Union
 import sys
 

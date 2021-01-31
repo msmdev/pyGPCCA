@@ -1,31 +1,30 @@
-# Python version (translated by Fabian Paul and revised by Bernhard Reuter)
-# of the following original work:
+# Python version (translated by Fabian Paul; revised by Bernhard Reuter, Michal Klein) of the following original work:
+# --------------------------------------------------------------------------------------------------------------------
 # Title:	Sorting Real Schur Forms
 # Author:	Jan Brandts
 # E-Mail:	brandts-AT-science.uva.nl
 # http://m2matlabdb.ma.tum.de/download.jsp?MC_ID=3&MP_ID=119
 # http://dx.doi.org/10.1002/nla.274
 # Institution:	University of Amsterdam
-# Description:	In Matlab 6, there exists a command to generate a real Schur
-# form, wheras another transforms a real Schur form into a complex one.
-# There do not exist commands to prescribe the order in which the eigenvalues
-# appear on the diagonal of the upper (quasi-) triangular factor T.
-# For the complex case, a routine is sketched in Golub and Van Loan (1996),
+# Description:	In Matlab 6, there exists a command to generate a real Schur form,
+# wheras another transforms a real Schur form into a complex one.
+# There do not exist commands to prescribe the order in which the eigenvalues appear on the diagonal of the upper
+# (quasi-) triangular factor T. For the complex case, a routine is sketched in Golub and Van Loan (1996),
 # that orders the diagonal of T according to their distance to a target value.
-# In the reference below, we give a Matlab routine to sort real Schur forms
-# in Matlab. It is based on a block-swapping procedure by Bai and Demmel (1993).
-# Sorting real Schur forms, both partially and completely, has important
-# applications in the computation of real invariant subspaces.
+# In the reference below, we give a Matlab routine to sort real Schur forms in Matlab.
+# It is based on a block-swapping procedure by Bai and Demmel (1993).
+# Sorting real Schur forms, both partially and completely,
+# has important applications in the computation of real invariant subspaces.
 # Reference:    J.H. Brandts. Matlab code for sorted real Schur forms.
 # Numerical Linear Algebra with Applications 9(3):249-261 (2002)
 # Keywords:	    Real Schur Form, sorting, Bai-Demmel algorithm, swapping
 # Based on the original Matlab File Version: 1.0
-# -------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------
 # All references to equations or pages made in the comments are referencing
 # Jan Brandts. Matlab Code for Sorted Real Schur Forms. Preprint No. 1180,
 # January, 2001, Universiteit Utrecht,
 # https://www.math.uu.nl/publications/preprints/1180.pdf
-# -------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------
 
 from typing import List, Tuple, Union
 

@@ -4,28 +4,35 @@
 # With contributions of Marius Lange and Michal Klein.
 # Based on the original MATLAB GPCCA code authored by Bernhard Reuter, Susanna Roeblitz and Marcus Weber,
 # Zuse Institute Berlin, Takustrasse 7, 14195 Berlin
-# --------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+# The development of pyGPCCA started at the beginning of 2020 in a fork of MSMTools
+# (Copyright (c) 2015, 2014 Computational Molecular Biology Group, Freie Universitaet Berlin (GER);
+# provided under LGPL-3.0 License), since at this time it was planned to integrate GPCCA into it.
+# Due to this, some similarities in structure/AST and code (indicated were evident) between pcca.py
+# https://github.com/markovmodel/msmtools/blob/93126608c6fa9c3197f4fae2f6da93140762b047/msmtools/analysis/dense/pcca.py
+# and _gpcca.py can be found.
+# ---------------------------------------------------------------------------------------------------------------------
 # If you use this code or parts of it, cite the following reference:
-# ------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 # Reuter, B., Weber, M., Fackeldey, K., Röblitz, S., & Garcia, M. E. (2018).
 # Generalized Markov State Modeling Method for Nonequilibrium Biomolecular Dynamics:
 # Exemplified on Amyloid β Conformational Dynamics Driven by an Oscillating Electric Field.
 # Journal of Chemical Theory and Computation, 14(7), 3579–3594. https://doi.org/10.1021/acs.jctc.8b00079
-# ----------------------------------------------------------------
-# pyGPCCA is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# ---------------------------------------------------------------------------------------------------------------------
+# pyGPCCA is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser
+# General Public License as published by the Free Software Foundation, either version 3 of the License,
+# or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU Lesser General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU Lesser General Public License along with this program.
+# If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------------------------------------------------
+
 __author__ = __maintainer__ = "Bernhard Reuter"
-__email__ = "bernhard.reuter AT uni-tuebingen DOT de"
+__email__ = "bernhard-reuter@gmx.de"
 __copyright__ = "Copyright 2020, Bernhard Reuter"
 __credits__ = [
     "Bernhard Reuter",
@@ -957,6 +964,9 @@ class GPCCA:
         if min(m_list) in [0, 1]:
             raise ValueError(f"There is no point in clustering into `{m}` clusters.")
 
+        # The following code enclosed by >>>... ...<<< originates (with some adjustments) from MSMTools
+        # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Freie Universitaet Berlin (GER).
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # test connectivity
         components = connected_sets(self._P)
         n_components = len(components)
@@ -970,6 +980,7 @@ class GPCCA:
             if np.sum(self._P[component, :][:, rest]) == 0:
                 closed_components.append(component)
         n_closed_components = len(closed_components)
+        # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
         # Calculate Schur matrix R and Schur vector matrix X, if not adequately given.
         self._do_schur_helper(max(m_list))
@@ -1138,6 +1149,12 @@ class GPCCA:
         -------
         Integer vector of shape `(n,)` containing the macrostate
         each microstate is located in.
+
+        Credits
+        -------
+        The code and docstring of this property origins (with some adjustments) from MSMTools
+        Copyright (c) 2015, 2014 Computational Molecular Biology Group
+        Freie Universitaet Berlin (GER)
         """
         return None if self.memberships is None else np.argmax(self.memberships, axis=1)
 
@@ -1155,6 +1172,12 @@ class GPCCA:
         A list of length equal to :attr:`n_m`.
 
         Each element is an array with microstate indexes contained in it.
+
+        Credits
+        -------
+        The code and docstring of this property origins (with some adjustments) from MSMTools
+        Copyright (c) 2015, 2014 Computational Molecular Biology Group
+        Freie Universitaet Berlin (GER)
         """
         return (
             None
