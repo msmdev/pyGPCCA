@@ -9,8 +9,8 @@ effort to translate the original Sorting routine for real Schur forms `SRSchur`_
 into `Python code`_,
 M. Weber and `Alexander Sikorski`_ for pointing us to `SLEPc`_ for sorted partial Schur decompositions,
 and A. Sikorski for supplying us with an `code example`_ and guidance how to interface SLEPc in Python.
-The development of *pyGPCCA* started at the beginning of 2020 in a fork of `MSMTools`_,
-since at this time it was planned to integrate GPCCA into it.
+The development of *pyGPCCA* started - based on the original `GPCCA`_ program written in MATLAB - at the beginning of
+2020 in a fork of `MSMTools`_, since it was planned to integrate GPCCA into MSMTools at this time.
 Due to this, some similarities in structure and code (indicated were evident) can be found.
 Futher the utility functions found in `pygpcca/utils/_utils.py`_ originate from MSMTools.
 
@@ -24,5 +24,6 @@ Futher the utility functions found in `pygpcca/utils/_utils.py`_ originate from 
 .. _`Alexander Sikorski`: https://www.zib.de/members/sikorski
 .. _`SLEPc`: https://slepc.upv.es/
 .. _`code example`: https://github.com/zib-cmd/cmdtools/blob/1c6b6d8e1c35bb487fcf247c5c1c622b4b665b0a/src/cmdtools/analysis/pcca.py#L64
+.. _`GPCCA`: https://github.com/msmdev/gpcca
 .. _`MSMTools`: https://github.com/markovmodel/msmtools
 .. _`pygpcca/utils/_utils.py`: https://github.com/msmdev/pyGPCCA/blob/main/pygpcca/utils/_utils.py
