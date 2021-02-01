@@ -1152,9 +1152,9 @@ class GPCCA:
 
         Credits
         -------
-        The code and docstring of this property origins (with some adjustments) from MSMTools
-        Copyright (c) 2015, 2014 Computational Molecular Biology Group
-        Freie Universitaet Berlin (GER)
+        The code and docstring of this property origins (with some adjustments) from MSMTools,
+        Copyright (c) 2015, 2014 Computational Molecular Biology Group,
+        Freie Universitaet Berlin (GER).
         """
         return None if self.memberships is None else np.argmax(self.memberships, axis=1)
 
@@ -1175,9 +1175,9 @@ class GPCCA:
 
         Credits
         -------
-        The code and docstring of this property origins (with some adjustments) from MSMTools
-        Copyright (c) 2015, 2014 Computational Molecular Biology Group
-        Freie Universitaet Berlin (GER)
+        The code and docstring of this property origins (with some adjustments) from MSMTools,
+        Copyright (c) 2015, 2014 Computational Molecular Biology Group,
+        Freie Universitaet Berlin (GER).
         """
         return (
             None

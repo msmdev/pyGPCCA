@@ -69,9 +69,9 @@ def connected_sets(C: Union[np.ndarray, spmatrix], directed: bool = True) -> Lis
 
     Credits
     -------
-    The code and docstring of this function origins (with some adjustments) from MSMTools
-    Copyright (c) 2015, 2014 Computational Molecular Biology Group
-    Freie Universitaet Berlin (GER)
+    The code and docstring of this function origins (with some adjustments) from MSMTools,
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group,
+    Freie Universitaet Berlin (GER).
     """
     raise NotImplementedError(type(C))
 
@@ -140,9 +140,9 @@ def is_transition_matrix(T: Union[np.ndarray, spmatrix], tol: float = 1e-12) -> 
 
     Credits
     -------
-    The code and docstring of this function origins (with some adjustments) from MSMTools
-    Copyright (c) 2015, 2014 Computational Molecular Biology Group
-    Freie Universitaet Berlin (GER)
+    The code and docstring of this function origins (with some adjustments) from MSMTools,
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group,
+    Freie Universitaet Berlin (GER).
     """
     raise NotImplementedError(type(T))
 
@@ -198,9 +198,9 @@ def stationary_distribution(P: Union[np.ndarray, spmatrix]) -> np.ndarray:
 
     Credits
     -------
-    The code and docstring of this function origins (with some adjustments) from MSMTools
-    Copyright (c) 2015, 2014 Computational Molecular Biology Group
-    Freie Universitaet Berlin (GER)
+    The code and docstring of this function origins (with some adjustments) from MSMTools,
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group,
+    Freie Universitaet Berlin (GER).
     """
     raise NotImplementedError(type(P))
 
@@ -270,9 +270,9 @@ def backward_iteration(A: np.ndarray, mu: float, x0: np.ndarray, tol: float = 1e
 
     Credits
     -------
-    The code and docstring of this function origins (with some adjustments) from MSMTools
-    Copyright (c) 2015, 2014 Computational Molecular Biology Group
-    Freie Universitaet Berlin (GER)
+    The code and docstring of this function origins (with some adjustments) from MSMTools,
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group,
+    Freie Universitaet Berlin (GER).
     """
     T = A - mu * np.eye(A.shape[0])
     # LU-factor of T
@@ -310,9 +310,9 @@ def stationary_distribution_from_backward_iteration(P: np.ndarray, eps: float = 
 
     Credits
     -------
-    The code and docstring of this function origins (with some adjustments) from MSMTools
-    Copyright (c) 2015, 2014 Computational Molecular Biology Group
-    Freie Universitaet Berlin (GER)
+    The code and docstring of this function origins (with some adjustments) from MSMTools,
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group,
+    Freie Universitaet Berlin (GER).
     """
     A = np.transpose(P)
     mu = 1.0 - eps
@@ -340,9 +340,9 @@ def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
 
     Credits
     -------
-    The code and docstring of this function origins (with some adjustments) from MSMTools
-    Copyright (c) 2015, 2014 Computational Molecular Biology Group
-    Freie Universitaet Berlin (GER)
+    The code and docstring of this function origins (with some adjustments) from MSMTools,
+    Copyright (c) 2015, 2014 Computational Molecular Biology Group,
+    Freie Universitaet Berlin (GER).
     """
     val, L = eig(P, left=True, right=False)
 
