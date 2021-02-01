@@ -19,7 +19,7 @@ setup(
     maintainer=__maintainer__,
     maintainer_email=__email__,
     description=Path("README.rst").read_text("utf-8").splitlines()[34],
-    long_description="\n".join(Path("README.rst").read_text("utf-8").splitlines()[:-4]).replace("|br|", r"\\"),
+    long_description="\n".join(Path("README.rst").read_text("utf-8").splitlines()[:-4]).replace("|br|", "\n"),
     long_description_content_type="text/x-rst; charset=UTF-8",
     url="https://github.com/msmdev/pygpcca",
     download_url="https://pypi.org/project/pygpcca/",
