@@ -64,7 +64,7 @@ Conda
     conda install -c conda-forge pygpcca
 
 This is the recommended way of installing, since this package also includes `PETSc`_/`SLEPc`_ libraries.
-We use `PETSc`_/`SLEPc`_ internally to speed up the computation of leading Schur vectors (both are optional)
+We use `PETSc`_/`SLEPc`_ internally to speed up the computation of leading Schur vectors (both are optional).
 
 .. _`PETSc`: https://www.mcs.anl.gov/petsc/
 
@@ -79,6 +79,16 @@ In order to install *pyGPCCA* from `The Python Package Index <https://pypi.org/p
 Example
 -------
 Please refer to our `example usage <https://pygpcca.readthedocs.io/en/latest/example.html>`_ in the documentation.
+
+Key Contributors
+----------------
+* `Bernhard Reuter`_: lead developer, maintainer.
+* `Michal Klein`_: developer, diverse contributions.
+* `Marius Lange`_: developer, diverse contributions.
+
+.. _Bernhard Reuter: https://github.com/msmdev
+.. _Michal Klein: https://github.com/michalk8
+.. _Marius Lange: https://github.com/Marius1311
 
 Acknowledgements
 ----------------
