@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import List, Union
+from typing import List, Tuple, Union
 from functools import singledispatch
 
 from scipy.linalg import eig, lu_solve, lu_factor
@@ -220,10 +220,54 @@ def _sdd(P: np.ndarray) -> np.ndarray:
     return mu
 
 
+def _eigs_slepc(P: spmatrix, k: int, which: "str" = "LR", tol: float = EPS) -> Tuple[np.ndarray, np.ndarray]:
+    from petsc4py import PETSc
+    from slepc4py import SLEPc
+
+    M = PETSc.Mat().create()
+    if not isspmatrix_csr(P):
+        P = csr_matrix(P)
+    M.createAIJ(size=P.shape, csr=(P.indptr, P.indices, P.data))
+
+    E = SLEPc.EPS()
+    E.create()
+    E.setOperators(M)
+    E.setDimensions(k)
+    E.setTolerances(tol=tol)
+    if which == "LR":
+        E.setWhichEigenpairs(E.Which.LARGEST_REAL)
+    elif which == "LM":
+        E.setWhichEigenpairs(E.Which.LARGEST_MAGNITUDE)
+    else:
+        raise NotImplementedError(f"`which={which}` is not implemented.")
+    E.solve()
+
+    nconv = E.getConverged()
+    if nconv < k:
+        raise ValueError(f"Requested `{k}` eigenvalues/vectors, but only `{nconv}` converged.")
+
+    xr, _ = M.getVecs()
+    xi, _ = M.getVecs()
+
+    eigenvalues, eigenvectors = [], []
+    for i in range(nconv):
+        # Get the i-th eigenvalue as computed by solve().
+        eigenvalues.append(E.getEigenpair(i, xr, xi))
+        if eigenvalues[-1].imag != 0.0:
+            eigenvectors.append([complex(r, i) for r, i in zip(xr.getArray(), xi.getArray())])
+        else:
+            eigenvectors.append(list(xr.getArray()))
+
+    return np.asarray(eigenvalues)[:k], np.asarray(eigenvectors)[:k]
+
+
 @stationary_distribution.register(spmatrix)
 def _sds(P: spmatrix) -> np.ndarray:
     # get the top two eigenvalues and vecs so we can check for irreducibility
-    vals, vecs = eigs(P.transpose(), k=2, which="LR", ncv=None)
+    try:
+        vals, vecs = _eigs_slepc(P.T, k=2, which="LR")
+    except ImportError:
+        vals, vecs = eigs(P.T, k=2, which="LR", ncv=None)
 
     # check for irreducibility
     if np.allclose(vals, 1, rtol=1e2 * EPS, atol=1e2 * EPS):
