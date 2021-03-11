@@ -1040,9 +1040,9 @@ class GPCCA:
                     f"Clustering {n} data points into {max(m_list)} clusters is always perfectly crisp. "
                     f"Thus m={max(m_list)} won't be included in the search for the optimal cluster number."
                 )
-                opt_idx = np.argmax(crispness_list[:-1])
+                opt_idx = int(np.argmax(crispness_list[:-1]))
             else:
-                opt_idx = np.argmax(crispness_list)
+                opt_idx = int(np.argmax(crispness_list))
         else:
             raise ValueError("Clustering wasn't successful. Try different cluster numbers.")
         self._m_opt = min(m_list) + opt_idx
@@ -1156,7 +1156,7 @@ class GPCCA:
         Copyright (c) 2015, 2014 Computational Molecular Biology Group,
         Freie Universitaet Berlin (GER).
         """
-        return None if self.memberships is None else np.argmax(self.memberships, axis=1)
+        return None if self.memberships is None else np.argmax(self.memberships, axis=1)  # type: ignore[return-value]
 
     @property
     def macrostate_sets(self) -> Optional[List[np.ndarray]]:

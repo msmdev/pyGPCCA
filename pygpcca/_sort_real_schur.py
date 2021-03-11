@@ -103,7 +103,8 @@ def sort_real_schur(
         sk = s[k]
         if s[k + 1] - sk == 2:  # if the block is 2x2
             Q, R = normalize(Q, R, slice(sk, s[k + 1]), inplace=True)  # normalize it
-            p[k] = R[sk, sk] + np.lib.scimath.sqrt(R[sk + 1, sk] * R[sk, sk + 1])  # store the eigenvalues
+            # store the eigenvalues
+            p[k] = R[sk, sk] + np.lib.scimath.sqrt(R[sk + 1, sk] * R[sk, sk + 1])  # type: ignore[attr-defined]
         else:  # (the one with the positive imaginary part is sufficient)
             assert s[k + 1] - sk == 1  # debug
             p[k] = R[s[k], s[k]]  # if the block is 1x1, only store the eigenvalue
@@ -259,7 +260,7 @@ def rot(X: np.ndarray) -> np.ndarray:
         tau = (X[0, 1] + X[1, 0]) / (X[0, 0] - X[1, 1])
         off = (tau ** 2 + 1) ** 0.5
         v = [tau - off, tau + off]
-        w = np.argmin(np.abs(v))
+        w = int(np.argmin(np.abs(v)))
         c = 1.0 / (1.0 + v[w] ** 2) ** 0.5  # ... the cosine and sine as given in Section 2.3.1
         s = v[w] * c
 
@@ -380,10 +381,10 @@ def select(p: Union[List[str], np.ndarray], z: str) -> Tuple[float, int]:
     Block that is next in the ordering.
     """
     if z == "LM":
-        pos = np.argmax(np.abs(p))
+        pos = int(np.argmax(np.abs(p)))
         return np.abs(p[pos]), pos
     elif z == "LR":
-        pos = np.argmax(np.real(p))
+        pos = int(np.argmax(np.real(p)))
         return np.real(p[pos]), pos
     else:
         raise NotImplementedError(z)

@@ -70,14 +70,14 @@ def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[np.ndarray, spmatrix]) 
     Returns
     -------
     Nothing, just initializes `M`. If `P` is an :class:`numpy.ndarray`,
-    `M` will also be dense. If `P` is a :class:`scipy.sparse.spmatrx`,
+    `M` will also be dense. If `P` is a :class:`scipy.sparse.spmatrix`,
     `M` will become a CSR matrix regardless of `P`'s sparse format.
     """
     if issparse(P):
         if not isspmatrix_csr(P):
             warnings.warn("Only CSR sparse matrices are supported, converting.")
             P = csr_matrix(P)
-        M.createAIJ(size=P.shape, csr=(P.indptr, P.indices, P.data))
+        M.createAIJ(size=P.shape, csr=(P.indptr, P.indices, P.data))  # type: ignore[union-attr]
     else:
         M.createDense(list(np.shape(P)), array=P)
 
@@ -283,10 +283,10 @@ def sorted_krylov_schur(
         eigenvalues_error.append(eigenval_error)
 
     # convert lists with eigenvalues and errors to arrays (while keeping excess eigenvalues and errors)
-    eigenvalues = np.asarray(eigenvalues)
-    eigenvalues_error = np.asarray(eigenvalues_error)
+    eigenvalues = np.asarray(eigenvalues)  # type: ignore[assignment]
+    eigenvalues_error = np.asarray(eigenvalues_error)  # type: ignore[assignment]
 
-    return R, Q, eigenvalues, eigenvalues_error
+    return R, Q, eigenvalues, eigenvalues_error  # type: ignore[return-value]
 
 
 @d.dedent
