@@ -1251,7 +1251,7 @@ class GPCCA:
         """
         try:
             return stationary_distribution(self._P)
-        except ValueError as e:
+        except Exception as e:  # noqa: B902
             warnings.warn(f"Stationary distribution couldn't be calculated. Reason: {e}.")
         return None
 
