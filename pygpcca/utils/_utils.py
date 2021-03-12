@@ -250,7 +250,7 @@ def _eigs_slepc(P: spmatrix, k: int, which: "str" = "LR", tol: float = EPS) -> T
     xi, _ = M.getVecs()
 
     eigenvalues, eigenvectors = [], []
-    for i in range(nconv):
+    for i in range(k):
         # Get the i-th eigenvalue as computed by solve().
         eigenvalues.append(E.getEigenpair(i, xr, xi))
         if eigenvalues[-1].imag != 0.0:
@@ -258,7 +258,7 @@ def _eigs_slepc(P: spmatrix, k: int, which: "str" = "LR", tol: float = EPS) -> T
         else:
             eigenvectors.append(list(xr.getArray()))
 
-    return np.asarray(eigenvalues)[:k], np.asarray(eigenvectors)[:k]
+    return np.asarray(eigenvalues), np.asarray(eigenvectors).T
 
 
 @stationary_distribution.register(spmatrix)
