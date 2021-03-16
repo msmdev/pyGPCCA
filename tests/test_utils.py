@@ -1,3 +1,4 @@
+from scipy.sparse import csr_matrix
 import numpy as np
 
 from tests.conftest import assert_allclose, skip_if_no_petsc_slepc
@@ -16,10 +17,13 @@ class TestEigendecompositionSLEPSc:
         test_matrix_2_eigenvectors: np.ndarray,
     ):
 
-        eigs_1, vecs_1 = _eigs_slepc(test_matrix_1, k=11)
-        assert_allclose(test_matrix_1_eigenvalues, eigs_1)
+        eigs_1, vecs_1 = _eigs_slepc(csr_matrix(test_matrix_1), k=11)
+        assert_allclose(
+            test_matrix_1_eigenvalues,
+            eigs_1,
+        )
         assert_allclose(test_matrix_1_eigenvectors, vecs_1)
 
-        eigs_2, vecs_2 = _eigs_slepc(test_matrix_2, k=13)
+        eigs_2, vecs_2 = _eigs_slepc(csr_matrix(test_matrix_2), k=13)
         assert_allclose(test_matrix_2_eigenvalues, eigs_2)
         assert_allclose(test_matrix_2_eigenvectors, vecs_2)

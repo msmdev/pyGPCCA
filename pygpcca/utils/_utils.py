@@ -33,6 +33,7 @@ __all__ = [
     "connected_sets",
     "is_transition_matrix",
     "stationary_distribution",
+    "is_stationary_distribution",
 ]
 
 
@@ -217,6 +218,9 @@ def _sdd(P: np.ndarray) -> np.ndarray:
             mu = np.maximum(mu, 0.0)
             mu /= mu.sum()
 
+    # check whether this really is a stationary distribution
+    is_stationary_distribution(P, mu)
+
     return mu
 
 
@@ -288,9 +292,13 @@ def _sds(P: spmatrix) -> np.ndarray:
     if not (top_vec > -1e4 * EPS).all() and not (top_vec < 1e4 * EPS).all():
         raise ValueError("Top eigenvector has both positive and negative entries.")
     top_vec = np.abs(top_vec)
+    pi = top_vec / np.sum(top_vec)
+
+    # check whether this really is a stationary distribution
+    is_stationary_distribution(P, pi)
 
     # normalize to 1 and return
-    return top_vec / np.sum(top_vec)
+    return pi
 
 
 def backward_iteration(A: np.ndarray, mu: float, x0: np.ndarray, tol: float = 1e-14, maxiter: int = 100) -> np.ndarray:
@@ -400,8 +408,62 @@ def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
     return nu / np.sum(nu)
 
 
-def _is_stationary_distribution(matrix: Union[spmatrix, np.ndarray], pi: Union[spmatrix, np.ndarray]) -> bool:
-    if isspmatrix_csr(matrix):
-        pass
+@singledispatch
+def is_stationary_distribution(T: Union[np.ndarray, spmatrix], pi: np.ndarray) -> bool:
+    """
+    Check if pi is a stationary distribution for T.
+
+    Does not include a check for uniqueness
+
+    Parameters
+    ----------
+    T
+        Transition matrix.
+    pi
+        Putative stationary distribution
+
+    Returns
+    -------
+    True, if ``pi`` is a valid stationary distribution for ``T``, False otherwise
+
+    Notes
+    -----
+    A valid stationary distribution has only non-negative elements, sums to one and is invariant under T.
+    """
+    raise NotImplementedError(type(T))
+
+
+@is_stationary_distribution.register(np.ndarray)
+def _isdd(T: np.ndarray, pi: np.ndarray) -> bool:
+
+    # check for invariance
+    if not np.allclose(T.T.dot(pi), pi, rtol=1e4 * EPS, atol=1e4 * EPS):
+        raise ValueError("Stationary distribution is not invariant under the transition matrix. ")
+
+    # check for positivity
+    if not (pi > -1e4 * EPS).all():
+        raise ValueError("Stationary distribution has negative elements. ")
+
+    # check whether it sums to one
+    if not np.allclose(pi.sum(), 1, rtol=1e4 * EPS, atol=1e4 * EPS):
+        raise ValueError("Stationary distribution doe not sum to one. ")
+
+    return True
+
+
+@is_stationary_distribution.register(np.ndarray)
+def _isds(T: np.ndarray, pi: np.ndarray) -> bool:
+
+    # check for invariance
+    if not np.allclose(T.T.dot(pi), pi, rtol=1e4 * EPS, atol=1e4 * EPS):
+        raise ValueError("Stationary distribution is not invariant under the transition matrix. ")
+
+    # check for positivity
+    if not (pi > -1e4 * EPS).all():
+        raise ValueError("Stationary distribution has negative elements. ")
+
+    # check whether it sums to one
+    if not np.allclose(pi.sum(), 1, rtol=1e4 * EPS, atol=1e4 * EPS):
+        raise ValueError("Stationary distribution doe not sum to one. ")
 
     return True
