@@ -130,6 +130,7 @@ dmypy.json
 
 # Editors
 .idea
+*.DS_Store
 
 # docs
 docs/source/api/*rst

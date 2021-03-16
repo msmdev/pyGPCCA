@@ -70,7 +70,10 @@ class TestStationaryDistribution:
         test_matrix_3: np.ndarray,
     ):
         # For the first two matrices, the stationary distribution exists and is unique
-        assert_allclose(test_matrix_1_stationary_distribution, stationary_distribution(test_matrix_1))
+        assert_allclose(
+            test_matrix_1_stationary_distribution,
+            stationary_distribution(test_matrix_1),
+        )
         assert_allclose(test_matrix_2_stationary_distribution, stationary_distribution(test_matrix_2))
 
         # For the third matrix, the stationary distribution is not uniquely defined
