@@ -410,7 +410,7 @@ def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
 def _is_stationary_distribution(T: Union[np.ndarray, spmatrix], pi: np.ndarray) -> bool:
 
     # check the shapes
-    if not T.shape[0] == T.shape[1] or T.shape[0] == pi.shape[0]:
+    if not T.shape[0] == T.shape[1] or not T.shape[0] == pi.shape[0]:
         raise ValueError("Shape mismatch.")
 
     # check for invariance
