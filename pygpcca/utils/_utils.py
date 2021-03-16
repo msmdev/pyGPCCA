@@ -398,3 +398,10 @@ def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
     nu = np.abs(L[:, 0])
 
     return nu / np.sum(nu)
+
+
+def _is_stationary_distribution(matrix: Union[spmatrix, np.ndarray], pi: Union[spmatrix, np.ndarray]) -> bool:
+    if isspmatrix_csr(matrix):
+        pass
+
+    return True
