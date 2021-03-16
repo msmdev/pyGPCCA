@@ -77,5 +77,8 @@ class TestStationaryDistribution:
         assert_allclose(test_matrix_2_stationary_distribution, stationary_distribution(test_matrix_2))
 
         # For the third matrix, the stationary distribution is not uniquely defined
+        # Note: we currently only check irreducibility for sparse matrices
+        if not issparse(test_matrix_3):
+            test_matrix_3 = csr_matrix(test_matrix_3)
         with pytest.raises(ValueError, match=r"This matrix is reducible."):
             stationary_distribution(test_matrix_3)
