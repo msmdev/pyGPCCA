@@ -3213,7 +3213,7 @@ def R_i(
 
 
 @pytest.fixture(scope="session")
-def test_matrix_1() -> np.ndarray:
+def test_matrix_1() -> Tuple[np.ndarray, np.ndarray]:
     """
     Parameters
     ----------
@@ -3225,9 +3225,12 @@ def test_matrix_1() -> np.ndarray:
         - connected
         - irreducible
         - not reversible
+    :class:`numpy.ndarray`
+        Stationary distribution.
     """
 
     # fmt: off
+    # define the transition matrix
     p = np.array([
         # 0.   1.   2.   3.   4.   5.   6.   7.   8.   9.   10.  11.
         [0.0, 0.8, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # 0
@@ -3248,11 +3251,29 @@ def test_matrix_1() -> np.ndarray:
     ])
     # fmt: on
 
-    return p
+    # define the stationary distribution
+    pi = np.array(
+        [
+            0.00356002197042,
+            0.00462802856155,
+            0.00439069376352,
+            0.01803744465013,
+            0.03463189372826,
+            0.03030290701223,
+            0.16883048192526,
+            0.1487316150294,
+            0.15275138840857,
+            0.15584352177716,
+            0.1372907215656,
+            0.14100128160791,
+        ]
+    )
+
+    return p, pi
 
 
 @pytest.fixture(scope="session")
-def test_matrix_2() -> np.ndarray:
+def test_matrix_2() -> Tuple[np.ndarray, np.ndarray]:
     """
     Parameters
     ----------
@@ -3264,8 +3285,12 @@ def test_matrix_2() -> np.ndarray:
         - connected
         - not irreducible (1 recurrent, 1 transient class)
         - not reversible
+    :class:`numpy.ndarray`
+        Stationary distribution.
     """
+
     # fmt: off
+    # define the transition matrix
     p = np.array([
         # 0.   1.   2.   3.   4.   5.   6.   7.   8.   9.   10.  11.  12.  13.
         [0.0, 0.8, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # 0
@@ -3289,7 +3314,10 @@ def test_matrix_2() -> np.ndarray:
     ])
     # fmt: on
 
-    return p
+    # define the stationary distribution
+    pi = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.42857142857143, 0.57142857142857])
+
+    return p, pi
 
 
 @pytest.fixture(scope="session")
@@ -3330,5 +3358,7 @@ def test_matrix_3() -> np.ndarray:
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.7],  # 13
     ])
     # fmt: on
+
+    # Note: no unique stationary distribution exists here, so we only return the matrix itself
 
     return p
