@@ -95,5 +95,8 @@ class TestStationaryDistribution:
         assert _is_stationary_distribution(test_matrix_1, test_matrix_1_stationary_distribution)
         assert _is_stationary_distribution(test_matrix_2, test_matrix_2_stationary_distribution)
 
-        with pytest.raises(ValueError, match="Stationary distribution is not invariant under the transition matrix."):
+        with pytest.raises(ValueError, match="Shape mismatch."):
             _is_stationary_distribution(test_matrix_1, test_matrix_2_stationary_distribution)
+
+        with pytest.raises(ValueError, match="Stationary distribution is not invariant under the transition matrix."):
+            _is_stationary_distribution(test_matrix_1, np.ones(test_matrix_1.shape[0]) / test_matrix_1.shape[0])
