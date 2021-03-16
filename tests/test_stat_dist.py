@@ -60,3 +60,13 @@ class TestStationaryDistribution:
 
         mu_actual = stationary_distribution(P)
         assert_allclose(P_mu, mu_actual)
+
+    def test_stat_dist_regression_test_matrides(
+        self,
+        test_matrix_1: np.ndarray,
+        test_matrix_1_stationary_distribution,
+        test_matrix_2: np.ndarray,
+        test_matrix_2_stationary_distribution,
+        test_matrix_3: np.ndarray,
+    ):
+        pass
