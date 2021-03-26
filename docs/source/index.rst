@@ -12,6 +12,7 @@
     api
     example
     acknowledgments
+    release_notes
     references
 
 .. |br| raw:: html
