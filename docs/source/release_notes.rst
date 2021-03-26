@@ -16,7 +16,7 @@ Version 1.0
 
 .. rubric:: Improvements
 
-- Use PETSc/SLEPc, if installed, to compute stationary distribution speed it up
+- Use PETSc/SLEPc, if installed, to speed up the computation of the stationary distribution
   `PR 22 <https://github.com/msmdev/pyGPCCA/pull/22>`_.
 
 1.0.1 :small:`2021-02-01`
