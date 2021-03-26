@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import List, Union
+from typing import List, Tuple, Union
 from functools import singledispatch
 
 from scipy.linalg import eig, lu_solve, lu_factor
@@ -217,13 +217,60 @@ def _sdd(P: np.ndarray) -> np.ndarray:
             mu = np.maximum(mu, 0.0)
             mu /= mu.sum()
 
+    # check whether this really is a stationary distribution
+    _is_stationary_distribution(P, mu)
+
     return mu
+
+
+def _eigs_slepc(P: spmatrix, k: int, which: "str" = "LR", tol: float = EPS) -> Tuple[np.ndarray, np.ndarray]:
+    from petsc4py import PETSc
+    from slepc4py import SLEPc
+
+    M = PETSc.Mat().create()
+    if not isspmatrix_csr(P):
+        P = csr_matrix(P)
+    M.createAIJ(size=P.shape, csr=(P.indptr, P.indices, P.data))
+
+    E = SLEPc.EPS()
+    E.create()
+    E.setOperators(M)
+    E.setDimensions(k)
+    E.setTolerances(tol=tol)
+    if which == "LR":
+        E.setWhichEigenpairs(E.Which.LARGEST_REAL)
+    elif which == "LM":
+        E.setWhichEigenpairs(E.Which.LARGEST_MAGNITUDE)
+    else:
+        raise NotImplementedError(f"`which={which}` is not implemented.")
+    E.solve()
+
+    nconv = E.getConverged()
+    if nconv < k:
+        raise ValueError(f"Requested `{k}` eigenvalues/vectors, but only `{nconv}` converged.")
+
+    xr, _ = M.getVecs()
+    xi, _ = M.getVecs()
+
+    eigenvalues, eigenvectors = [], []
+    for i in range(k):
+        # Get the i-th eigenvalue as computed by solve().
+        eigenvalues.append(E.getEigenpair(i, xr, xi))
+        if eigenvalues[-1].imag != 0.0:
+            eigenvectors.append([complex(r, i) for r, i in zip(xr.getArray(), xi.getArray())])
+        else:
+            eigenvectors.append(list(xr.getArray()))
+
+    return np.asarray(eigenvalues), np.asarray(eigenvectors).T
 
 
 @stationary_distribution.register(spmatrix)
 def _sds(P: spmatrix) -> np.ndarray:
     # get the top two eigenvalues and vecs so we can check for irreducibility
-    vals, vecs = eigs(P.transpose(), k=2, which="LR", ncv=None)
+    try:
+        vals, vecs = _eigs_slepc(P.T, k=2, which="LR")
+    except ImportError:
+        vals, vecs = eigs(P.T, k=2, which="LR", ncv=None)
 
     # check for irreducibility
     if np.allclose(vals, 1, rtol=1e2 * EPS, atol=1e2 * EPS):
@@ -244,9 +291,13 @@ def _sds(P: spmatrix) -> np.ndarray:
     if not (top_vec > -1e4 * EPS).all() and not (top_vec < 1e4 * EPS).all():
         raise ValueError("Top eigenvector has both positive and negative entries.")
     top_vec = np.abs(top_vec)
+    pi = top_vec / np.sum(top_vec)
+
+    # check whether this really is a stationary distribution
+    _is_stationary_distribution(P, pi)
 
     # normalize to 1 and return
-    return top_vec / np.sum(top_vec)
+    return pi
 
 
 def backward_iteration(A: np.ndarray, mu: float, x0: np.ndarray, tol: float = 1e-14, maxiter: int = 100) -> np.ndarray:
@@ -354,3 +405,24 @@ def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
     nu = np.abs(L[:, 0])
 
     return nu / np.sum(nu)
+
+
+def _is_stationary_distribution(T: Union[np.ndarray, spmatrix], pi: np.ndarray) -> bool:
+
+    # check the shapes
+    if not T.shape[0] == T.shape[1] or not T.shape[0] == pi.shape[0]:
+        raise ValueError("Shape mismatch.")
+
+    # check for invariance
+    if not np.allclose(T.T.dot(pi), pi, rtol=1e4 * EPS, atol=1e4 * EPS):
+        raise ValueError("Stationary distribution is not invariant under the transition matrix.")
+
+    # check for positivity
+    if not (pi > -1e4 * EPS).all():
+        raise ValueError("Stationary distribution has negative elements.")
+
+    # check whether it sums to one
+    if not np.allclose(pi.sum(), 1, rtol=1e4 * EPS, atol=1e4 * EPS):
+        raise ValueError("Stationary distribution doe not sum to one.")
+
+    return True
