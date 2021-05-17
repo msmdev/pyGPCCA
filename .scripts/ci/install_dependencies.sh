@@ -7,7 +7,7 @@ function install_petsc_macos {
     tar -xzf "petsc-lite-$PC_VERSION.tar.gz"
     pushd "petsc-$PC_VERSION"
 
-    ./configure --with-cc=mpicc --with-fortran-bindings=0 --with-cxx=mpicxx --with-debugging=0 --with-mpi=1
+    ./configure --with-cc=mpicc --with-fc=0 --with-cxx=mpicxx --with-debugging=0 --with-mpi=1
     make all
     make check
     # make install  # only to move the files into the appropriate location
