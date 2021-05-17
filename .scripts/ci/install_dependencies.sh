@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
 
-# set -euo pipefail
+set -euo pipefail
 
 function install_petsc_macos {
     curl -O "https://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-$PC_VERSION.tar.gz"
     tar -xzf "petsc-lite-$PC_VERSION.tar.gz"
     pushd "petsc-$PC_VERSION"
 
-    ./configure --with-cc=mpicc --with-fc=gfortran --with-cxx=mpicxx --with-debugging=0 --with-mpi=1
-    echo "Exit code: $?"
-    cat configure.log
-
-    return
+    ./configure --with-cc=mpicc --with-fortran-bindings=0 --with-cxx=mpicxx --with-debugging=0 --with-mpi=1
     make all
     make check
     # make install  # only to move the files into the appropriate location
@@ -43,7 +39,6 @@ elif [[ "$RUNNER_OS" == "macOS" ]]; then
 
     brew install gcc open-mpi openblas lapack arpack
     install_petsc_macos
-    exit 42
     install_slepc_macos
 
     popd
