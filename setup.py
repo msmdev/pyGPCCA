@@ -35,11 +35,11 @@ setup(
     extras_require=dict(
         # https://gitlab.com/petsc/petsc/-/issues/803
         slepc=[
-            "mpi4py>=3.0.3,<3.1",
-            "petsc>=3.13,<3.14",
-            "slepc>=3.13,<3.14",
-            "petsc4py>=3.13,<3.14",
-            "slepc4py>=3.13,<3.14",
+            "mpi4py>=3.0.3",
+            "petsc>=3.13,!=3.14",
+            "slepc>=3.13,!=3.14",
+            "petsc4py>=3.13,!=3.14",
+            "slepc4py>=3.13,!=3.14",
         ],
         dev=["pre-commit>=2.9.0", "bump2version>=1.0.2"],
         test=["tox>=3.20.1"],

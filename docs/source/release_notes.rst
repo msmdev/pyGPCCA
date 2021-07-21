@@ -23,7 +23,7 @@ Version 1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 .. rubric:: General
 
-- Minor improvements/fixes in README and acknowledgements.
+- Minor improvements/fixes in README and acknowledgments.
 
 1.0.0 :small:`2021-01-29`
 ~~~~~~~~~~~~~~~~~~~~~~~~~

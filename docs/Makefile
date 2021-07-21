@@ -21,4 +21,4 @@ help:
 
 clean: Makefile
 	@$(SPHINXBUILD) -M clean "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	rm -rf source/api/
+	@rm -rf $(SOURCEDIR)/api/
