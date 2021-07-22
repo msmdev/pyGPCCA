@@ -46,20 +46,16 @@ jobs:
                 key: precommit-${{ env.pythonLocation }}-${{ hashFiles('.pre-commit-config.yaml') }}
                 restore-keys: |
                     precommit-${{ env.pythonLocation }}-
-                    precommit-
 
         -   name: Install dependencies
             run: |
+                sudo apt install pandoc
                 python -m pip install --upgrade pip
                 pip install tox
 
         -   name: Linting
             run: |
-                tox -e lint,readme
-        -   name: Documentation check
-            run: |
-                echo "Uncomment me below once the badges are working..."
-            # tox -e check-docs
+                tox -e lint,check-docs,readme
 
     test:
         needs: init
@@ -67,22 +63,23 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             fail-fast: false
-            max-parallel: 4
+            max-parallel: 5
             matrix:
-                python: [3.8]
+                python: [3.7, 3.9]
                 os: [ubuntu-latest]
-                use_slepc: [true]
+                use_slepc: [false]
                 include:
                 -   os: ubuntu-latest
-                    python: 3.7
-                    use_slepc: false
-                -   os: macos-latest
                     python: 3.8
-                    use_slepc: false
+                    use_slepc: true
                 -   os: macos-latest
                     python: 3.7
                     use_slepc: true
+                -   os: macos-latest
+                    python: 3.8
+                    use_slepc: false
         env:
+            # for macOS only, make sure to pin this in tox.ini as well
             PC_VERSION: 3.13.5  # PETSc version
             SC_VERSION: 3.13.2  # SLEPc version
 
@@ -122,7 +119,6 @@ jobs:
             run: |
                 python -m pip install --upgrade pip
                 pip install tox tox-gh-actions codecov
-
 
         -   name: Restore PETSc/SLEPc tox cache
             if: matrix.use_slepc == true

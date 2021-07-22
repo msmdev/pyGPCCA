@@ -81,7 +81,7 @@ napoleon_numpy_docstring = True
 napoleon_include_init_with_doc = False
 napoleon_use_rtype = True
 napoleon_use_param = True
-napoleon_custom_sections = [("Params", "Parameters")]
+napoleon_custom_sections = [("Params", "Parameters"), ("Credits", "References")]
 napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
@@ -112,6 +112,9 @@ spelling_add_pypi_package_names = True
 spelling_show_suggestions = True
 # see: https://pyenchant.github.io/pyenchant/api/enchant.tokenize.html
 spelling_filters = ["enchant.tokenize.URLFilter", "enchant.tokenize.EmailFilter"]
+
+# linkcheck
+linkcheck_anchors = False  # problem with specifying lines on GitHub in `acknowledgments.rst`
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

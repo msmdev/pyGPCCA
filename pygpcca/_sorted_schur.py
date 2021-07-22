@@ -111,7 +111,8 @@ def _check_conj_split(eigenvalues: np.ndarray) -> bool:
 
 @d.dedent
 def _check_schur(P: np.ndarray, Q: np.ndarray, R: np.ndarray, eigenvalues: np.ndarray, method: str) -> None:
-    """Run a number of checks on the sorted Schur decomposition.
+    """
+    Run a number of checks on the sorted Schur decomposition.
 
     Parameters
     ----------
@@ -259,6 +260,11 @@ def sorted_krylov_schur(
     # We take the sequence of 1-D arrays and stack them as columns to make a single 2-D array.
     Q = np.column_stack([x.array for x in E.getInvariantSubspace()])
 
+    try:
+        # otherwise, R would be of shape `(k + 1, k)`
+        E.getDS().setExtraRow(False)
+    except AttributeError:
+        pass
     # Get the schur form
     R = E.getDS().getMat(SLEPc.DS.MatType.A)
     R.view()

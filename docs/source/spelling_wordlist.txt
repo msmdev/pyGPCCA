@@ -25,3 +25,4 @@ Fackeldey
 Röblitz
 Sikorski
 Zuse
+mypy
