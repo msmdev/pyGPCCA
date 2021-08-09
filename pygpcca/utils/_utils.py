@@ -415,14 +415,19 @@ def _is_stationary_distribution(T: Union[np.ndarray, spmatrix], pi: np.ndarray) 
 
     # check for invariance
     if not np.allclose(T.T.dot(pi), pi, rtol=1e4 * EPS, atol=1e4 * EPS):
-        raise ValueError("Stationary distribution is not invariant under the transition matrix.")
+        dev = np.max(np.abs(T.T.dot(pi) - pi))
+        raise ValueError(
+            f"Stationary distribution is not invariant under the transition matrix. Maximal deviation = " f"{dev}"
+        )
 
     # check for positivity
     if not (pi > -1e4 * EPS).all():
-        raise ValueError("Stationary distribution has negative elements.")
+        dev = np.min(pi)
+        raise ValueError(f"Stationary distribution has negative elements. Minimal element = {dev}")
 
     # check whether it sums to one
     if not np.allclose(pi.sum(), 1, rtol=1e4 * EPS, atol=1e4 * EPS):
-        raise ValueError("Stationary distribution doe not sum to one.")
+        dev = np.abs(pi.sum() - 1)
+        raise ValueError(f"Stationary distribution doe not sum to one. Deviation = {dev}.")
 
     return True
