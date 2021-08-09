@@ -274,7 +274,8 @@ def _sds(P: spmatrix) -> np.ndarray:
 
     # check for irreducibility
     if np.allclose(vals, 1, rtol=1e2 * EPS, atol=1e2 * EPS):
-        raise ValueError("This matrix is reducible.")
+        second_largest = np.min(vals)
+        raise ValueError(f"This matrix is reducible. The second largest eigenvalue is {second_largest}.")
 
     # sort by real part and take the top one
     p = np.argsort(vals.real)[::-1]
@@ -289,7 +290,8 @@ def _sds(P: spmatrix) -> np.ndarray:
 
     # check the sign structure
     if not (top_vec > -1e4 * EPS).all() and not (top_vec < 1e4 * EPS).all():
-        raise ValueError("Top eigenvector has both positive and negative entries.")
+        el_min, el_max = np.min(top_vec), np.max(top_vec)
+        raise ValueError(f"Top eigenvector has both positive and negative entries. It has range = [{el_min}, {el_max}]")
     top_vec = np.abs(top_vec)
     pi = top_vec / np.sum(top_vec)
 
