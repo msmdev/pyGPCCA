@@ -161,7 +161,11 @@ def _gram_schmidt_mod(X: np.ndarray, eta: np.ndarray) -> np.ndarray:
         )
     # Raise, if the (Schur)vectors aren't orthogonal!
     if not np.allclose(Q.conj().T.dot(Q), np.eye(Q.shape[1]), atol=1e-8, rtol=1e-5):
-        raise ValueError("(Schur)vectors do not appear to be orthogonal.")
+        dev = np.max(np.abs(Q.conj().T.dot(Q) - np.eye(Q.shape[1])))
+        raise ValueError(
+            f"(Schur)vectors do not appear to be orthogonal. Largest absolute element-wise deviation in "
+            f"(Q^*TQ - I) is {dev}"
+        )
 
     return Q
 
@@ -229,11 +233,14 @@ def _do_schur(
     if eta.shape[0] != N1:
         raise ValueError("eta vector length doesn't match with the shape of P.")
     if not np.allclose(np.sum(P, 1), 1.0, rtol=1e-6, atol=1e-6):  # previously eps
+        dev = np.max(np.abs(np.sum(P, 1) - 1.0))
         raise ValueError(
-            "Not all rows of P sum up to one (within numerical precision). P must be a row-stochastic matrix."
+            f"Not all rows of P sum up to one. P must be a row-stochastic matrix Largest deviation from row-sums to 1 "
+            f"is {dev}."
         )
     if not np.all(eta > EPS):
-        raise ValueError("Not all elements of eta are > 0 (within numerical precision).")
+        smallest_eta = np.min(eta)
+        raise ValueError(f"Not all elements of eta are > 0. The smallest element is {smallest_eta}")
 
     # Weight the stochastic matrix P by the input (initial) distribution eta.
     if issparse(P):
@@ -279,12 +286,19 @@ def _do_schur(
         )
     # Raise, if the first column X[:,0] of the Schur vector matrix isn't constantly equal 1!
     if not np.allclose(X[:, 0], 1.0, atol=1e-8, rtol=1e-5):
-        raise ValueError("The first column X[:, 0] of the Schur vector matrix isn't constantly equal 1.")
+        dev = np.max(np.abs(X[:, 0] - 1.0))
+        raise ValueError(
+            f"The first column X[:, 0] of the Schur vector matrix isn't constantly equal 1. The largest "
+            f"deviation from one is {dev}."
+        )
 
     # Raise, if the (Schur)vectors aren't D-orthogonal (don't fullfill the orthogonality condition)!
     if not np.allclose(X.T.dot(X * eta[:, None]), np.eye(X.shape[1]), atol=1e-6, rtol=1e-5):
-        logging.error(X.T.dot(X * eta[:, None]))
-        raise ValueError("Schur vectors appear to not be D-orthogonal.")
+        dev = np.max(np.abs(X.T.dot(X * eta[:, None]) - np.eye(X.shape[1])))
+        raise ValueError(
+            f"Schur vectors appear to not be D-orthogonal. The largets deviation of X^T D X from the "
+            f"identity matrix is {dev}"
+        )
 
     # Raise, if X doesn't fullfill the invariant subspace condition!
     dp = np.dot(P, sp.csr_matrix(X) if issparse(P) else X)
@@ -372,8 +386,9 @@ def _indexsearch(X: np.ndarray) -> np.ndarray:
     diffs = np.abs(np.max(X, axis=0) - np.min(X, axis=0))
     if not np.isclose(1.0 + diffs[0], 1.0, rtol=1e-6):
         raise ValueError(
-            "First Schur vector is not constant 1. This indicates that the Schur vectors "
-            "are incorrectly sorted. Cannot search for a simplex structure in the data."
+            f"First Schur vector is not constant 1. This indicates that the Schur vectors "
+            f"are incorrectly sorted. Cannot search for a simplex structure in the data. The largest deviation from 1 "
+            f"is {diffs[0]}."
         )
     if not np.all(diffs[1:] > 1e-6):
         which = np.sum(diffs[1:] <= 1e-6)
@@ -516,12 +531,16 @@ def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.nda
     # Check for negative elements in chi and handle them.
     if np.any(chi < 0.0):
         if np.any(chi < -10 * EPS):
-            raise ValueError(f"Some elements of chi are significantly negative: < {-10 * EPS}.")
+            min_el = np.min(chi)
+            raise ValueError(f"Some elements of chi are significantly negative. The minimal element in chi is {min_el}")
         else:
             chi[chi < 0.0] = 0.0
             chi = np.true_divide(1.0, np.sum(chi, axis=1))[:, np.newaxis] * chi
             if not np.allclose(np.sum(chi, axis=1), 1.0, atol=1e-8, rtol=1e-5):
-                raise ValueError("The rows of chi don't sum up to 1.0 after rescaling.")
+                dev = np.max(np.abs(np.sum(chi, axis=1) - 1.0))
+                raise ValueError(
+                    f"The rows of chi don't sum up to 1.0 after rescaling. Maximum deviation from 1 is " f"{dev}"
+                )
 
     return rot_matrix, chi, fopt
 
