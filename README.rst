@@ -27,7 +27,7 @@
 .. |License| image:: https://img.shields.io/github/license/msmdev/pyGPCCA?color=green
     :target: https://github.com/msmdev/pyGPCCA/blob/main/LICENSE.txt
     :alt: License
-    
+
 .. |PyPIdownloads| image:: https://static.pepy.tech/personalized-badge/pygpcca?period=total&units=international_system&left_color=grey&right_color=blue&left_text=pypi%20downloads
     :target: https://pepy.tech/project/pygpcca
     :alt: PyPI - Downloads
