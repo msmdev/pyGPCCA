@@ -70,14 +70,14 @@ def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[np.ndarray, spmatrix]) 
     Returns
     -------
     Nothing, just initializes `M`. If `P` is an :class:`numpy.ndarray`,
-    `M` will also be dense. If `P` is a :class:`scipy.sparse.spmatrx`,
+    `M` will also be dense. If `P` is a :class:`scipy.sparse.spmatrix`,
     `M` will become a CSR matrix regardless of `P`'s sparse format.
     """
     if issparse(P):
         if not isspmatrix_csr(P):
             warnings.warn("Only CSR sparse matrices are supported, converting.")
             P = csr_matrix(P)
-        M.createAIJ(size=P.shape, csr=(P.indptr, P.indices, P.data))
+        M.createAIJ(size=P.shape, csr=(P.indptr, P.indices, P.data))  # type: ignore[union-attr]
     else:
         M.createDense(list(np.shape(P)), array=P)
 
@@ -111,7 +111,8 @@ def _check_conj_split(eigenvalues: np.ndarray) -> bool:
 
 @d.dedent
 def _check_schur(P: np.ndarray, Q: np.ndarray, R: np.ndarray, eigenvalues: np.ndarray, method: str) -> None:
-    """Run a number of checks on the sorted Schur decomposition.
+    """
+    Run a number of checks on the sorted Schur decomposition.
 
     Parameters
     ----------
@@ -259,6 +260,11 @@ def sorted_krylov_schur(
     # We take the sequence of 1-D arrays and stack them as columns to make a single 2-D array.
     Q = np.column_stack([x.array for x in E.getInvariantSubspace()])
 
+    try:
+        # otherwise, R would be of shape `(k + 1, k)`
+        E.getDS().setExtraRow(False)
+    except AttributeError:
+        pass
     # Get the schur form
     R = E.getDS().getMat(SLEPc.DS.MatType.A)
     R.view()
@@ -283,10 +289,10 @@ def sorted_krylov_schur(
         eigenvalues_error.append(eigenval_error)
 
     # convert lists with eigenvalues and errors to arrays (while keeping excess eigenvalues and errors)
-    eigenvalues = np.asarray(eigenvalues)
-    eigenvalues_error = np.asarray(eigenvalues_error)
+    eigenvalues = np.asarray(eigenvalues)  # type: ignore[assignment]
+    eigenvalues_error = np.asarray(eigenvalues_error)  # type: ignore[assignment]
 
-    return R, Q, eigenvalues, eigenvalues_error
+    return R, Q, eigenvalues, eigenvalues_error  # type: ignore[return-value]
 
 
 @d.dedent

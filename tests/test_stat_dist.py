@@ -8,6 +8,7 @@ import numpy as np
 from tests.conftest import bdc, assert_allclose
 from pygpcca.utils._utils import (
     stationary_distribution,
+    _is_stationary_distribution,
     stationary_distribution_from_eigenvector,
     stationary_distribution_from_backward_iteration,
 )
@@ -60,3 +61,42 @@ class TestStationaryDistribution:
 
         mu_actual = stationary_distribution(P)
         assert_allclose(P_mu, mu_actual)
+
+    def test_stat_dist_regression_test_matrices(
+        self,
+        test_matrix_1: np.ndarray,
+        test_matrix_1_stationary_distribution,
+        test_matrix_2: np.ndarray,
+        test_matrix_2_stationary_distribution,
+        test_matrix_3: np.ndarray,
+    ):
+        # For the first two matrices, the stationary distribution exists and is unique
+        assert_allclose(
+            test_matrix_1_stationary_distribution,
+            stationary_distribution(test_matrix_1),
+        )
+        assert_allclose(test_matrix_2_stationary_distribution, stationary_distribution(test_matrix_2))
+
+        # For the third matrix, the stationary distribution is not uniquely defined
+        # Note: we currently only check irreducibility for sparse matrices
+        if not issparse(test_matrix_3):
+            test_matrix_3 = csr_matrix(test_matrix_3)
+        with pytest.raises(ValueError, match=r"This matrix is reducible."):
+            stationary_distribution(test_matrix_3)
+
+    def test_stat_dist_check(
+        self,
+        test_matrix_1: np.ndarray,
+        test_matrix_1_stationary_distribution,
+        test_matrix_2: np.ndarray,
+        test_matrix_2_stationary_distribution,
+    ):
+
+        assert _is_stationary_distribution(test_matrix_1, test_matrix_1_stationary_distribution)
+        assert _is_stationary_distribution(test_matrix_2, test_matrix_2_stationary_distribution)
+
+        with pytest.raises(ValueError, match="Shape mismatch."):
+            _is_stationary_distribution(test_matrix_1, test_matrix_2_stationary_distribution)
+
+        with pytest.raises(ValueError, match="Stationary distribution is not invariant under the transition matrix."):
+            _is_stationary_distribution(test_matrix_1, np.ones(test_matrix_1.shape[0]) / test_matrix_1.shape[0])

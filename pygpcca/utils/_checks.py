@@ -15,7 +15,7 @@ def assert_array(
     uniform: Optional[bool] = None,
     ndim: Optional[int] = None,
     size: Optional[int] = None,
-    dtype: Optional[Union[type, np.dtype]] = None,
+    dtype: Optional[Union[type, np.dtype]] = None,  # type: ignore[type-arg]
     kind: Optional[str] = None,
 ) -> None:
     """
@@ -99,7 +99,7 @@ def ensure_ndarray_or_sparse(
     uniform: Optional[bool] = None,
     ndim: Optional[int] = None,
     size: Optional[int] = None,
-    dtype: Optional[Union[type, np.dtype]] = None,
+    dtype: Optional[Union[type, np.dtype]] = None,  # type: ignore[type-arg]
     kind: Optional[str] = None,
 ) -> Union[np.ndarray, spmatrix]:
     """
