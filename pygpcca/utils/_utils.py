@@ -274,7 +274,8 @@ def _sds(P: spmatrix) -> np.ndarray:
 
     # check for irreducibility
     if np.allclose(vals, 1, rtol=1e2 * EPS, atol=1e2 * EPS):
-        raise ValueError("This matrix is reducible.")
+        second_largest = np.min(vals)
+        raise ValueError(f"This matrix is reducible. The second largest eigenvalue is {second_largest}.")
 
     # sort by real part and take the top one
     p = np.argsort(vals.real)[::-1]
@@ -289,7 +290,8 @@ def _sds(P: spmatrix) -> np.ndarray:
 
     # check the sign structure
     if not (top_vec > -1e4 * EPS).all() and not (top_vec < 1e4 * EPS).all():
-        raise ValueError("Top eigenvector has both positive and negative entries.")
+        el_min, el_max = np.min(top_vec), np.max(top_vec)
+        raise ValueError(f"Top eigenvector has both positive and negative entries. It has range = [{el_min}, {el_max}]")
     top_vec = np.abs(top_vec)
     pi = top_vec / np.sum(top_vec)
 
@@ -415,14 +417,19 @@ def _is_stationary_distribution(T: Union[np.ndarray, spmatrix], pi: np.ndarray) 
 
     # check for invariance
     if not np.allclose(T.T.dot(pi), pi, rtol=1e4 * EPS, atol=1e4 * EPS):
-        raise ValueError("Stationary distribution is not invariant under the transition matrix.")
+        dev = np.max(np.abs(T.T.dot(pi) - pi))
+        raise ValueError(
+            f"Stationary distribution is not invariant under the transition matrix. Maximal deviation = " f"{dev}"
+        )
 
     # check for positivity
     if not (pi > -1e4 * EPS).all():
-        raise ValueError("Stationary distribution has negative elements.")
+        dev = np.min(pi)
+        raise ValueError(f"Stationary distribution has negative elements. Minimal element = {dev}")
 
     # check whether it sums to one
     if not np.allclose(pi.sum(), 1, rtol=1e4 * EPS, atol=1e4 * EPS):
-        raise ValueError("Stationary distribution doe not sum to one.")
+        dev = np.abs(pi.sum() - 1)
+        raise ValueError(f"Stationary distribution doe not sum to one. Deviation = {dev}.")
 
     return True
