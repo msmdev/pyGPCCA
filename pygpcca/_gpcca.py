@@ -132,7 +132,7 @@ def _gram_schmidt_mod(X: np.ndarray, eta: np.ndarray) -> np.ndarray:
     X[:, 0] = np.sqrt(eta)
     # Raise, if the subspace changed!
     dummy = subspace_angles(X, Xc)
-    if not np.allclose(dummy, 0.0, atol=1e-8, rtol=1e-5):
+    if not np.allclose(dummy, 0.0, atol=1e-7, rtol=1e-5):
         logging.error(Xc)
         logging.error(X)
         raise ValueError(
@@ -153,7 +153,7 @@ def _gram_schmidt_mod(X: np.ndarray, eta: np.ndarray) -> np.ndarray:
 
     # Raise, if the subspace changed!
     dummy = subspace_angles(Q, Xc)
-    if not np.allclose(dummy, 0.0, atol=1e-8, rtol=1e-5):
+    if not np.allclose(dummy, 0.0, atol=1e-7, rtol=1e-5):
         raise ValueError(
             "The subspace of Q derived by eta-orthogonalization doesn't match the "
             f"subspace of the original Q! The subspace angles are: {dummy}. "

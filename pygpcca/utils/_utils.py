@@ -416,7 +416,7 @@ def _is_stationary_distribution(T: Union[np.ndarray, spmatrix], pi: np.ndarray) 
         raise ValueError("Shape mismatch.")
 
     # check for invariance
-    if not np.allclose(T.T.dot(pi), pi, rtol=1e4 * EPS, atol=1e4 * EPS):
+    if not np.allclose(T.T.dot(pi), pi, rtol=1e6 * EPS, atol=1e6 * EPS):
         dev = np.max(np.abs(T.T.dot(pi) - pi))
         raise ValueError(
             f"Stationary distribution is not invariant under the transition matrix. Maximal deviation = " f"{dev}"
