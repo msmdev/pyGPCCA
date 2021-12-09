@@ -530,7 +530,7 @@ def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.nda
 
     # Check for negative elements in chi and handle them.
     if np.any(chi < 0.0):
-        if np.any(chi < -1e3 * EPS):
+        if np.any(chi < -1e4 * EPS):
             min_el = np.min(chi)
             raise ValueError(f"Some elements of chi are significantly negative. The minimal element in chi is {min_el}")
         else:
