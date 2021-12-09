@@ -530,7 +530,7 @@ def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.nda
 
     # Check for negative elements in chi and handle them.
     if np.any(chi < 0.0):
-        if np.any(chi < -10 * EPS):
+        if np.any(chi < -1e4 * EPS):
             min_el = np.min(chi)
             raise ValueError(f"Some elements of chi are significantly negative. The minimal element in chi is {min_el}")
         else:
@@ -539,7 +539,7 @@ def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.nda
             if not np.allclose(np.sum(chi, axis=1), 1.0, atol=1e-8, rtol=1e-5):
                 dev = np.max(np.abs(np.sum(chi, axis=1) - 1.0))
                 raise ValueError(
-                    f"The rows of chi don't sum up to 1.0 after rescaling. Maximum deviation from 1 is " f"{dev}"
+                    f"The rows of chi don't sum up to 1.0 after rescaling. Maximum deviation from 1 is {dev}"
                 )
 
     return rot_matrix, chi, fopt
