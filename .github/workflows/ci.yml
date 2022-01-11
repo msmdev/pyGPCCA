@@ -80,8 +80,8 @@ jobs:
                     use_slepc: false
         env:
             # for macOS only, make sure to pin this in tox.ini as well
-            PC_VERSION: 3.13.5  # PETSc version
-            SC_VERSION: 3.13.2  # SLEPc version
+            PC_VERSION: 3.15.4  # PETSc version
+            SC_VERSION: 3.15.2  # SLEPc version
 
         steps:
         -   uses: actions/checkout@v2
@@ -93,7 +93,7 @@ jobs:
                 python-version: ${{ matrix.python }}
 
         -   name: Export environment variables
-            if: matrix.use_slepc == true && runner.os == 'macOS'
+            if: matrix.use_slepc == true
             run: |
                 echo "PETSC_DIR=$HOME/petsc-$PC_VERSION" >> $GITHUB_ENV
                 echo "SLEPC_DIR=$HOME/slepc-$SC_VERSION" >> $GITHUB_ENV
