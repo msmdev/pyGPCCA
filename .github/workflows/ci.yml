@@ -79,7 +79,7 @@ jobs:
                     python: 3.8
                     use_slepc: false
         env:
-            # for macOS only, make sure to pin this in tox.ini as well
+            # make sure to pin this in tox.ini as well
             PC_VERSION: 3.15.4  # PETSc version
             SC_VERSION: 3.15.2  # SLEPc version
 
@@ -97,7 +97,7 @@ jobs:
             run: |
                 echo "PETSC_DIR=$HOME/petsc-$PC_VERSION" >> $GITHUB_ENV
                 echo "SLEPC_DIR=$HOME/slepc-$SC_VERSION" >> $GITHUB_ENV
-                echo "PETSC_ARCH=arch-darwin-c-opt" >> $GITHUB_ENV
+                echo "PETSC_ARCH=arch-$RUNNER_OS-c-opt" >> $GITHUB_ENV
         -   name: Install PETSc/SLEPc dev dependencies
             if: matrix.use_slepc == true
             run: |
