@@ -43,7 +43,7 @@ jobs:
         -   uses: actions/cache@v2
             with:
                 path: ~/.cache/pre-commit
-                key: precommit-${{ env.pythonLocation }}-${{ hashFiles('.pre-commit-config.yaml') }}
+                key: precommit-${{ env.pythonLocation }}-${{ hashFiles('**/.pre-commit-config.yaml') }}
                 restore-keys: |
                     precommit-${{ env.pythonLocation }}-
 
@@ -112,8 +112,6 @@ jobs:
             with:
                 path: ${{ steps.pip-cache-dir.outputs.dir }}
                 key: pip-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('**/requirements.txt') }}
-                restore-keys: |
-                    pip-${{ runner.os }}-${{ env.pythonLocation }}-
 
         -   name: Install pip dependencies
             run: |
