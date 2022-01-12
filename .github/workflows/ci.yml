@@ -56,7 +56,8 @@ jobs:
                     use_slepc: true
                 -   os: macos-latest
                     python: 3.9
-                    use_slepc: true
+                    # TODO(michalk8): enable this in the future (problem/missing mpif90)
+                    use_slepc: false
                 -   os: macos-latest
                     python: 3.8
                     use_slepc: false
