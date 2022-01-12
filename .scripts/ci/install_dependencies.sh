@@ -20,11 +20,7 @@ function install_slepc {
     tar -xzf "slepc-$SC_VERSION.tar.gz"
     pushd "slepc-$SC_VERSION"
 
-    if [[ "$RUNNER_OS" == "Linux" ]]; then
-        ./configure
-    else
-        ./configure --with-arpack-dir=/usr/local/Cellar/arpack
-    fi
+    ./configure
     make all
     make check
     # make install  # only to move into the appropriate location
