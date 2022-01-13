@@ -13,23 +13,7 @@ on:
         -   main
 
 jobs:
-    init:
-        runs-on: ubuntu-latest
-        outputs:
-            skip: ${{ steps.ci-skip-step.outputs.ci-skip }}
-        steps:
-        -   uses: actions/checkout@v2
-            with:
-                fetch-depth: 0
-        -   id: ci-skip-step
-            uses: mstachniuk/ci-skip@master
-            with:
-                commit-filter: '[ci skip];[ci-skip];[skip ci];[skip-ci]'
-                commit-filter-separator: ';'
-
     lint:
-        needs: init
-        if: ${{ github.event_name == 'schedule' || needs.init.outputs.skip == 'false' }}
         runs-on: ubuntu-latest
         steps:
         -   uses: actions/checkout@v2
@@ -43,7 +27,7 @@ jobs:
         -   uses: actions/cache@v2
             with:
                 path: ~/.cache/pre-commit
-                key: precommit-${{ env.pythonLocation }}-${{ hashFiles('.pre-commit-config.yaml') }}
+                key: precommit-${{ env.pythonLocation }}-${{ hashFiles('**/.pre-commit-config.yaml') }}
                 restore-keys: |
                     precommit-${{ env.pythonLocation }}-
 
@@ -58,8 +42,6 @@ jobs:
                 tox -e lint,check-docs,readme
 
     test:
-        needs: init
-        if: ${{ github.event_name == 'schedule' || needs.init.outputs.skip == 'false' }}
         runs-on: ${{ matrix.os }}
         strategy:
             fail-fast: false
@@ -73,15 +55,16 @@ jobs:
                     python: 3.8
                     use_slepc: true
                 -   os: macos-latest
-                    python: 3.7
-                    use_slepc: true
+                    python: 3.9
+                    # TODO(michalk8): enable this in the future (problem/missing mpif90)
+                    use_slepc: false
                 -   os: macos-latest
                     python: 3.8
                     use_slepc: false
         env:
-            # for macOS only, make sure to pin this in tox.ini as well
-            PC_VERSION: 3.13.5  # PETSc version
-            SC_VERSION: 3.13.2  # SLEPc version
+            # make sure to pin this in tox.ini as well
+            PC_VERSION: 3.15.4  # PETSc version
+            SC_VERSION: 3.15.2  # SLEPc version
 
         steps:
         -   uses: actions/checkout@v2
@@ -93,11 +76,11 @@ jobs:
                 python-version: ${{ matrix.python }}
 
         -   name: Export environment variables
-            if: matrix.use_slepc == true && runner.os == 'macOS'
+            if: matrix.use_slepc == true
             run: |
                 echo "PETSC_DIR=$HOME/petsc-$PC_VERSION" >> $GITHUB_ENV
                 echo "SLEPC_DIR=$HOME/slepc-$SC_VERSION" >> $GITHUB_ENV
-                echo "PETSC_ARCH=arch-darwin-c-opt" >> $GITHUB_ENV
+                echo "PETSC_ARCH=arch-$RUNNER_OS-c-opt" >> $GITHUB_ENV
         -   name: Install PETSc/SLEPc dev dependencies
             if: matrix.use_slepc == true
             run: |
@@ -112,8 +95,6 @@ jobs:
             with:
                 path: ${{ steps.pip-cache-dir.outputs.dir }}
                 key: pip-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('**/requirements.txt') }}
-                restore-keys: |
-                    pip-${{ runner.os }}-${{ env.pythonLocation }}-
 
         -   name: Install pip dependencies
             run: |
