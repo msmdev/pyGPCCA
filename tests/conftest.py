@@ -3831,6 +3831,8 @@ def test_matrix_2_eigenvectors() -> np.ndarray:
 @pytest.fixture(scope="session")
 def test_matrix_3() -> np.ndarray:
     """
+    Definition of test_matrix_3.
+
     Parameters
     ----------
 
