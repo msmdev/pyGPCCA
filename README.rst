@@ -1,4 +1,4 @@
-|PyPI| |Conda| |Cite| |CI| |Docs| |Coverage| |License| |PyPIdownloads|
+|PyPI| |Conda| |Cite| |Zenodo| |CI| |Docs| |Coverage| |License| |PyPIdownloads|
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/pygpcca
     :target: https://pypi.org/project/pygpcca/
@@ -11,6 +11,10 @@
 .. |Cite| image:: https://img.shields.io/badge/DOI-10.1021%2Facs.jctc.8b00079-blue
     :target: https://doi.org/10.1021/acs.jctc.8b00079
     :alt: Cite
+    
+.. |Zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.6914001.svg
+   :target: https://doi.org/10.5281/zenodo.6914001
+   :alt: Zenodo
 
 .. |CI| image:: https://img.shields.io/github/workflow/status/msmdev/pygpcca/CI/main
     :target: https://github.com/msmdev/pygpcca/actions
