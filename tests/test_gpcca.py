@@ -75,6 +75,8 @@ def _assert_schur(
 
 def _find_permutation(expected: np.ndarray, actual: np.ndarray) -> np.ndarray:
     """
+    Find a permutation of a matrix.
+
     Parameters
     ----------
     expected
