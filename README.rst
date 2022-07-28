@@ -47,9 +47,12 @@ utilizing real Schur vectors instead of eigenvectors. |br|
 *pyGPCCA* enables the semiautomatic coarse-graining of transition matrices representing the dynamics of the system
 under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics can be identified and modeled.
 
-If you use *pyGPCCA* or parts of it, please cite `JCTC (2018)`_.
+How to cite pyGPCCA
+-------------------
+If you use *pyGPCCA* or parts of it, cite `JCTC (2018)`_ and `pyGPCCA`_.
 
 .. _JCTC (2018): https://pubs.acs.org/doi/abs/10.1021/acs.jctc.8b00079
+.. _pyGPCCA: https://doi.org/10.5281/zenodo.6913970
 
 Installation
 ------------
