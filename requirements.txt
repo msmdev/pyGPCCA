@@ -1,3 +1,5 @@
+# pin click to fix "ImportError: cannot import name '_unicodefun' from 'click'" error from black during linting
+click==8.0.1
 docrep>=0.3.1
 # pin jinja2 to fix "module 'jinja2.utils' has no attribute 'escape'" error during linting
 jinja2==3.0.3
