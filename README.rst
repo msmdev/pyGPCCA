@@ -11,7 +11,7 @@
 .. |Cite| image:: https://img.shields.io/badge/DOI-10.1021%2Facs.jctc.8b00079-blue
     :target: https://doi.org/10.1021/acs.jctc.8b00079
     :alt: Cite
-    
+
 .. |Zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.6914001.svg
    :target: https://doi.org/10.5281/zenodo.6914001
    :alt: Zenodo
@@ -104,8 +104,8 @@ for the longstanding and productive collaboration in the field of Markov modelin
 M. Weber, together with K. Fackeldey, had the original idea to employ Schur vectors instead of eigenvectors in the
 coarse-graining of non-reversible transition matrices. |br|
 Further, we would like to thank `Fabian Paul`_ for valuable discussions regarding the sorting of Schur vectors and his
-effort to translate the original sorting routine for real Schur forms, `SRSchur`_ published by `Jan Brandts`_, from MATLAB
-into `Python code`_,
+effort to translate the original sorting routine for real Schur forms, `SRSchur`_ published by `Jan Brandts`_,
+from MATLAB into `Python code`_,
 M. Weber and `Alexander Sikorski`_ for pointing us to `SLEPc`_ for sorted partial Schur decompositions,
 and A. Sikorski for supplying us with an `code example`_ and guidance how to interface SLEPc in Python.
 The development of *pyGPCCA* started - based on the original `GPCCA`_ program written in MATLAB - at the beginning of
