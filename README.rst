@@ -38,15 +38,15 @@
 
 pyGPCCA - Generalized Perron Cluster Cluster Analysis
 =====================================================
-Generalized Perron Cluster Cluster Analysis program to coarse-grain reversible and non-reversible Markov State Models.
+Generalized Perron Cluster Cluster Analysis program to coarse-grain reversible and non-reversible Markov state models.
 
-Markov State Models (MSM) enable the identification and analysis of metastable states and related kinetics in a
-very instructive manner. They are widely used, e.g. to model molecular or cellular kinetics. |br|
+Markov state models (MSM) enable the identification and analysis of metastable states and related kinetics in a
+very instructive manner. They are widely used, e.g., to model molecular or cellular kinetics. |br|
 Common state-of-the-art Markov state modeling methods and tools are very well suited to model reversible processes in
 closed equilibrium systems. However, most are not well suited to deal with non-reversible or even non-autonomous
 processes of non-equilibrium systems. |br|
-To overcome this limitation, the Generalized Robust Perron Cluster Cluster Analysis (G-PCCA) was developed.
-The G-PCCA method implemented in the *pyGPCCA* program readily handles equilibrium as well as non-equilibrium data by
+To overcome this limitation, the Generalized Robust Perron Cluster Cluster Analysis (GPCCA or G-PCCA) was developed.
+The GPCCA method implemented in the *pyGPCCA* program readily handles equilibrium as well as non-equilibrium data by
 utilizing real Schur vectors instead of eigenvectors. |br|
 *pyGPCCA* enables the semiautomatic coarse-graining of transition matrices representing the dynamics of the system
 under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics can be identified and modeled.
@@ -104,7 +104,7 @@ for the longstanding and productive collaboration in the field of Markov modelin
 M. Weber, together with K. Fackeldey, had the original idea to employ Schur vectors instead of eigenvectors in the
 coarse-graining of non-reversible transition matrices. |br|
 Further, we would like to thank `Fabian Paul`_ for valuable discussions regarding the sorting of Schur vectors and his
-effort to translate the original Sorting routine for real Schur forms `SRSchur`_ published by `Jan Brandts`_ from MATLAB
+effort to translate the original sorting routine for real Schur forms, `SRSchur`_ published by `Jan Brandts`_, from MATLAB
 into `Python code`_,
 M. Weber and `Alexander Sikorski`_ for pointing us to `SLEPc`_ for sorted partial Schur decompositions,
 and A. Sikorski for supplying us with an `code example`_ and guidance how to interface SLEPc in Python.
