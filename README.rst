@@ -8,8 +8,8 @@
     :target: https://anaconda.org/conda-forge/pygpcca
     :alt: Conda
 
-.. |Cite| image:: https://img.shields.io/badge/DOI-10.1021%2Facs.jctc.8b00079-blue
-    :target: https://doi.org/10.1021/acs.jctc.8b00079
+.. |Cite| image:: https://img.shields.io/badge/DOI-10.1063%2F1.5064530-blue
+    :target: https://doi.org/10.1063/1.5064530
     :alt: Cite
 
 .. |Zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.6914001.svg
@@ -53,10 +53,26 @@ under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics c
 
 How to cite pyGPCCA
 -------------------
-If you use *pyGPCCA* or parts of it, cite `JCTC (2018)`_ and `pyGPCCA`_.
+If you use *pyGPCCA* or parts of it, cite [`Reuter19`_] as:
 
-.. _JCTC (2018): https://pubs.acs.org/doi/abs/10.1021/acs.jctc.8b00079
-.. _pyGPCCA: https://doi.org/10.5281/zenodo.6913970
+.. code-block:: bibtex
+
+    @article{Reuter19,
+        author = {Reuter,Bernhard  and Fackeldey,Konstantin  and Weber,Marcus },
+        title = {Generalized Markov modeling of nonreversible molecular kinetics},
+        journal = {The Journal of Chemical Physics},
+        volume = {150},
+        number = {17},
+        pages = {174103},
+        year = {2019},
+        doi = {10.1063/1.5064530},
+    }
+
+Please consider also citing [`Reuter22`_]. You might further consider [`Reuter18`_].
+
+.. _Reuter19: https://doi.org/10.1063/1.5064530
+.. _Reuter22: https://doi.org/10.5281/zenodo.6913970
+.. _Reuter18: https://pubs.acs.org/doi/abs/10.1021/acs.jctc.8b00079
 
 Installation
 ------------

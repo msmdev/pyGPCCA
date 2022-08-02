@@ -14,10 +14,10 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # If you use this code or parts of it, cite the following reference:
 # ---------------------------------------------------------------------------------------------------------------------
-# Reuter, B., Weber, M., Fackeldey, K., Röblitz, S., & Garcia, M. E. (2018).
-# Generalized Markov State Modeling Method for Nonequilibrium Biomolecular Dynamics:
-# Exemplified on Amyloid β Conformational Dynamics Driven by an Oscillating Electric Field.
-# Journal of Chemical Theory and Computation, 14(7), 3579–3594. https://doi.org/10.1021/acs.jctc.8b00079
+# Bernhard Reuter, Konstantin Fackeldey, and Marcus Weber,
+# Generalized Markov modeling of nonreversible molecular kinetics,
+# The Journal of Chemical Physics, 150(17):174103, 2019.
+# https://doi.org/10.1063/1.5064530
 # ---------------------------------------------------------------------------------------------------------------------
 # pyGPCCA is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser
 # General Public License as published by the Free Software Foundation, either version 3 of the License,
@@ -629,7 +629,7 @@ def _cluster_by_isa(X: np.ndarray) -> Tuple[np.ndarray, float]:
 @d.dedent
 def _gpcca_core(X: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
     r"""
-    Core of the G-PCCA [Reuter18]_ spectral clustering method with optimized memberships.
+    Core of the G-PCCA spectral clustering method with optimized memberships [Reuter18]_, [Reuter19]_.
 
     Clusters the dominant `m` Schur vectors of a transition matrix.
     This algorithm generates a fuzzy clustering such that the resulting
@@ -672,7 +672,7 @@ def _coarsegrain(P: Union[np.ndarray, spmatrix], eta: np.ndarray, chi: np.ndarra
 
     ..math: P_c = (\chi^T D \chi)^{-1} (\chi^T D P \chi)
 
-    with :math:`D` being a diagonal matrix with `eta` on its diagonal [Reuter18]_.
+    with :math:`D` being a diagonal matrix with `eta` on its diagonal [Reuter18]_, [Reuter19]_.
 
     Parameters
     ----------
@@ -706,14 +706,14 @@ def gpcca_coarsegrain(
     method: str = DEFAULT_SCHUR_METHOD,
 ) -> np.ndarray:
     r"""
-    Coarse-grain the transition matrix `P` into `m` sets using G-PCCA [Reuter18]_.
+    Coarse-grain the transition matrix `P` into `m` sets using G-PCCA [Reuter18]_, [Reuter19]_.
 
     Performs optimized spectral clustering via G-PCCA and coarse-grains `P`
     such that the dominant Perron eigenvalues are preserved using:
 
     .. math:: P_c = (\chi^T D \chi)^{-1} (\chi^T D P \chi)
 
-    with :math:`D` being a diagonal matrix with `eta` on its diagonal [Reuter18]_.
+    with :math:`D` being a diagonal matrix with `eta` on its diagonal [Reuter18]_, [Reuter19]_.
 
     Parameters
     ----------
@@ -732,7 +732,7 @@ def gpcca_coarsegrain(
 
     References
     ----------
-    If you use this code or parts of it, please cite [Reuter18]_.
+    If you use this code or parts of it, please cite [Reuter19]_.
     """
     # Matlab: Pc = pinv(chi'*diag(eta)*chi)*(chi'*diag(eta)*P*chi)
     chi = GPCCA(P, eta=eta, z=z, method=method).optimize(m).memberships
@@ -743,7 +743,7 @@ def gpcca_coarsegrain(
 @d.dedent
 class GPCCA:
     """
-    G-PCCA [Reuter18_, Reuter19_] spectral clustering method with optimized memberships.
+    G-PCCA spectral clustering method with optimized memberships [Reuter18]_, [Reuter19]_.
 
     Clusters the dominant `m` Schur vectors of a transition matrix.
 
@@ -762,7 +762,7 @@ class GPCCA:
 
     References
     ----------
-    If you use this code or parts of it, please cite [Reuter18]_.
+    If you use this code or parts of it, please cite [Reuter19]_.
     """
 
     def __init__(
@@ -904,7 +904,7 @@ class GPCCA:
         m: Union[int, Tuple[int, int], List[int], Dict[str, int]],
     ) -> "GPCCA":
         r"""
-        Full G-PCCA [Reuter18]_ spectral clustering method with optimized memberships.
+        Full G-PCCA spectral clustering method with optimized memberships [Reuter18]_, [Reuter19]_.
 
         It also has the option to optimize the number of clusters
         (macrostates) `m` as well.

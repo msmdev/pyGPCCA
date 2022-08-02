@@ -4,18 +4,25 @@
 
 References
 ==========
-.. [Reuter18]
-    Bernhard Reuter, Marcus Weber, Konstantin Fackeldey, Susanna Röblitz, and Martin E. Garcia, |br|
-    *Generalized Markov State Modeling Method for Nonequilibrium Biomolecular Dynamics: Exemplified on Amyloid β
-    Conformational Dynamics Driven by an Oscillating Electric Field.*, |br|
-    Journal of Chemical Theory and Computation, 14(7):3579–3594, 2018.
-    `doi:10.1021/acs.jctc.8b00079 <https://doi.org/10.1021/acs.jctc.8b00079>`__.
+.. [Reuter22]
+    Bernhard Reuter, Michal Klein, and Marius Lange, |br|
+    *pyGPCCA - python GPCCA: Generalized Perron Cluster Cluster Analysis package to coarse-grain
+    reversible and non-reversible Markov state models*, |br|
+    v1.0.3, Zenodo, 2022,
+    `doi:10.5281/zenodo.6914001 <https://doi.org/10.5281/zenodo.6914001>`__.
 
 .. [Reuter19]
     Bernhard Reuter, Konstantin Fackeldey, and Marcus Weber, |br|
     *Generalized Markov modeling of nonreversible molecular kinetics*, |br|
     The Journal of Chemical Physics, 150(17):174103, 2019.
     `doi:10.1063/1.5064530 <https://doi.org/10.1063/1.5064530>`__.
+
+.. [Reuter18]
+    Bernhard Reuter, Marcus Weber, Konstantin Fackeldey, Susanna Röblitz, and Martin E. Garcia, |br|
+    *Generalized Markov State Modeling Method for Nonequilibrium Biomolecular Dynamics: Exemplified on Amyloid β
+    Conformational Dynamics Driven by an Oscillating Electric Field.*, |br|
+    Journal of Chemical Theory and Computation, 14(7):3579–3594, 2018.
+    `doi:10.1021/acs.jctc.8b00079 <https://doi.org/10.1021/acs.jctc.8b00079>`__.
 
 .. [Brandts02]
     Jan H. Brandts, |br|
