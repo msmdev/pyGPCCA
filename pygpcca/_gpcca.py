@@ -743,7 +743,7 @@ def gpcca_coarsegrain(
 @d.dedent
 class GPCCA:
     """
-    G-PCCA [Reuter18]_ spectral clustering method with optimized memberships.
+    G-PCCA [Reuter18_, Reuter19_] spectral clustering method with optimized memberships.
 
     Clusters the dominant `m` Schur vectors of a transition matrix.
 
