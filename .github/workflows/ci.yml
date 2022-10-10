@@ -116,11 +116,14 @@ jobs:
                 USE_SLEPC: ${{ matrix.use_slepc }}
 
         -   name: Upload coverage
-            if: success()
-            env:
-                CODECOV_NAME: ${{ matrix.os }}-${{ matrix.python }}-{{ matrix.use_slepc }}
-            run: |
-                codecov --no-color --required --flags unittests
+            uses: codecov/codecov-action@v3
+            with:
+                files: ./coverage.xml
+                flags: unittests
+                name: ${{ matrix.os }}-${{ matrix.python }}-{{ matrix.use_slepc }}
+                env_vars: OS,PYTHON
+                fail_ci_if_error: false
+                verbose: true
 
     deploy:
         needs: [lint, test]
