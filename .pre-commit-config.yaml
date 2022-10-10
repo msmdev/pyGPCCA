@@ -10,10 +10,12 @@ repos:
     rev: v0.982
     hooks:
     -   id: mypy
+        additional_dependencies: [numpy==1.20.0, scipy>=1.6.0]
 -   repo: https://github.com/psf/black
     rev: 22.10.0
     hooks:
     -   id: black
+        additional_dependencies: [toml]
 -   repo: https://github.com/timothycrosley/isort
     rev: 5.10.1
     hooks:
