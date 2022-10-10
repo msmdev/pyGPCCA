@@ -378,7 +378,7 @@ class TestGPCCAMatlabUnit:
                 alpha[j + i * (k - 1)] = A_mu0_init[i + 1, j + 1]
 
         act_val = _objective(alpha, svecs_mu0)
-        exp_val = k - np.sum(np.true_divide(np.sum(A_mu0 ** 2, axis=0), A_mu0[0, :]))
+        exp_val = k - np.sum(np.true_divide(np.sum(A_mu0**2, axis=0), A_mu0[0, :]))
 
         assert_allclose(act_val, exp_val)
 
@@ -390,7 +390,7 @@ class TestGPCCAMatlabUnit:
                 alpha[j + i * (k - 1)] = A_mu1000_init[i + 1, j + 1]
 
         act_val = _objective(alpha, svecs_mu1000)
-        exp_val = k - np.sum(np.true_divide(np.sum(A_mu1000 ** 2, axis=0), A_mu1000[0, :]))
+        exp_val = k - np.sum(np.true_divide(np.sum(A_mu1000**2, axis=0), A_mu1000[0, :]))
 
         assert_allclose(act_val, exp_val)
 
