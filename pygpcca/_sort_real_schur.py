@@ -258,7 +258,7 @@ def rot(X: np.ndarray) -> np.ndarray:
     s = 0.0
     if X[0, 0] != X[1, 1]:
         tau = (X[0, 1] + X[1, 0]) / (X[0, 0] - X[1, 1])
-        off = (tau ** 2 + 1) ** 0.5
+        off = (tau**2 + 1) ** 0.5
         v = [tau - off, tau + off]
         w = int(np.argmin(np.abs(v)))
         c = 1.0 / (1.0 + v[w] ** 2) ** 0.5  # ... the cosine and sine as given in Section 2.3.1

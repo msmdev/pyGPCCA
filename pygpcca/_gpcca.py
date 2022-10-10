@@ -456,7 +456,7 @@ def _objective(alpha: np.ndarray, X: np.ndarray) -> float:
     rot_mat = np.zeros((m, m), dtype=np.float64)
 
     # Sanity checks.
-    if alpha.shape[0] != k ** 2:
+    if alpha.shape[0] != k**2:
         raise ValueError(
             "The shape of alpha doesn't match with the shape of X: "
             f"It is not a ({k}^2,)-vector, but of dimension {alpha.shape}. X is of shape `{X.shape}`."
@@ -514,7 +514,7 @@ def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.nda
 
     # Now reshape rot_crop_matrix into a linear vector alpha.
     k = m - 1
-    alpha = np.reshape(rot_crop_matrix, k ** 2)
+    alpha = np.reshape(rot_crop_matrix, k**2)
     # TODO: Implement Gauss Newton Optimization to speed things up esp. for m > 10
     alpha, fopt, _, _, _ = fmin(_objective, alpha, args=(X,), full_output=True, disp=False)
 
