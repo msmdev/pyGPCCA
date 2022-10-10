@@ -15,7 +15,7 @@ repos:
     rev: 20.8b1
     hooks:
     -   id: black
-        additional_dependencies: ['click==8.0.1', toml]
+        additional_dependencies: [click==8.0.1, toml]
 -   repo: https://github.com/timothycrosley/isort
     rev: 5.7.0
     hooks:
