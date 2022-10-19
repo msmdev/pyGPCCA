@@ -6,7 +6,7 @@ try:
     from pygpcca import __email__, __author__, __version__, __maintainer__
 except ImportError:
     __author__ = __maintainer__ = "Bernhard Reuter"
-    __version__ = "1.0.3"
+    __version__ = "1.0.4"
     __email__ = "bernhard-reuter@gmx.de"
 
 setup(
@@ -36,10 +36,10 @@ setup(
         # https://gitlab.com/petsc/petsc/-/issues/803
         slepc=[
             "mpi4py>=3.0.3",
-            "petsc>=3.13,!=3.14",
-            "slepc>=3.13,!=3.14",
-            "petsc4py>=3.13,!=3.14",
-            "slepc4py>=3.13,!=3.14",
+            "petsc>=3.18",
+            "slepc>=3.18",
+            "petsc4py>=3.18",
+            "slepc4py>=3.18",
         ],
         dev=["pre-commit>=2.9.0", "bump2version"],
         test=["tox>=3.20.1"],
