@@ -36,10 +36,10 @@ setup(
         # https://gitlab.com/petsc/petsc/-/issues/803
         slepc=[
             "mpi4py>=3.0.3",
-            "petsc>=3.18",
-            "slepc>=3.18",
-            "petsc4py>=3.18",
-            "slepc4py>=3.18",
+            "petsc>=3.18.0",
+            "slepc>=3.18.0",
+            "petsc4py>=3.18.0",
+            "slepc4py>=3.18.0",
         ],
         dev=["pre-commit>=2.9.0", "bump2version"],
         test=["tox>=3.20.1"],
