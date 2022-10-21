@@ -39,6 +39,7 @@ repos:
     -   id: no-commit-to-branch
         args: [--branch, main]
         always_run: false
+        stages: [commit]
     -   id: check-merge-conflict
     -   id: check-ast
     -   id: check-symlinks
