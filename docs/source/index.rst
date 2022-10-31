@@ -11,6 +11,7 @@
     installation
     api
     example
+    how_to_cite
     acknowledgments
     release_notes
     references
