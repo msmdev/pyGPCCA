@@ -5,6 +5,28 @@ Release Notes
 
 Version 1.0
 -----------
+1.0.4 :small:`2022-10-31`
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. rubric:: Fixes
+
+- Fix 'Operation done in wrong order' error when calling SLEPc
+  `#42 <https://github.com/msmdev/pyGPCCA/pull/42>`_.
+- Minor pre-commit/linting fixes
+  `#39 <https://github.com/msmdev/pyGPCCA/pull/39>`_,
+  `#40 <https://github.com/msmdev/pyGPCCA/pull/40>`_,
+  `#41 <https://github.com/msmdev/pyGPCCA/pull/41>`_,
+  `#44 <https://github.com/msmdev/pyGPCCA/pull/44>`_,
+  `#45 <https://github.com/msmdev/pyGPCCA/pull/45>`_,
+  `#46 <https://github.com/msmdev/pyGPCCA/pull/46>`_.
+- Fix intersphinx numpy/scipy
+  `#37 <https://github.com/msmdev/pyGPCCA/pull/37>`_.
+
+.. rubric:: Improvements
+
+- Update and improve documentation and README
+  `#47 <https://github.com/msmdev/pyGPCCA/pull/47>`_.
+
 1.0.3 :small:`2022-02-13`
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
