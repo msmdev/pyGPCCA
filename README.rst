@@ -131,7 +131,7 @@ Key Contributors
 .. _Michal Klein: https://github.com/michalk8
 .. _Marius Lange: https://github.com/Marius1311
 
-Acknowledgements
+Acknowledgments
 ----------------
 We thank `Marcus Weber`_ and the Computational Molecular Design (`CMD`_) group at the Zuse Institute Berlin (`ZIB`_)
 for the longstanding and productive collaboration in the field of Markov modeling of non-reversible molecular dynamics.
@@ -145,7 +145,7 @@ and A. Sikorski for supplying us with an `code example`_ and guidance how to int
 The development of *pyGPCCA* started - based on the original `GPCCA`_ program written in MATLAB - at the beginning of
 2020 in a fork of `MSMTools`_, since it was planned to integrate GPCCA into MSMTools at this time.
 Due to this, some similarities in structure and code (indicated were evident) can be found.
-Futher the utility functions found in `pygpcca/utils/_utils.py`_ originate from MSMTools.
+Further, utility functions found in `pygpcca/utils/_utils.py`_ originate from MSMTools.
 
 .. _`Marcus Weber`: https://www.zib.de/members/weber
 .. _`CMD`: https://www.zib.de/numeric/cmd
