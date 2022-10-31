@@ -266,9 +266,10 @@ def sorted_krylov_schur(
     except AttributeError:
         pass
     # Get the schur form
-    R = E.getDS().getMat(SLEPc.DS.MatType.A)
-    R.view()
-    R = R.getDenseArray().astype(np.float64)
+    ds = E.getDS()
+    A = ds.getMat(SLEPc.DS.MatType.A)
+    R = A.getDenseArray().astype(np.float64)
+    ds.restoreMat(SLEPc.DS.MatType.A, A)
 
     # Gets the number of converged eigenpairs.
     nconv = E.getConverged()
