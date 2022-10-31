@@ -53,7 +53,7 @@ under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics c
 
 How to cite pyGPCCA
 -------------------
-If you use *pyGPCCA* or parts of it to model molecular dynamics, e.g.,
+If you use *pyGPCCA* or parts of it to model molecular dynamics, e.g.
 to coarse-grain protein conformational dynamics, cite [`Reuter18`_] as:
 
 .. code-block:: bibtex
@@ -71,7 +71,8 @@ to coarse-grain protein conformational dynamics, cite [`Reuter18`_] as:
         note  = {PMID: 29812922},
     }
 
-If you use *pyGPCCA* or parts of it in a more general context, e.g., to model cellular dynamics, cite [`Reuter19`_] as:
+If you use *pyGPCCA* or parts of it in a more general context,
+e.g. to model cellular dynamics, cite [`Reuter19`_] as:
 
 .. code-block:: bibtex
 

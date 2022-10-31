@@ -1,5 +1,5 @@
 .. include:: ../../README.rst
-    :end-line: 93
+    :end-line: 52
 
 .. include:: _key_contributors.rst
 
@@ -11,6 +11,7 @@
     installation
     api
     example
+    how_to_cite
     acknowledgments
     release_notes
     references

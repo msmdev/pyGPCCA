@@ -4,13 +4,6 @@
 
 References
 ==========
-.. [Reuter22]
-    Bernhard Reuter, Michal Klein, and Marius Lange, |br|
-    *pyGPCCA - python GPCCA: Generalized Perron Cluster Cluster Analysis package to coarse-grain
-    reversible and non-reversible Markov state models*, |br|
-    v1.0.3, Zenodo, 2022,
-    `doi:10.5281/zenodo.6914001 <https://doi.org/10.5281/zenodo.6914001>`__.
-
 .. [Reuter19]
     Bernhard Reuter, Konstantin Fackeldey, and Marcus Weber, |br|
     *Generalized Markov modeling of nonreversible molecular kinetics*, |br|
