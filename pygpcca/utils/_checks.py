@@ -1,11 +1,12 @@
 from typing import Tuple, Union, Optional
+import logging
 
 from scipy.sparse import issparse, spmatrix
 import numpy as np
 
 from pygpcca.utils._docs import d
 
-__all__ = ["ensure_ndarray_or_sparse"]
+__all__ = ["ensure_ndarray_or_sparse", "petsc_real_scalar_type"]
 
 
 @d.get_sections(base="assert_array", sections=["Parameters"])
@@ -122,3 +123,28 @@ def ensure_ndarray_or_sparse(
     assert_array(A, shape=shape, uniform=uniform, ndim=ndim, size=size, dtype=dtype, kind=kind)
 
     return A
+
+
+def petsc_real_scalar_type() -> bool:
+    """Check PETSc was compiled using `–with-scalar-type=real`."""
+    try:
+        from petsc4py import PETSc
+
+        if np.isrealobj(PETSc.ScalarType()):
+            return True
+        raise TypeError("Complex scalar type is not supported.")
+    except ImportError:
+        return False
+    except TypeError:
+        logging.error(
+            "PETSc was compiled with complex scalar type. "
+            "Please recompile PETSc with `--with-scalar-type=real` or "
+            "provide alternative `PETSC_ARCH=...` with correct scalar type."
+        )
+        return False
+    except Exception as e:
+        logging.error(
+            f"Unable to determine PETSc's scalar type, reason: `{e}`. Assuming true, "  # noqa: G004
+            f"but please ensure that PETSc was compiled using `--with-scalar-type=real`.",
+        )
+        return True

@@ -43,15 +43,18 @@ from scipy.sparse import issparse, spmatrix, csr_matrix, isspmatrix_csr
 import numpy as np
 
 from pygpcca.utils._docs import d
+from pygpcca.utils._checks import petsc_real_scalar_type
 from pygpcca._sort_real_schur import sort_real_schur
 from pygpcca.utils._constants import EPS, DEFAULT_SCHUR_METHOD, NO_PETSC_SLEPC_FOUND_MSG
 
 try:
     import petsc4py
     import slepc4py
-except ImportError:
-    petsc4py = None
-    slepc4py = None
+
+    if not petsc_real_scalar_type():
+        raise TypeError("PETSc was compiled with complex scalar type.")
+except (ImportError, TypeError):
+    petsc4py = slepc4py = None
 
 __all__ = ["sorted_schur"]
 
