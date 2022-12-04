@@ -8,8 +8,8 @@
     :target: https://anaconda.org/conda-forge/pygpcca
     :alt: Conda
 
-.. |Cite| image:: https://img.shields.io/badge/DOI-10.1021%2Facs.jctc.8b00079-blue
-    :target: https://doi.org/10.1021/acs.jctc.8b00079
+.. |Cite| image:: https://img.shields.io/badge/DOI-10.1063%2F1.5064530-blue
+    :target: https://doi.org/10.1063/1.5064530
     :alt: Cite
 
 .. |Zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.6914001.svg
@@ -53,10 +53,45 @@ under study. Utilizing *pyGPCCA*, metastable states as well as cyclic kinetics c
 
 How to cite pyGPCCA
 -------------------
-If you use *pyGPCCA* or parts of it, cite `JCTC (2018)`_ and `pyGPCCA`_.
+If you use *pyGPCCA* or parts of it to model molecular dynamics, e.g.
+to coarse-grain protein conformational dynamics, cite [`Reuter18`_] as:
 
-.. _JCTC (2018): https://pubs.acs.org/doi/abs/10.1021/acs.jctc.8b00079
-.. _pyGPCCA: https://doi.org/10.5281/zenodo.6913970
+.. code-block:: bibtex
+
+    @article{Reuter18,
+        author = {Reuter, Bernhard and Weber, Marcus and Fackeldey, Konstantin and Röblitz, Susanna and Garcia, Martin E.},
+        title = {Generalized Markov State Modeling Method for Nonequilibrium Biomolecular Dynamics:
+        Exemplified on Amyloid β Conformational Dynamics Driven by an Oscillating Electric Field},
+        journal = {Journal of Chemical Theory and Computation},
+        volume = {14},
+        number = {7},
+        pages = {3579-3594},
+        year = {2018},
+        doi = {10.1021/acs.jctc.8b00079},
+        note  = {PMID: 29812922},
+    }
+
+If you use *pyGPCCA* or parts of it in a more general context,
+e.g. to model cellular dynamics, cite [`Reuter19`_] as:
+
+.. code-block:: bibtex
+
+    @article{Reuter19,
+        author = {Reuter,Bernhard and Fackeldey,Konstantin and Weber,Marcus },
+        title = {Generalized Markov modeling of nonreversible molecular kinetics},
+        journal = {The Journal of Chemical Physics},
+        volume = {150},
+        number = {17},
+        pages = {174103},
+        year = {2019},
+        doi = {10.1063/1.5064530},
+    }
+
+Please consider also citing [`Reuter22`_].
+
+.. _Reuter18: https://pubs.acs.org/doi/abs/10.1021/acs.jctc.8b00079
+.. _Reuter19: https://doi.org/10.1063/1.5064530
+.. _Reuter22: https://doi.org/10.5281/zenodo.6913970
 
 Installation
 ------------
@@ -97,12 +132,12 @@ Key Contributors
 .. _Michal Klein: https://github.com/michalk8
 .. _Marius Lange: https://github.com/Marius1311
 
-Acknowledgements
+Acknowledgments
 ----------------
 We thank `Marcus Weber`_ and the Computational Molecular Design (`CMD`_) group at the Zuse Institute Berlin (`ZIB`_)
 for the longstanding and productive collaboration in the field of Markov modeling of non-reversible molecular dynamics.
-M. Weber, together with K. Fackeldey, had the original idea to employ Schur vectors instead of eigenvectors in the
-coarse-graining of non-reversible transition matrices. |br|
+M. Weber, together with Susanna Röblitz and K. Fackeldey, had the original idea to employ Schur
+vectors instead of eigenvectors in the coarse-graining of non-reversible transition matrices. |br|
 Further, we would like to thank `Fabian Paul`_ for valuable discussions regarding the sorting of Schur vectors and his
 effort to translate the original sorting routine for real Schur forms, `SRSchur`_ published by `Jan Brandts`_,
 from MATLAB into `Python code`_,
@@ -111,7 +146,7 @@ and A. Sikorski for supplying us with an `code example`_ and guidance how to int
 The development of *pyGPCCA* started - based on the original `GPCCA`_ program written in MATLAB - at the beginning of
 2020 in a fork of `MSMTools`_, since it was planned to integrate GPCCA into MSMTools at this time.
 Due to this, some similarities in structure and code (indicated were evident) can be found.
-Futher the utility functions found in `pygpcca/utils/_utils.py`_ originate from MSMTools.
+Further, utility functions found in `pygpcca/utils/_utils.py`_ originate from MSMTools.
 
 .. _`Marcus Weber`: https://www.zib.de/members/weber
 .. _`CMD`: https://www.zib.de/numeric/cmd

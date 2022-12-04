@@ -16,15 +16,15 @@ jobs:
     lint:
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v2
+        -   uses: actions/checkout@v3
             with:
                 fetch-depth: 0
         -   name: Set up Python
-            uses: actions/setup-python@v2
+            uses: actions/setup-python@v4
             with:
                 python-version: 3.8
 
-        -   uses: actions/cache@v2
+        -   uses: actions/cache@v3
             with:
                 path: ~/.cache/pre-commit
                 key: precommit-${{ env.pythonLocation }}-${{ hashFiles('**/.pre-commit-config.yaml') }}
@@ -63,15 +63,15 @@ jobs:
                     use_slepc: false
         env:
             # make sure to pin this in tox.ini as well
-            PC_VERSION: 3.15.4  # PETSc version
-            SC_VERSION: 3.15.2  # SLEPc version
+            PC_VERSION: 3.18.0  # PETSc version
+            SC_VERSION: 3.18.0  # SLEPc version
 
         steps:
-        -   uses: actions/checkout@v2
+        -   uses: actions/checkout@v3
             with:
                 fetch-depth: 0
         -   name: Set up Python ${{ matrix.python }}
-            uses: actions/setup-python@v2
+            uses: actions/setup-python@v4
             with:
                 python-version: ${{ matrix.python }}
 
@@ -89,9 +89,9 @@ jobs:
         -   name: Get pip cache dir
             id: pip-cache-dir
             run: |
-                echo "::set-output name=dir::$(pip cache dir)"
+                echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
         -   name: Restore pip cache
-            uses: actions/cache@v2
+            uses: actions/cache@v3
             with:
                 path: ${{ steps.pip-cache-dir.outputs.dir }}
                 key: pip-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('**/requirements.txt') }}
@@ -103,7 +103,7 @@ jobs:
 
         -   name: Restore PETSc/SLEPc tox cache
             if: matrix.use_slepc == true
-            uses: actions/cache@v2
+            uses: actions/cache@v3
             with:
                 path: .tox
                 key: tox-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('**/install_dependencies.sh', '**/requirements.txt', '**/setup.py', '**/tox.ini') }}
@@ -130,11 +130,11 @@ jobs:
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v2
+        -   uses: actions/checkout@v3
             with:
                 fetch-depth: 0
         -   name: Set up Python
-            uses: actions/setup-python@v2
+            uses: actions/setup-python@v4
             with:
                 python-version: 3.8
         -   name: Install pypa/build
