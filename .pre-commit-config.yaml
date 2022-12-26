@@ -55,7 +55,7 @@ repos:
     -   id: check-yaml
     -   id: check-toml
     -   id: requirements-txt-fixer
--   repo: https://gitlab.com/pycqa/flake8
+-   repo: https://github.com/pycqa/flake8
     rev: 3.9.2
     hooks:
     -   id: flake8
