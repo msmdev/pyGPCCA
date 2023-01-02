@@ -126,19 +126,20 @@ def ensure_ndarray_or_sparse(
 
 
 def assert_petsc_real_scalar_type() -> None:
-    """Check PETSc was compiled using `–with-scalar-type=real`."""
+    """Check if PETSc was compiled using `–with-scalar-type=real`."""
     try:
         from petsc4py import PETSc
 
         if np.isrealobj(PETSc.ScalarType()):
             return
-        raise TypeError(
-            "PETSc was compiled with complex scalar type. "
-            "Please recompile PETSc with `--with-scalar-type=real` or "
-            "provide alternative `PETSC_ARCH=...` with correct scalar type."
-        )
+        else:
+            raise TypeError(
+                "PETSc was compiled with complex scalar type. "
+                "Please recompile PETSc with `--with-scalar-type=real` or "
+                "provide alternative `PETSC_ARCH=...` with correct scalar type."
+            )
     except Exception as e:
         logging.error(
-            f"Unable to determine PETSc's scalar type, reason: `{e}`. Assuming true, "  # noqa: G004
+            f"Unable to determine PETSc's scalar type. Reason: `{e}`. Assuming true, "  # noqa: G004
             f"but please ensure that PETSc was compiled using `--with-scalar-type=real`.",
         )
