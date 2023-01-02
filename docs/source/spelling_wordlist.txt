@@ -26,3 +26,8 @@ Röblitz
 Sikorski
 Zuse
 mypy
+numpy
+Zenodo
+Konstantin
+pre
+intersphinx

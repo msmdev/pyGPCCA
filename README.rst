@@ -16,7 +16,7 @@
    :target: https://doi.org/10.5281/zenodo.6914001
    :alt: Zenodo
 
-.. |CI| image:: https://img.shields.io/github/workflow/status/msmdev/pygpcca/CI/main
+.. |CI| image:: https://img.shields.io/github/actions/workflow/status/msmdev/pygpcca/ci.yml?branch=main
     :target: https://github.com/msmdev/pygpcca/actions
     :alt: CI
 
