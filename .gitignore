@@ -134,3 +134,6 @@ dmypy.json
 
 # docs
 docs/source/api/*rst
+
+# VSCode
+.vscode/
