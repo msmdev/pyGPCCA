@@ -1,6 +1,6 @@
 -r ../requirements.txt
 nbsphinx>=0.8
-sphinx==4.0.2  # https://github.com/spatialaudio/nbsphinx/issues/584
+sphinx>=5
 sphinx-autodoc-annotation
 sphinx-autodoc-typehints>=1.10.3
 sphinx-copybutton
