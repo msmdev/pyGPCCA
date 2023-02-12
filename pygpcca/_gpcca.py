@@ -471,7 +471,7 @@ def _objective(alpha: np.ndarray, X: np.ndarray) -> float:
 
     # Compute value of the objective function.
     # from Matlab: optval = m - trace( diag(1 ./ A(1,:)) * (A' * A) )
-    return m - np.trace(np.diag(1.0 / rot_mat[0, :]).dot(rot_mat.conj().T.dot(rot_mat)))  # type: ignore[no-any-return]
+    return m - np.trace(np.diag(1.0 / rot_mat[0, :]).dot(rot_mat.conj().T.dot(rot_mat)))  # type: ignore[return-value]
 
 
 @d.dedent
