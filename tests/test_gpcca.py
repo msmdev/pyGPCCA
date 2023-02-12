@@ -851,7 +851,6 @@ class TestCustom:
         assert_allclose(g.dominant_eigenvalues, top_eigenvalues_P_2_LM[:n_m])
 
     def test_split_warning_LM(self, P_2: np.ndarray):
-
         g = GPCCA(P_2, eta=None, z="LM")
 
         with pytest.warns(
@@ -880,7 +879,6 @@ class TestCustom:
             g.optimize({"m_min": 11, "m_max": 12})
 
     def test_split_raise_LM(self, P_2: np.ndarray):
-
         g = GPCCA(P_2, eta=None, z="LM")
 
         with pytest.raises(
@@ -939,7 +937,6 @@ class TestCustom:
         assert_allclose(g.dominant_eigenvalues, top_eigenvalues_P_2_LR[:n_m])
 
     def test_split_warning_LR(self, P_2: np.ndarray):
-
         g = GPCCA(P_2, eta=None, z="LR")
 
         with pytest.warns(
@@ -962,7 +959,6 @@ class TestCustom:
             g.optimize({"m_min": 10, "m_max": 12})
 
     def test_split_raise_LR(self, P_2: np.ndarray):
-
         g = GPCCA(P_2, eta=None, z="LR")
 
         with pytest.raises(
@@ -985,7 +981,6 @@ class TestCustom:
             g.optimize(11)
 
     def test_optimize_range_all_invalid(self, P_2: np.ndarray, mocker):
-
         g = GPCCA(P_2, eta=None, z="LR")
 
         mocker.patch(
