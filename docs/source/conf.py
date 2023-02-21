@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath("_ext"))
 
 import pygpcca  # noqa: E402
 
-needs_sphinx = "3.3"
+needs_sphinx = "5"
 # -- Project information -----------------------------------------------------
 
 project = "pyGPCCA"
@@ -115,6 +115,7 @@ spelling_filters = ["enchant.tokenize.URLFilter", "enchant.tokenize.EmailFilter"
 
 # linkcheck
 linkcheck_anchors = False  # problem with specifying lines on GitHub in `acknowledgments.rst`
+linkcheck_ignore = ["https://doi.org/10.1021/acs.jctc.8b00079", "https://pubs.acs.org/doi/abs/10.1021/acs.jctc.8b00079"]
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

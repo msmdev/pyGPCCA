@@ -91,7 +91,6 @@ class TestStationaryDistribution:
         test_matrix_2: np.ndarray,
         test_matrix_2_stationary_distribution,
     ):
-
         assert _is_stationary_distribution(test_matrix_1, test_matrix_1_stationary_distribution)
         assert _is_stationary_distribution(test_matrix_2, test_matrix_2_stationary_distribution)
 

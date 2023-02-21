@@ -17,7 +17,6 @@ class TestEigendecompositionSLEPSc:
         test_matrix_2_eigenvalues: np.ndarray,
         test_matrix_2_eigenvectors: np.ndarray,
     ):
-
         eigs_1, vecs_1 = _eigs_slepc(csr_matrix(test_matrix_1), k=11)
         assert_allclose(
             test_matrix_1_eigenvalues,
