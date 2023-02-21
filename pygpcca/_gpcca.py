@@ -317,7 +317,7 @@ def _do_schur(
         warnings.warn(
             "According to `scipy.linalg.subspace_angles()` the dimension of the "
             f"column spaces of P*X and/or X*R is not equal to {m}."
-        )
+        )  # noqa: B028
 
     return X, R, eigenvalues
 
@@ -353,7 +353,7 @@ def _initialize_rot_matrix(X: np.ndarray) -> np.ndarray:
         warnings.warn(
             f"The condition number {condition} of the matrix of start simplex vertices "
             "X[index, :] is quite high for safe inversion (to build the initial rotation matrix)."
-        )
+        )  # noqa: B028
 
     # Compute transformation matrix rot_matrix as initial guess for local optimization (maybe not feasible!).
     return np.linalg.pinv(X[index, :])
@@ -1024,7 +1024,7 @@ class GPCCA:
                 warnings.warn(
                     f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
                     f"Skipping clustering into {m} clusters."
-                )
+                )  # noqa: B028
                 crispness_list.append(0.0)
                 chi_list.append(np.zeros((n, m)))
                 rot_matrix_list.append(np.zeros((m, m)))
@@ -1040,14 +1040,14 @@ class GPCCA:
                 warnings.warn(
                     f"`{m}` macrostates requested, but transition matrix only has "
                     f"`{nmeta}` macrostates. Request less macrostates."
-                )
+                )  # noqa: B028
             # Check, if we have enough clusters to support the disconnected sets.
             elif m < n_closed_components:
                 crispness_list.append(-crispness)
                 warnings.warn(
                     f"Number of macrostates `({m})` is too small. "
                     f"Transition matrix has `{n_closed_components}` disconnected components."
-                )
+                )  # noqa: B028
             else:
                 crispness_list.append(crispness)
             chi_list.append(chi)
@@ -1058,7 +1058,7 @@ class GPCCA:
                 warnings.warn(
                     f"Clustering {n} data points into {max(m_list)} clusters is always perfectly crisp. "
                     f"Thus m={max(m_list)} won't be included in the search for the optimal cluster number."
-                )
+                )  # noqa: B028
                 opt_idx = int(np.argmax(crispness_list[:-1]))
             else:
                 opt_idx = int(np.argmax(crispness_list))
@@ -1271,7 +1271,7 @@ class GPCCA:
         try:
             return stationary_distribution(self._P)
         except Exception as e:  # noqa: B902
-            warnings.warn(f"Stationary distribution couldn't be calculated. Reason: {e}.")
+            warnings.warn(f"Stationary distribution couldn't be calculated. Reason: {e}.")  # noqa: B028
         return None
 
     @property
