@@ -19,9 +19,8 @@ References
 
 .. [Brandts02]
     Jan H. Brandts, |br|
-    *Matlab code for sorting real Schur forms*, |br|
+    *Matlab ode for sorting real Schur forms*, |br|
     Numerical Linear Algebra with Applications, 9(3):249-261, 2002.
-    `doi:10.1002/nla.274 <https://doi.org/10.1002/nla.274>`__.
 
 .. [Roeblitz13]
     Susanna Röblitz and Marcus Weber, |br|
