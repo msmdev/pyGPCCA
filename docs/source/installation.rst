@@ -15,7 +15,7 @@ Conda
 This is the recommended way of installing, since this package also includes `PETSc`_/`SLEPc`_ libraries.
 We use `PETSc`_/`SLEPc`_ internally to speed up the computation of the leading Schur vectors. These are optional
 dependencies - if they're not present, we compute a full Schur decomposition instead and sort it using the method
-introduced by `Brandts (2002)`_. Note that this scales cubically in sample number, making it essential to use
+introduced by `Brandts (2001)`_. Note that this scales cubically in sample number, making it essential to use
 `PETSc`_/`SLEPc`_ for large sample numbers. `PETSc`_/`SLEPc`_ implement iterative methods to only compute
 the leading Schur vectors, which is computationally much less expensive.
 
@@ -86,7 +86,7 @@ The installation steps can be roughly outlined as::
     # install slepc4py
     pip install --user petsc4py
 
-.. _`Brandts (2002)`: https://doi.org/10.1002/nla.274
+.. _`Brandts (2001)`: https://www.math.uu.nl/publications/preprints/1180.pdf
 .. _`PETSc`: https://www.mcs.anl.gov/petsc/
 .. _`SLEPc`: https://slepc.upv.es/
 .. _`PETSc installation guide`: https://www.mcs.anl.gov/petsc/documentation/installation.html
