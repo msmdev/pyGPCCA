@@ -18,7 +18,7 @@ Further, utility functions found in `pygpcca/utils/_utils.py`_ originate from MS
 .. _`CMD`: https://www.zib.de/numeric/cmd
 .. _`ZIB`: https://www.zib.de/
 .. _`Fabian Paul`: https://github.com/fabian-paul
-.. _`Jan Brandts`: https://onlinelibrary.wiley.com/doi/10.1002/nla.274
+.. _`Jan Brandts`: https://www.math.uu.nl/publications/preprints/1180.pdf
 .. _`Python code`: https://gist.github.com/fabian-paul/14679b43ed27aa25fdb8a2e8f021bad5
 .. _`Alexander Sikorski`: https://www.zib.de/members/sikorski
 .. _`SLEPc`: https://slepc.upv.es/
