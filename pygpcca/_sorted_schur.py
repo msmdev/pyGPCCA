@@ -28,7 +28,7 @@
 # You should have received a copy of the GNU Lesser General Public License along with this program.
 # If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------------------------------------------------------
-from typing import Tuple, Union
+from typing import Tuple, Union, Literal
 import sys
 
 if not sys.warnoptions:
@@ -42,6 +42,7 @@ from scipy.linalg import schur, rsf2csf, subspace_angles
 from scipy.sparse import issparse, spmatrix, csr_matrix, isspmatrix_csr
 import numpy as np
 
+from pygpcca._types import ArrayLike
 from pygpcca.utils._docs import d
 from pygpcca.utils._checks import assert_petsc_real_scalar_type
 from pygpcca._sort_real_schur import sort_real_schur
@@ -58,7 +59,7 @@ except (ImportError, TypeError):
 __all__ = ["sorted_schur"]
 
 
-def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[np.ndarray, spmatrix]) -> None:
+def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[ArrayLike, spmatrix]) -> None:
     """
     Initialize PETSc matrix.
 
@@ -85,7 +86,7 @@ def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[np.ndarray, spmatrix]) 
 
 
 @d.dedent
-def _check_conj_split(eigenvalues: np.ndarray) -> bool:
+def _check_conj_split(eigenvalues: ArrayLike) -> bool:
     """
     Check whether using m eigenvalues cuts through a block of complex conjugates.
 
@@ -112,7 +113,7 @@ def _check_conj_split(eigenvalues: np.ndarray) -> bool:
 
 
 @d.dedent
-def _check_schur(P: np.ndarray, Q: np.ndarray, R: np.ndarray, eigenvalues: np.ndarray, method: str) -> None:
+def _check_schur(P: ArrayLike, Q: ArrayLike, R: ArrayLike, eigenvalues: ArrayLike, method: str) -> None:
     """
     Run a number of checks on the sorted Schur decomposition.
 
@@ -189,8 +190,8 @@ def _check_schur(P: np.ndarray, Q: np.ndarray, R: np.ndarray, eigenvalues: np.nd
 
 @d.dedent
 def sorted_krylov_schur(
-    P: Union[spmatrix, np.ndarray], k: int, z: str = "LM", tol: float = 1e-16
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    P: Union[spmatrix, ArrayLike], k: int, z: Literal["LM", "LR"] = "LM", tol: float = 1e-16
+) -> Tuple[ArrayLike, ArrayLike, ArrayLike, ArrayLike]:
     r"""
     Calculate an orthonormal basis of the subspace associated with the `k`
     dominant eigenvalues of `P` using the Krylov-Schur method as implemented in SLEPc.
@@ -301,7 +302,7 @@ def sorted_krylov_schur(
 
 
 @d.dedent
-def sorted_brandts_schur(P: np.ndarray, k: int, z: str = "LM") -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def sorted_brandts_schur(P: ArrayLike, k: int, z: Literal["LM", "LR"] = "LM") -> Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     Compute a sorted Schur decomposition.
 
@@ -344,8 +345,12 @@ def sorted_brandts_schur(P: np.ndarray, k: int, z: str = "LM") -> Tuple[np.ndarr
 
 @d.dedent
 def sorted_schur(
-    P: Union[np.ndarray, spmatrix], m: int, z: str = "LM", method: str = DEFAULT_SCHUR_METHOD, tol_krylov: float = 1e-16
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    P: Union[ArrayLike, spmatrix],
+    m: int,
+    z: Literal["LM", "LR"] = "LM",
+    method: str = DEFAULT_SCHUR_METHOD,
+    tol_krylov: float = 1e-16,
+) -> Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     Return ``m`` dominant real Schur vectors or an orthonormal basis spanning the same invariant subspace.
 

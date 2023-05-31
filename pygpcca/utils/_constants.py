@@ -1,6 +1,6 @@
 import numpy as np
 
-EPS = np.finfo(np.float64).eps
+EPS = float(np.finfo(np.float64).eps)
 
 DEFAULT_SCHUR_METHOD = "brandts"
 NO_PETSC_SLEPC_FOUND_MSG = (

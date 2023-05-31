@@ -25,6 +25,7 @@ from scipy.sparse import csgraph, spmatrix, csr_matrix, isspmatrix_csr
 from scipy.sparse.linalg import eigs
 import numpy as np
 
+from pygpcca._types import ArrayLike
 from pygpcca.utils._docs import d
 from pygpcca.utils._checks import ensure_ndarray_or_sparse
 from pygpcca.utils._constants import EPS
@@ -37,7 +38,7 @@ __all__ = [
 
 
 @singledispatch
-def connected_sets(C: Union[np.ndarray, spmatrix], directed: bool = True) -> List[np.ndarray]:
+def connected_sets(C: Union[ArrayLike, spmatrix], directed: bool = True) -> List[ArrayLike]:
     """
     Compute connected sets of microstates.
 
@@ -76,13 +77,13 @@ def connected_sets(C: Union[np.ndarray, spmatrix], directed: bool = True) -> Lis
     raise NotImplementedError(type(C))
 
 
-@connected_sets.register(np.ndarray)
-def _csd(C: np.ndarray, directed: bool = True) -> List[np.ndarray]:
+@connected_sets.register(ArrayLike)
+def _csd(C: ArrayLike, directed: bool = True) -> List[ArrayLike]:
     return connected_sets(csr_matrix(C), directed=directed)
 
 
 @connected_sets.register(spmatrix)
-def _css(C: spmatrix, directed: bool = True) -> List[np.ndarray]:
+def _css(C: spmatrix, directed: bool = True) -> List[ArrayLike]:
     if not isspmatrix_csr(C):
         C = csr_matrix(C)
 
@@ -118,7 +119,7 @@ def _css(C: spmatrix, directed: bool = True) -> List[np.ndarray]:
 
 
 @singledispatch
-def is_transition_matrix(T: Union[np.ndarray, spmatrix], tol: float = 1e-12) -> bool:
+def is_transition_matrix(T: Union[ArrayLike, spmatrix], tol: float = 1e-12) -> bool:
     r"""
     Check if the given matrix is a transition matrix.
 
@@ -164,8 +165,8 @@ def _itmd(T: spmatrix, tol: float = 1e-12) -> bool:
     return is_positive and is_normed
 
 
-@is_transition_matrix.register(np.ndarray)
-def _itms(T: np.ndarray, tol: float = 1e-12) -> bool:
+@is_transition_matrix.register(ArrayLike)
+def _itms(T: ArrayLike, tol: float = 1e-12) -> bool:
     T = ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind="numeric")
 
     dim = T.shape[0]
@@ -177,7 +178,7 @@ def _itms(T: np.ndarray, tol: float = 1e-12) -> bool:
 
 @singledispatch
 @d.dedent
-def stationary_distribution(P: Union[np.ndarray, spmatrix]) -> np.ndarray:
+def stationary_distribution(P: Union[ArrayLike, spmatrix]) -> ArrayLike:
     r"""
     Compute stationary distribution of stochastic matrix `P`.
 
@@ -205,8 +206,8 @@ def stationary_distribution(P: Union[np.ndarray, spmatrix]) -> np.ndarray:
     raise NotImplementedError(type(P))
 
 
-@stationary_distribution.register(np.ndarray)
-def _sdd(P: np.ndarray) -> np.ndarray:
+@stationary_distribution.register(ArrayLike)
+def _sdd(P: ArrayLike) -> ArrayLike:
     try:
         mu = stationary_distribution_from_backward_iteration(P)
         if np.any(mu < 0):  # numerical problem, fall back to more robust algorithm.
@@ -223,7 +224,7 @@ def _sdd(P: np.ndarray) -> np.ndarray:
     return mu
 
 
-def _eigs_slepc(P: spmatrix, k: int, which: "str" = "LR", tol: float = EPS) -> Tuple[np.ndarray, np.ndarray]:
+def _eigs_slepc(P: spmatrix, k: int, which: "str" = "LR", tol: float = EPS) -> Tuple[ArrayLike, ArrayLike]:
     from petsc4py import PETSc
     from slepc4py import SLEPc
 
@@ -265,7 +266,7 @@ def _eigs_slepc(P: spmatrix, k: int, which: "str" = "LR", tol: float = EPS) -> T
 
 
 @stationary_distribution.register(spmatrix)
-def _sds(P: spmatrix) -> np.ndarray:
+def _sds(P: spmatrix) -> ArrayLike:
     # get the top two eigenvalues and vecs so we can check for irreducibility
     try:
         vals, vecs = _eigs_slepc(P.T, k=2, which="LR")
@@ -302,7 +303,7 @@ def _sds(P: spmatrix) -> np.ndarray:
     return pi
 
 
-def backward_iteration(A: np.ndarray, mu: float, x0: np.ndarray, tol: float = 1e-14, maxiter: int = 100) -> np.ndarray:
+def backward_iteration(A: ArrayLike, mu: float, x0: ArrayLike, tol: float = 1e-14, maxiter: int = 100) -> ArrayLike:
     """
     Find eigenvector to approximate eigenvalue via backward iteration.
 
@@ -347,7 +348,7 @@ def backward_iteration(A: np.ndarray, mu: float, x0: np.ndarray, tol: float = 1e
 
 
 @d.dedent
-def stationary_distribution_from_backward_iteration(P: np.ndarray, eps: float = 1e-15) -> np.ndarray:
+def stationary_distribution_from_backward_iteration(P: ArrayLike, eps: float = 1e-15) -> ArrayLike:
     """
     Fast computation of the stationary vector using backward iteration.
 
@@ -376,7 +377,7 @@ def stationary_distribution_from_backward_iteration(P: np.ndarray, eps: float = 
 
 
 @d.dedent
-def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
+def stationary_distribution_from_eigenvector(P: ArrayLike) -> ArrayLike:
     r"""
     Compute stationary distribution of stochastic matrix `P`.
 
@@ -409,7 +410,7 @@ def stationary_distribution_from_eigenvector(P: np.ndarray) -> np.ndarray:
     return nu / np.sum(nu)
 
 
-def _is_stationary_distribution(T: Union[np.ndarray, spmatrix], pi: np.ndarray) -> bool:
+def _is_stationary_distribution(T: Union[ArrayLike, spmatrix], pi: ArrayLike) -> bool:
     # check the shapes
     if not T.shape[0] == T.shape[1] or not T.shape[0] == pi.shape[0]:
         raise ValueError("Shape mismatch.")

@@ -45,7 +45,7 @@ __credits__ = [
 ]
 
 
-from typing import Dict, List, Tuple, Union, Callable, Optional, TYPE_CHECKING
+from typing import Dict, List, Tuple, Union, Literal, Callable, Optional, TYPE_CHECKING
 
 try:
     from functools import cached_property  # type: ignore[attr-defined]
@@ -74,6 +74,7 @@ from scipy.optimize import fmin
 import numpy as np
 import scipy.sparse as sp
 
+from pygpcca._types import OArray, ArrayLike
 from pygpcca.utils._docs import d
 from pygpcca.utils._utils import (
     connected_sets,
@@ -84,11 +85,10 @@ from pygpcca._sorted_schur import sorted_schur, _check_conj_split
 from pygpcca.utils._constants import EPS, DEFAULT_SCHUR_METHOD
 
 __all__ = ["gpcca_coarsegrain", "GPCCA"]
-OArray = Optional[np.ndarray]
 
 
 @d.dedent
-def _gram_schmidt_mod(X: np.ndarray, eta: np.ndarray) -> np.ndarray:
+def _gram_schmidt_mod(X: ArrayLike, eta: ArrayLike) -> ArrayLike:
     r"""
     :math:`\eta`-orthonormalize Schur vectors.
 
@@ -172,13 +172,13 @@ def _gram_schmidt_mod(X: np.ndarray, eta: np.ndarray) -> np.ndarray:
 
 @d.dedent
 def _do_schur(
-    P: Union[np.ndarray, spmatrix],
-    eta: np.ndarray,
+    P: Union[ArrayLike, spmatrix],
+    eta: ArrayLike,
     m: int,
-    z: str = "LM",
+    z: Literal["LM", "LR"] = "LM",
     method: str = DEFAULT_SCHUR_METHOD,
     tol_krylov: float = 1e-16,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> Tuple[ArrayLike, ArrayLike, ArrayLike]:
     r"""
     Firstly, a Schur decomposition of the `(n, n)` transition matrix `P`
     is performed, with due regard to the input distribution of states `eta`.
@@ -324,7 +324,7 @@ def _do_schur(
 
 
 @d.dedent
-def _initialize_rot_matrix(X: np.ndarray) -> np.ndarray:
+def _initialize_rot_matrix(X: ArrayLike) -> ArrayLike:
     """
     Initialize the rotation matrix.
 
@@ -362,7 +362,7 @@ def _initialize_rot_matrix(X: np.ndarray) -> np.ndarray:
 
 
 @d.dedent
-def _indexsearch(X: np.ndarray) -> np.ndarray:
+def _indexsearch(X: ArrayLike) -> ArrayLike:
     """
     Find a simplex structure in the data.
 
@@ -405,11 +405,11 @@ def _indexsearch(X: np.ndarray) -> np.ndarray:
     index = np.zeros(m, dtype=np.int64)
     max_dist = 0.0
 
-    # First vertex: row with largest norm.
+    # First vertex: row with the largest norm.
     for i in range(n):
         dist = np.linalg.norm(ortho_sys[i, :])
         if dist > max_dist:
-            max_dist = dist
+            max_dist = dist  # type: ignore[assignment]
             index[0] = i
 
     # Translate coordinates to make the first vertex the origin.
@@ -425,7 +425,7 @@ def _indexsearch(X: np.ndarray) -> np.ndarray:
             ortho_sys[i, :] -= sclprod * temp
             distt = np.linalg.norm(ortho_sys[i, :])
             if distt > max_dist:  # and i not in index[0:j]: #in _pcca_connected_isa() of pcca.py
-                max_dist = distt
+                max_dist = distt  # type: ignore[assignment]
                 index[j] = i
         ortho_sys /= max_dist
 
@@ -433,7 +433,7 @@ def _indexsearch(X: np.ndarray) -> np.ndarray:
 
 
 @d.dedent
-def _objective(alpha: np.ndarray, X: np.ndarray) -> float:
+def _objective(alpha: ArrayLike, X: ArrayLike) -> float:
     """
     Compute objective function value.
 
@@ -477,7 +477,7 @@ def _objective(alpha: np.ndarray, X: np.ndarray) -> float:
 
 
 @d.dedent
-def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
+def _opt_soft(X: ArrayLike, rot_matrix: ArrayLike) -> Tuple[ArrayLike, ArrayLike, float]:
     r"""
     Optimize the G-PCCA rotation matrix such that the memberships are
     exclusively non-negative and compute the membership matrix.
@@ -548,7 +548,7 @@ def _opt_soft(X: np.ndarray, rot_matrix: np.ndarray) -> Tuple[np.ndarray, np.nda
 
 
 @d.dedent
-def _fill_matrix(rot_matrix: np.ndarray, X: np.ndarray) -> np.ndarray:
+def _fill_matrix(rot_matrix: ArrayLike, X: ArrayLike) -> ArrayLike:
     """
     Make the rotation matrix feasible.
 
@@ -591,7 +591,7 @@ def _fill_matrix(rot_matrix: np.ndarray, X: np.ndarray) -> np.ndarray:
 
 
 @d.dedent
-def _cluster_by_isa(X: np.ndarray) -> Tuple[np.ndarray, float]:
+def _cluster_by_isa(X: ArrayLike) -> Tuple[ArrayLike, float]:
     """
     Classification of dynamical data based on `m` orthonormal Schur vectors of the (row-stochastic) transition matrix.
 
@@ -629,7 +629,7 @@ def _cluster_by_isa(X: np.ndarray) -> Tuple[np.ndarray, float]:
 
 
 @d.dedent
-def _gpcca_core(X: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
+def _gpcca_core(X: ArrayLike) -> Tuple[ArrayLike, ArrayLike, float]:
     r"""
     Core of the G-PCCA spectral clustering method with optimized memberships [Reuter18]_, [Reuter19]_.
 
@@ -666,7 +666,7 @@ def _gpcca_core(X: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
 
 
 @d.dedent
-def _coarsegrain(P: Union[np.ndarray, spmatrix], eta: np.ndarray, chi: np.ndarray) -> np.ndarray:
+def _coarsegrain(P: Union[ArrayLike, spmatrix], eta: ArrayLike, chi: ArrayLike) -> ArrayLike:
     r"""
     Coarse-grain `P` such that the (dominant) Perron eigenvalues are preserved.
 
@@ -701,12 +701,12 @@ def _coarsegrain(P: Union[np.ndarray, spmatrix], eta: np.ndarray, chi: np.ndarra
 
 @d.dedent
 def gpcca_coarsegrain(
-    P: Union[np.ndarray, spmatrix],
+    P: Union[ArrayLike, spmatrix],
     m: Union[int, Tuple[int, int], List[int], Dict[str, int]],
-    eta: Optional[np.ndarray] = None,
-    z: str = "LM",
+    eta: Optional[ArrayLike] = None,
+    z: Literal["LM", "LR"] = "LM",
     method: str = DEFAULT_SCHUR_METHOD,
-) -> np.ndarray:
+) -> ArrayLike:
     r"""
     Coarse-grain the transition matrix `P` into `m` sets using G-PCCA [Reuter18]_, [Reuter19]_.
 
@@ -769,9 +769,9 @@ class GPCCA:
 
     def __init__(
         self,
-        P: Union[np.ndarray, spmatrix],
-        eta: Optional[np.ndarray] = None,
-        z: str = "LM",
+        P: Union[ArrayLike, spmatrix],
+        eta: Optional[ArrayLike] = None,
+        z: Literal["LM", "LR"] = "LM",
         method: str = DEFAULT_SCHUR_METHOD,
     ):
         if not is_transition_matrix(P):
@@ -791,7 +791,7 @@ class GPCCA:
             raise ValueError(f"eta vector length ({len(eta)}) doesn't match with the shape of " f"P[{n}, {n}].")
 
         self._P = P.astype(np.float64)
-        self._eta: np.ndarray = eta.astype(np.float64)
+        self._eta: ArrayLike = eta.astype(np.float64)
         self._z: str = z
         self._method: str = method
 
@@ -1012,8 +1012,8 @@ class GPCCA:
             assert isinstance(self._p_eigenvalues, np.ndarray)
 
         # Initialize lists to collect results.
-        chi_list: List[np.ndarray] = []
-        rot_matrix_list: List[np.ndarray] = []
+        chi_list: List[ArrayLike] = []
+        rot_matrix_list: List[ArrayLike] = []
         crispness_list: List[float] = []
         # Iterate over m
         for m in range(min(m_list), max(m_list) + 1):
@@ -1144,7 +1144,7 @@ class GPCCA:
         return self._top_eigenvalues
 
     @property
-    def input_distribution(self) -> np.ndarray:
+    def input_distribution(self) -> ArrayLike:
         r"""
         Input probability distribution of the (micro)states.
 
@@ -1184,7 +1184,7 @@ class GPCCA:
         return None if self.memberships is None else np.argmax(self.memberships, axis=1)  # type: ignore[return-value]
 
     @property
-    def macrostate_sets(self) -> Optional[List[np.ndarray]]:
+    def macrostate_sets(self) -> Optional[List[ArrayLike]]:
         """
         Crisp clustering using G-PCCA.
 
@@ -1293,7 +1293,7 @@ class GPCCA:
         return self._eigenvalues
 
     @property
-    def transition_matrix(self) -> Union[np.ndarray, spmatrix]:
+    def transition_matrix(self) -> Union[ArrayLike, spmatrix]:
         """Row-stochastic transition matrix `P`."""
         return self._P
 
