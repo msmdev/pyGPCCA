@@ -12,6 +12,11 @@ on:
         branches:
         -   main
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+
 jobs:
     lint:
         runs-on: ubuntu-latest
@@ -60,8 +65,8 @@ jobs:
                     use_slepc: false
         env:
             # make sure to pin this in tox.ini as well
-            PC_VERSION: 3.18.0  # PETSc version
-            SC_VERSION: 3.18.0  # SLEPc version
+            PC_VERSION: 3.19.0  # PETSc version
+            SC_VERSION: 3.19.0  # SLEPc version
 
         steps:
         -   uses: actions/checkout@v3
