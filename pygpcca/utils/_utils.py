@@ -77,7 +77,7 @@ def connected_sets(C: Union[ArrayLike, spmatrix], directed: bool = True) -> List
     raise NotImplementedError(type(C))
 
 
-@connected_sets.register(ArrayLike)
+@connected_sets.register(np.ndarray)
 def _csd(C: ArrayLike, directed: bool = True) -> List[ArrayLike]:
     return connected_sets(csr_matrix(C), directed=directed)
 
@@ -165,7 +165,7 @@ def _itmd(T: spmatrix, tol: float = 1e-12) -> bool:
     return is_positive and is_normed
 
 
-@is_transition_matrix.register(ArrayLike)
+@is_transition_matrix.register(np.ndarray)
 def _itms(T: ArrayLike, tol: float = 1e-12) -> bool:
     T = ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind="numeric")
 
@@ -206,7 +206,7 @@ def stationary_distribution(P: Union[ArrayLike, spmatrix]) -> ArrayLike:
     raise NotImplementedError(type(P))
 
 
-@stationary_distribution.register(ArrayLike)
+@stationary_distribution.register(np.ndarray)
 def _sdd(P: ArrayLike) -> ArrayLike:
     try:
         mu = stationary_distribution_from_backward_iteration(P)
@@ -267,7 +267,7 @@ def _eigs_slepc(P: spmatrix, k: int, which: "str" = "LR", tol: float = EPS) -> T
 
 @stationary_distribution.register(spmatrix)
 def _sds(P: spmatrix) -> ArrayLike:
-    # get the top two eigenvalues and vecs so we can check for irreducibility
+    # get the top two eigenvalues and vecs so that we can check for irreducibility
     try:
         vals, vecs = _eigs_slepc(P.T, k=2, which="LR")
     except ImportError:

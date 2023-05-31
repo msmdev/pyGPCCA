@@ -114,7 +114,7 @@ def ensure_ndarray_or_sparse(
     Returns
     -------
     If ``A`` is an already valid :class:`numpy.ndarray` or :class:`scipy.sparse.spmatrix`, then it is simply returned.
-    Otherwise returns a :class:`numpy.ndarray` copy of the array-like object ``A``.
+    Otherwise, returns a :class:`numpy.ndarray` copy of the array-like object ``A``.
     """
     if not isinstance(A, np.ndarray) and not issparse(A):
         try:
