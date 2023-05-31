@@ -10,7 +10,8 @@ repos:
     rev: v1.0.0
     hooks:
     -   id: mypy
-        additional_dependencies: [numpy>=1.20.0, scipy>=1.6.0]
+        # TODO(michalk8): remove the numpy restriction
+        additional_dependencies: [numpy==1.20.0, scipy>=1.6.0]
 -   repo: https://github.com/psf/black
     rev: 23.1.0
     hooks:
