@@ -77,7 +77,7 @@ def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[np.ndarray, spmatrix]) 
     """
     if issparse(P):
         if not isspmatrix_csr(P):
-            warnings.warn("Only CSR sparse matrices are supported, converting.")
+            warnings.warn("Only CSR sparse matrices are supported, converting.", stacklevel=2)
             P = csr_matrix(P)
         M.createAIJ(size=P.shape, csr=(P.indptr, P.indices, P.data))  # type: ignore[union-attr]
     else:
@@ -174,14 +174,16 @@ def _check_schur(P: np.ndarray, Q: np.ndarray, R: np.ndarray, eigenvalues: np.nd
             f"return the invariant subspace associated with the top k eigenvalues, "
             f"since the subspace angles between the column spaces of P*Q and Q*L "
             f"aren't near zero (L is a diagonal matrix with the "
-            f"sorted top eigenvalues on the diagonal). The subspace angles are: `{dummy3}`."
+            f"sorted top eigenvalues on the diagonal). The subspace angles are: `{dummy3}`.",
+            stacklevel=2,
         )
 
     if not test3:
         warnings.warn(
             f"According to `scipy.linalg.subspace_angles()`, the dimension of the "
             f"column space of P*Q and/or Q*L is not equal to m (L is a diagonal "
-            f"matrix with the sorted top eigenvalues on the diagonal), method=`{method}`."
+            f"matrix with the sorted top eigenvalues on the diagonal), method=`{method}`.",
+            stacklevel=2,
         )
 
 
@@ -278,7 +280,7 @@ def sorted_krylov_schur(
 
     # Warn, if nconv smaller than k.
     if nconv < k:
-        warnings.warn(f"The number of converged eigenpairs is `{nconv}`, but `{k}` were requested.")
+        warnings.warn(f"The number of converged eigenpairs is `{nconv}`, but `{k}` were requested.", stacklevel=2)
 
     # Collect the k dominant eigenvalues.
     eigenvalues = []
@@ -331,7 +333,7 @@ def sorted_brandts_schur(P: np.ndarray, k: int, z: str = "LM") -> Tuple[np.ndarr
 
     # Warnings
     if np.any(np.array(ap) > 1.0):
-        warnings.warn("Reordering of Schur matrix was inaccurate.")
+        warnings.warn("Reordering of Schur matrix was inaccurate.", stacklevel=2)
 
     # compute eigenvalues
     T, _ = rsf2csf(R, Q)
@@ -369,7 +371,7 @@ def sorted_schur(
     if method == "krylov":
         if petsc4py is None or slepc4py is None:
             method = DEFAULT_SCHUR_METHOD
-            warnings.warn(NO_PETSC_SLEPC_FOUND_MSG)
+            warnings.warn(NO_PETSC_SLEPC_FOUND_MSG, stacklevel=2)
 
     if method != "krylov" and issparse(P):
         raise ValueError("Sparse implementation is only available for `method='krylov'`.")

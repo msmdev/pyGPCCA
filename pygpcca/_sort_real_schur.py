@@ -7,7 +7,7 @@
 # http://dx.doi.org/10.1002/nla.274
 # Institution:	University of Amsterdam
 # Description:	In Matlab 6, there exists a command to generate a real Schur form,
-# wheras another transforms a real Schur form into a complex one.
+# whereas another transforms a real Schur form into a complex one.
 # There do not exist commands to prescribe the order in which the eigenvalues appear on the diagonal of the upper
 # (quasi-) triangular factor T. For the complex case, a routine is sketched in Golub and Van Loan (1996),
 # that orders the diagonal of T according to their distance to a target value.

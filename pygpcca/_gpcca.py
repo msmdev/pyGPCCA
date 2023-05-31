@@ -316,7 +316,8 @@ def _do_schur(
     if not test1:
         warnings.warn(
             "According to `scipy.linalg.subspace_angles()` the dimension of the "
-            f"column spaces of P*X and/or X*R is not equal to {m}."
+            f"column spaces of P*X and/or X*R is not equal to {m}.",
+            stacklevel=2,
         )
 
     return X, R, eigenvalues
@@ -352,7 +353,8 @@ def _initialize_rot_matrix(X: np.ndarray) -> np.ndarray:
     if condition > 1e4:
         warnings.warn(
             f"The condition number {condition} of the matrix of start simplex vertices "
-            "X[index, :] is quite high for safe inversion (to build the initial rotation matrix)."
+            "X[index, :] is quite high for safe inversion (to build the initial rotation matrix).",
+            stacklevel=2,
         )
 
     # Compute transformation matrix rot_matrix as initial guess for local optimization (maybe not feasible!).
@@ -1023,7 +1025,8 @@ class GPCCA:
             if _check_conj_split(self._p_eigenvalues[:m]):
                 warnings.warn(
                     f"Clustering into {m} clusters will split complex conjugate eigenvalues. "
-                    f"Skipping clustering into {m} clusters."
+                    f"Skipping clustering into {m} clusters.",
+                    stacklevel=2,
                 )
                 crispness_list.append(0.0)
                 chi_list.append(np.zeros((n, m)))
@@ -1039,14 +1042,16 @@ class GPCCA:
                 crispness_list.append(-crispness)
                 warnings.warn(
                     f"`{m}` macrostates requested, but transition matrix only has "
-                    f"`{nmeta}` macrostates. Request less macrostates."
+                    f"`{nmeta}` macrostates. Request less macrostates.",
+                    stacklevel=2,
                 )
             # Check, if we have enough clusters to support the disconnected sets.
             elif m < n_closed_components:
                 crispness_list.append(-crispness)
                 warnings.warn(
                     f"Number of macrostates `({m})` is too small. "
-                    f"Transition matrix has `{n_closed_components}` disconnected components."
+                    f"Transition matrix has `{n_closed_components}` disconnected components.",
+                    stacklevel=2,
                 )
             else:
                 crispness_list.append(crispness)
@@ -1057,7 +1062,8 @@ class GPCCA:
             if len(m_list) > 1 and max(m_list) == n:
                 warnings.warn(
                     f"Clustering {n} data points into {max(m_list)} clusters is always perfectly crisp. "
-                    f"Thus m={max(m_list)} won't be included in the search for the optimal cluster number."
+                    f"Thus m={max(m_list)} won't be included in the search for the optimal cluster number.",
+                    stacklevel=2,
                 )
                 opt_idx = int(np.argmax(crispness_list[:-1]))
             else:
@@ -1271,7 +1277,7 @@ class GPCCA:
         try:
             return stationary_distribution(self._P)
         except Exception as e:  # noqa: B902
-            warnings.warn(f"Stationary distribution couldn't be calculated. Reason: {e}.")
+            warnings.warn(f"Stationary distribution couldn't be calculated. Reason: {e}.", stacklevel=2)
         return None
 
     @property
