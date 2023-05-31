@@ -52,12 +52,12 @@ jobs:
             fail-fast: false
             max-parallel: 5
             matrix:
-                python: ['3.7', '3.9', '3.10', '3.11']
+                python: ['3.7', '3.8', '3.10', '3.11']
                 os: [ubuntu-latest]
                 use_slepc: [false]
                 include:
                 -   os: ubuntu-latest
-                    python: 3.8
+                    python: 3.9
                     use_slepc: true
                 -   os: macos-latest
                     python: 3.9
