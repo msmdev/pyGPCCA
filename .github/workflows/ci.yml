@@ -73,7 +73,7 @@ jobs:
 
         -   name: Test
             run: |
-                tox -e py-${{ matrix.python }}-${{ matrix.slepc }} -vv
+                tox -e py${{ matrix.python }}-${{ matrix.slepc }} -vv
             env:
                 PLATFORM: ${{ matrix.os }}
 
