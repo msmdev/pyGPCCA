@@ -45,7 +45,6 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.mathjax",
     "sphinx_autodoc_typehints",
-    "sphinx_last_updated_by_git",
     "sphinx_copybutton",
     "typed_returns",
     "nbsphinx",
