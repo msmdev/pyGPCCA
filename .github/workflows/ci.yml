@@ -54,10 +54,10 @@ jobs:
                 include:
                 -   os: ubuntu-latest
                     python: '3.9'
-                    use_slepc: ['slepc']
+                    slepc: 'slepc'
                 -   os: macos-latest
                     python: '3.10'
-                    slepc: ['slepc']
+                    slepc: 'slepc'
 
         steps:
         -   uses: actions/checkout@v3
