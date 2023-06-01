@@ -22,6 +22,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
         -   uses: actions/checkout@v3
+            with:
+                fetch-depth: 0
         -   name: Set up Python
             uses: actions/setup-python@v4
             with:
@@ -34,9 +36,10 @@ jobs:
 
         -   name: Install dependencies
             run: |
-                sudo apt install pandoc
+                sudo apt-get update -y
+                sudo apt install libenchant-2-dev
                 python -m pip install --upgrade pip
-                pip install tox
+                python -m pip install tox
 
         -   name: Linting
             run: |
