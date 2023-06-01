@@ -82,7 +82,7 @@ jobs:
             with:
                 files: ./coverage.xml
                 flags: unittests
-                name: ${{ matrix.os }}-${{ matrix.python }}-{{ matrix.slepc }}
+                name: ${{ matrix.os }}-${{ matrix.python }}-${{ matrix.slepc }}
                 env_vars: OS,PYTHON
                 fail_ci_if_error: false
                 verbose: true
