@@ -69,9 +69,7 @@ from `PyPI`_::
 
 macOS
 +++++
-The most robust way is to follow the `PETSc installation guide`_ and the `SLEPc installation guide`_ or to take a look
-at our continuous integration `steps <https://github.com/msmdev/pyGPCCA/blob/main/.scripts/ci/install_dependencies.sh>`_
-for macOS.
+The most robust way is to follow the `PETSc installation guide`_ and the `SLEPc installation guide`_.
 
 The installation steps can be roughly outlined as::
 
