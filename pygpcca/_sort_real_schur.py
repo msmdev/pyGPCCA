@@ -7,7 +7,7 @@
 # http://dx.doi.org/10.1002/nla.274
 # Institution:	University of Amsterdam
 # Description:	In Matlab 6, there exists a command to generate a real Schur form,
-# wheras another transforms a real Schur form into a complex one.
+# whereas another transforms a real Schur form into a complex one.
 # There do not exist commands to prescribe the order in which the eigenvalues appear on the diagonal of the upper
 # (quasi-) triangular factor T. For the complex case, a routine is sketched in Golub and Van Loan (1996),
 # that orders the diagonal of T according to their distance to a target value.
@@ -26,10 +26,11 @@
 # https://www.math.uu.nl/publications/preprints/1180.pdf
 # --------------------------------------------------------------------------------------------------------------------
 
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Literal
 
 import numpy as np
 
+from pygpcca._types import ArrayLike
 from pygpcca.utils._docs import d
 
 __all__ = ["sort_real_schur"]
@@ -38,8 +39,8 @@ expensive_asserts = False
 
 @d.dedent
 def sort_real_schur(
-    Q: np.ndarray, R: np.ndarray, z: str, b: float, inplace: bool = False
-) -> Tuple[np.ndarray, np.ndarray, List[float]]:
+    Q: ArrayLike, R: ArrayLike, z: Literal["LM", "LR"], b: float, inplace: bool = False
+) -> Tuple[ArrayLike, ArrayLike, List[float]]:
     r"""
     Partially or completely sort the real Schur form `R` and  Schur vectors `Q` of a square matrix `A`.
 
@@ -143,7 +144,7 @@ def sort_real_schur(
         if len(w) == 2:  # if the second block is 2 x 2
             Q, R = normalize(Q, R, w, inplace=True)  # normalize it
         ap.append(
-            np.linalg.norm(R[w, :][:, v], ord=np.inf) / (10 * eps * nrA)
+            float(np.linalg.norm(R[w, :][:, v], ord=np.inf) / (10 * eps * nrA))
         )  # measure size of bottom-left block (see p.6, Sect. 2.3)
 
     R = R - np.tril(R, -2)  # Zero the below-block entries
@@ -192,8 +193,8 @@ def sort_real_schur(
 
 
 def normalize(
-    U: np.ndarray, S: np.ndarray, v: Union[slice, List[int]], inplace: bool = False
-) -> Tuple[np.ndarray, np.ndarray]:
+    U: ArrayLike, S: ArrayLike, v: Union[slice, List[int]], inplace: bool = False
+) -> Tuple[ArrayLike, ArrayLike]:
     """
     Apply a Givens rotation such that the two-by-two diagonal block of `S` situated at diagonal positions \
     ``v[0]``, ``v[1]`` is in standardized form.
@@ -241,7 +242,7 @@ def normalize(
 # -------------------------------------------------------------------------
 
 
-def rot(X: np.ndarray) -> np.ndarray:
+def rot(X: ArrayLike) -> ArrayLike:
     r"""
     Compute a Givens rotation needed in the :func:`normalize`.
 
@@ -284,7 +285,7 @@ def rot(X: np.ndarray) -> np.ndarray:
 
 
 @d.dedent
-def swaplist(p: Union[np.ndarray, List[float]], s: List[int], z: str, b: float) -> List[int]:
+def swaplist(p: Union[ArrayLike, List[float]], s: List[int], z: Literal["LM", "LR"], b: float) -> List[int]:
     """
     Produce a list `v` of swaps of neighboring blocks needed to order the eigenvalues assembled in the vector `p` \
     from closest to `z` to farthest away from `z`, taking into account the parameter `b`.
@@ -366,7 +367,7 @@ def swaplist(p: Union[np.ndarray, List[float]], s: List[int], z: str, b: float) 
 
 
 @d.dedent
-def select(p: Union[List[str], np.ndarray], z: str) -> Tuple[float, int]:
+def select(p: ArrayLike, z: Literal["LM", "LR"]) -> Tuple[float, int]:
     """
     Determine which block is next in the ordering (needed in :func:`normalize`).
 
@@ -403,9 +404,7 @@ def select(p: Union[List[str], np.ndarray], z: str) -> Tuple[float, int]:
 # -------------------------------------------------------------------------
 
 
-def swap(
-    U: np.ndarray, S: np.ndarray, v: List[int], w: List[int], inplace: bool = False
-) -> Tuple[np.ndarray, np.ndarray]:
+def swap(U: ArrayLike, S: ArrayLike, v: List[int], w: List[int], inplace: bool = False) -> Tuple[ArrayLike, ArrayLike]:
     """
     Swap the two blocks on the diagonal of `S` at positions symbolized by the entries of `v` and `w`.
 
@@ -449,8 +448,8 @@ def swap(
     r = e * r[sigp]  # ... scale and permute the right-hand side.
     try:
         x = np.linalg.solve(H, np.linalg.solve(L, r))  # and solve the two triangular systems.
-    except np.linalg.LinAlgError as e:
-        raise RuntimeError(f"Condition number of H is {np.linalg.cond(H)}.") from e
+    except np.linalg.LinAlgError as err:
+        raise RuntimeError(f"Condition number of H is {np.linalg.cond(H)}.") from err
     sigq = np.arange(p * q)
     for k in range(p * q - 1):  # Implement permutation Q of the LU-decomposition PAQ=LU ...
         sigq[[k, Q[k]]] = sigq[[Q[k], k]].copy()
@@ -502,7 +501,7 @@ def swap(
 # -------------------------------------------------------------------------
 
 
-def lu_complpiv(A: np.ndarray, inplace: bool = False) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def lu_complpiv(A: ArrayLike, inplace: bool = False) -> Tuple[ArrayLike, ArrayLike, ArrayLike, ArrayLike]:
     r"""
     Compute the LU-decomposition of a matrix `A` with complete pivoting.
 
@@ -538,8 +537,8 @@ def lu_complpiv(A: np.ndarray, inplace: bool = False) -> Tuple[np.ndarray, np.nd
         rw, cl = np.unravel_index(np.argmax(np.abs(Ak), axis=None), Ak.shape)
         rw += k
         cl += k
-        A[[k, rw], :] = A[[rw, k], :].copy()
-        A[:, [k, cl]] = A[:, [cl, k]].copy()
+        A[[k, rw], :] = A[[rw, k], :].copy()  # type: ignore[index]
+        A[:, [k, cl]] = A[:, [cl, k]].copy()  # type: ignore[index]
         P[k] = rw
         Q[k] = cl
         if A[k, k] != 0:

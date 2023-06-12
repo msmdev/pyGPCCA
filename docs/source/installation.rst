@@ -1,6 +1,6 @@
 Installation
 ============
-*pyGPCCA* requires Python >= 3.6 to run. If any problems arise, please consult the
+*pyGPCCA* requires Python >= 3.8 to run. If any problems arise, please consult the
 `Troubleshooting`_ section.
 
 Methods

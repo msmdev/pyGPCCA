@@ -4,6 +4,7 @@ import logging
 from scipy.sparse import issparse, spmatrix
 import numpy as np
 
+from pygpcca._types import ArrayLike
 from pygpcca.utils._docs import d
 
 __all__ = ["ensure_ndarray_or_sparse", "assert_petsc_real_scalar_type"]
@@ -11,7 +12,7 @@ __all__ = ["ensure_ndarray_or_sparse", "assert_petsc_real_scalar_type"]
 
 @d.get_sections(base="assert_array", sections=["Parameters"])
 def assert_array(
-    A: Union[np.ndarray, spmatrix],
+    A: Union[ArrayLike, spmatrix],
     shape: Optional[Tuple[int, ...]] = None,
     uniform: Optional[bool] = None,
     ndim: Optional[int] = None,
@@ -95,14 +96,14 @@ def assert_array(
 
 @d.dedent
 def ensure_ndarray_or_sparse(
-    A: Union[np.ndarray, spmatrix],
+    A: Union[ArrayLike, spmatrix],
     shape: Optional[Tuple[int, ...]] = None,
     uniform: Optional[bool] = None,
     ndim: Optional[int] = None,
     size: Optional[int] = None,
     dtype: Optional[Union[type, np.dtype]] = None,  # type: ignore[type-arg]
     kind: Optional[str] = None,
-) -> Union[np.ndarray, spmatrix]:
+) -> Union[ArrayLike, spmatrix]:
     """
     Ensure ``A`` is an array or a sparse matrix and assert that the given parameters match.
 
@@ -113,7 +114,7 @@ def ensure_ndarray_or_sparse(
     Returns
     -------
     If ``A`` is an already valid :class:`numpy.ndarray` or :class:`scipy.sparse.spmatrix`, then it is simply returned.
-    Otherwise returns a :class:`numpy.ndarray` copy of the array-like object ``A``.
+    Otherwise, returns a :class:`numpy.ndarray` copy of the array-like object ``A``.
     """
     if not isinstance(A, np.ndarray) and not issparse(A):
         try:

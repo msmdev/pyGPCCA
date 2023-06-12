@@ -28,7 +28,7 @@
 # You should have received a copy of the GNU Lesser General Public License along with this program.
 # If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------------------------------------------------------
-from typing import Tuple, Union
+from typing import Tuple, Union, Literal
 import sys
 
 if not sys.warnoptions:
@@ -42,6 +42,7 @@ from scipy.linalg import schur, rsf2csf, subspace_angles
 from scipy.sparse import issparse, spmatrix, csr_matrix, isspmatrix_csr
 import numpy as np
 
+from pygpcca._types import ArrayLike
 from pygpcca.utils._docs import d
 from pygpcca.utils._checks import assert_petsc_real_scalar_type
 from pygpcca._sort_real_schur import sort_real_schur
@@ -58,7 +59,7 @@ except (ImportError, TypeError):
 __all__ = ["sorted_schur"]
 
 
-def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[np.ndarray, spmatrix]) -> None:
+def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[ArrayLike, spmatrix]) -> None:
     """
     Initialize PETSc matrix.
 
@@ -77,7 +78,7 @@ def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[np.ndarray, spmatrix]) 
     """
     if issparse(P):
         if not isspmatrix_csr(P):
-            warnings.warn("Only CSR sparse matrices are supported, converting.")
+            warnings.warn("Only CSR sparse matrices are supported, converting.", stacklevel=2)
             P = csr_matrix(P)
         M.createAIJ(size=P.shape, csr=(P.indptr, P.indices, P.data))  # type: ignore[union-attr]
     else:
@@ -85,7 +86,7 @@ def _initialize_matrix(M: "petsc4py.PETSc.Mat", P: Union[np.ndarray, spmatrix]) 
 
 
 @d.dedent
-def _check_conj_split(eigenvalues: np.ndarray) -> bool:
+def _check_conj_split(eigenvalues: ArrayLike) -> bool:
     """
     Check whether using m eigenvalues cuts through a block of complex conjugates.
 
@@ -112,7 +113,7 @@ def _check_conj_split(eigenvalues: np.ndarray) -> bool:
 
 
 @d.dedent
-def _check_schur(P: np.ndarray, Q: np.ndarray, R: np.ndarray, eigenvalues: np.ndarray, method: str) -> None:
+def _check_schur(P: ArrayLike, Q: ArrayLike, R: ArrayLike, eigenvalues: ArrayLike, method: str) -> None:
     """
     Run a number of checks on the sorted Schur decomposition.
 
@@ -174,21 +175,23 @@ def _check_schur(P: np.ndarray, Q: np.ndarray, R: np.ndarray, eigenvalues: np.nd
             f"return the invariant subspace associated with the top k eigenvalues, "
             f"since the subspace angles between the column spaces of P*Q and Q*L "
             f"aren't near zero (L is a diagonal matrix with the "
-            f"sorted top eigenvalues on the diagonal). The subspace angles are: `{dummy3}`."
+            f"sorted top eigenvalues on the diagonal). The subspace angles are: `{dummy3}`.",
+            stacklevel=2,
         )
 
     if not test3:
         warnings.warn(
             f"According to `scipy.linalg.subspace_angles()`, the dimension of the "
             f"column space of P*Q and/or Q*L is not equal to m (L is a diagonal "
-            f"matrix with the sorted top eigenvalues on the diagonal), method=`{method}`."
+            f"matrix with the sorted top eigenvalues on the diagonal), method=`{method}`.",
+            stacklevel=2,
         )
 
 
 @d.dedent
 def sorted_krylov_schur(
-    P: Union[spmatrix, np.ndarray], k: int, z: str = "LM", tol: float = 1e-16
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    P: Union[spmatrix, ArrayLike], k: int, z: Literal["LM", "LR"] = "LM", tol: float = 1e-16
+) -> Tuple[ArrayLike, ArrayLike, ArrayLike, ArrayLike]:
     r"""
     Calculate an orthonormal basis of the subspace associated with the `k`
     dominant eigenvalues of `P` using the Krylov-Schur method as implemented in SLEPc.
@@ -278,7 +281,7 @@ def sorted_krylov_schur(
 
     # Warn, if nconv smaller than k.
     if nconv < k:
-        warnings.warn(f"The number of converged eigenpairs is `{nconv}`, but `{k}` were requested.")
+        warnings.warn(f"The number of converged eigenpairs is `{nconv}`, but `{k}` were requested.", stacklevel=2)
 
     # Collect the k dominant eigenvalues.
     eigenvalues = []
@@ -299,7 +302,7 @@ def sorted_krylov_schur(
 
 
 @d.dedent
-def sorted_brandts_schur(P: np.ndarray, k: int, z: str = "LM") -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def sorted_brandts_schur(P: ArrayLike, k: int, z: Literal["LM", "LR"] = "LM") -> Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     Compute a sorted Schur decomposition.
 
@@ -331,7 +334,7 @@ def sorted_brandts_schur(P: np.ndarray, k: int, z: str = "LM") -> Tuple[np.ndarr
 
     # Warnings
     if np.any(np.array(ap) > 1.0):
-        warnings.warn("Reordering of Schur matrix was inaccurate.")
+        warnings.warn("Reordering of Schur matrix was inaccurate.", stacklevel=2)
 
     # compute eigenvalues
     T, _ = rsf2csf(R, Q)
@@ -342,8 +345,12 @@ def sorted_brandts_schur(P: np.ndarray, k: int, z: str = "LM") -> Tuple[np.ndarr
 
 @d.dedent
 def sorted_schur(
-    P: Union[np.ndarray, spmatrix], m: int, z: str = "LM", method: str = DEFAULT_SCHUR_METHOD, tol_krylov: float = 1e-16
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    P: Union[ArrayLike, spmatrix],
+    m: int,
+    z: Literal["LM", "LR"] = "LM",
+    method: str = DEFAULT_SCHUR_METHOD,
+    tol_krylov: float = 1e-16,
+) -> Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     Return ``m`` dominant real Schur vectors or an orthonormal basis spanning the same invariant subspace.
 
@@ -369,7 +376,7 @@ def sorted_schur(
     if method == "krylov":
         if petsc4py is None or slepc4py is None:
             method = DEFAULT_SCHUR_METHOD
-            warnings.warn(NO_PETSC_SLEPC_FOUND_MSG)
+            warnings.warn(NO_PETSC_SLEPC_FOUND_MSG, stacklevel=2)
 
     if method != "krylov" and issparse(P):
         raise ValueError("Sparse implementation is only available for `method='krylov'`.")
