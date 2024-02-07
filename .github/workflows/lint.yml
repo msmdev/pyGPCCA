@@ -36,5 +36,5 @@ jobs:
                 python -m pip install tox
 
         -   name: Linting
-            run: |-
+            run: |
                 tox -e lint,check-docs,readme
