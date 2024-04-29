@@ -2,54 +2,23 @@ name: CI
 
 on:
     schedule:
-    -   cron: 00 00 * * 1  # run every Monday at 00:00
+    -   cron: 00 00 * * 1  # Run every Monday at 00:00
     push:
-        branches:
-        -   main
-        tags:
-        -   v[0-9]+.[0-9]+.[0-9]+
+        branches: [main]
     pull_request:
-        branches:
-        -   main
+        branches: [main]
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
-
 jobs:
-    lint:
-        runs-on: ubuntu-latest
-        steps:
-        -   uses: actions/checkout@v3
-        -   name: Set up Python
-            uses: actions/setup-python@v4
-            with:
-                python-version: '3.10'
-
-        -   uses: actions/cache@v3
-            with:
-                path: ~/.cache/pre-commit
-                key: precommit-${{ env.pythonLocation }}-${{ hashFiles('**/.pre-commit-config.yaml') }}
-
-        -   name: Install dependencies
-            run: |
-                sudo apt-get update -y
-                sudo apt install libenchant-2-dev pandoc
-                python -m pip install --upgrade pip
-                python -m pip install tox
-
-        -   name: Linting
-            run: |
-                tox -e lint,check-docs,readme
-
     test:
         runs-on: ${{ matrix.os }}
         strategy:
             fail-fast: false
-            max-parallel: 5
             matrix:
-                python: ['3.8', '3.10', '3.11']
+                python: ['3.8', '3.10', '3.11', '3.12']
                 os: [ubuntu-latest]
                 slepc: ['noslepc']
                 include:
@@ -86,31 +55,4 @@ jobs:
                 name: ${{ matrix.os }}-${{ matrix.python }}-${{ matrix.slepc }}
                 env_vars: OS,PYTHON
                 fail_ci_if_error: false
-                verbose: true
-
-    deploy:
-        needs: [lint, test]
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
-        runs-on: ubuntu-latest
-        steps:
-        -   uses: actions/checkout@v3
-        -   name: Set up Python
-            uses: actions/setup-python@v4
-            with:
-                python-version: '3.10'
-        -   name: Install pypa/build
-            run: |
-                python -m pip install --upgrade pip
-                pip install build
-        -   name: Build a binary wheel and a source tarball
-            run: |
-                python -m build --sdist --wheel --outdir dist/
-
-        -   name: Publish package on PyPI
-            uses: pypa/gh-action-pypi-publish@release/v1
-            with:
-                user: __token__
-                password: ${{ secrets.PYPI_PASSWORD }}
-                skip_existing: true
-                verify-metadata: true
                 verbose: true
