@@ -119,6 +119,7 @@ linkcheck_ignore = [
     "https://pubs.acs.org/doi/abs/10.1021/acs.jctc.8b00079",
     "https://doi.org/10.1063/1.5064530",
 ]
+linkcheck_report_timeouts_as_broken = False
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

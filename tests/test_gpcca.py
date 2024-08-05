@@ -547,7 +547,6 @@ class TestGPCCAMatlabUnit:
         l2 = sort_evals(np.linalg.eigvals(RR))
 
         EL = np.true_divide(np.abs(l1 - l2), eps * np.abs(l1))
-        print(R_i, RR, EL, l1, l2)
         assert_allclose(EL, 1.0, atol=5)
 
 
