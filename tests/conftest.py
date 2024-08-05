@@ -70,7 +70,7 @@ def bdc(q: np.ndarray, p: np.ndarray, sparse: bool = True) -> Tuple[np.ndarray, 
     mu[0] = 1.0
     mu[1:] = np.cumprod(p[:-1] / q[1:])
 
-    return (P if sparse else P.A), mu / np.sum(mu)
+    return (P if sparse else P.toarray()), mu / np.sum(mu)
 
 
 def mu(mu: int):
