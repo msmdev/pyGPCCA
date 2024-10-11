@@ -29,7 +29,6 @@ from typing import Optional
 from operator import itemgetter
 from itertools import combinations
 
-from packaging.version import Version
 import pytest
 
 from scipy.linalg import lu, pinv, hilbert, subspace_angles
@@ -525,7 +524,6 @@ class TestGPCCAMatlabUnit:
         with pytest.raises(ValueError, match=r"Sparse implementation is only available for `method='krylov'`."):
             GPCCA(csr_matrix(P), eta=sd, method="brandts").optimize(3)
 
-    @pytest.mark.skipif(Version(np.__version__) >= Version("2"), reason="Eigenvalue mismatch.")
     def test_sort_real_schur(self, R_i: np.ndarray):
         def sort_evals(e: np.ndarray, take: int = 4) -> np.ndarray:
             return e[np.argsort(np.linalg.norm(np.c_[e.real, e.imag], axis=1))][:take]
