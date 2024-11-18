@@ -31,15 +31,24 @@ jobs:
 
         steps:
         -   uses: actions/checkout@v4
-        -   name: Set up Python ${{ matrix.python }}
-            uses: actions/setup-python@v5
+        -   name: Set up Conda
+            uses: conda-incubator/setup-miniconda@v3
             with:
                 python-version: ${{ matrix.python }}
+                auto-activate-base: true
+                activate-environment: ""
+                channels: conda-forge,defaults
 
         -   name: Install pip dependencies
             run: |
                 python -m pip install --upgrade pip
                 pip install tox codecov
+
+        -   name: Install conda dependencies
+            if: ${{ matrix.slepc == 'slepc' }}
+            shell: bash -el {0}
+            run: |
+                conda install petsc4py slepc4py mpi4py
 
         -   name: Test
             run: |
