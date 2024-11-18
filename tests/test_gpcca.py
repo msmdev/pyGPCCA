@@ -792,7 +792,6 @@ class TestCustom:
     @pytest.mark.parametrize("method", ["krylov", "brandts"])
     def test_P_i(self, P_i: np.ndarray, method: str):
         if method == "krylov":
-            pytest.importorskip("mpi4py")
             pytest.importorskip("petsc4py")
             pytest.importorskip("slepc4py")
 
@@ -827,7 +826,6 @@ class TestCustom:
         method: str,
     ):
         if method == "krylov":
-            pytest.importorskip("mpi4py")
             pytest.importorskip("petsc4py")
             pytest.importorskip("slepc4py")
 
@@ -912,7 +910,6 @@ class TestCustom:
         method: str,
     ):
         if method == "krylov":
-            pytest.importorskip("mpi4py")
             pytest.importorskip("petsc4py")
             pytest.importorskip("slepc4py")
 

@@ -98,7 +98,6 @@ def _session_setup():
 
 def _skip_if_no_petsc_slepc() -> bool:
     try:
-        import mpi4py  # noqa: F401
         import petsc4py  # noqa: F401
         import slepc4py  # noqa: F401
 
