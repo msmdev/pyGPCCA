@@ -44,8 +44,6 @@ jobs:
         -   name: Test
             run: |
                 tox -e py${{ matrix.python }}-${{ matrix.slepc }} -vv
-            env:
-                PLATFORM: ${{ matrix.os }}
 
         -   name: Upload coverage
             uses: codecov/codecov-action@v3
