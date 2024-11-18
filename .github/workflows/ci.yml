@@ -48,7 +48,7 @@ jobs:
             if: ${{ matrix.slepc == 'slepc' }}
             shell: bash -el {0}
             run: |
-                conda install petsc4py slepc4py mpi4py
+                conda install petsc slepc petsc4py slepc4py mpi4py
 
         -   name: Test
             run: |
