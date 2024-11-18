@@ -57,6 +57,7 @@ jobs:
 
         -   name: Upload coverage
             uses: codecov/codecov-action@v4
+            shell: bash -el {0}
             with:
                 fail_ci_if_error: false
                 files: ./coverage.xml
