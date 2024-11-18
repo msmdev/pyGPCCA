@@ -32,11 +32,12 @@ jobs:
         steps:
         -   uses: actions/checkout@v4
         -   name: Set up Conda
-            uses: conda-incubator/setup-miniconda@v3
+            uses: conda-incubator/setup-miniconda@v3.1.0
             with:
                 python-version: ${{ matrix.python }}
+                auto-update-conda: true
                 auto-activate-base: true
-                activate-environment: true
+                activate-environment: ""
                 channels: conda-forge,defaults
 
         -   name: Install pip dependencies
