@@ -53,11 +53,10 @@ jobs:
         -   name: Test
             shell: bash -el {0}
             run: |
-                python -m pytest --cov --cov-append --cov-report=term-missing --cov-config=tox.ini --ignore docs/ -vv
+                python -m pytest --cov --cov-config=tox.ini --no-cov-on-fail --cov-report=xml --cov-report=term-missing:skip-covered --v
 
         -   name: Upload coverage
             uses: codecov/codecov-action@v4
-            shell: bash -el {0}
             with:
                 fail_ci_if_error: false
                 files: ./coverage.xml
