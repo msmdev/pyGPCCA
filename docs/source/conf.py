@@ -47,7 +47,7 @@ extensions = [
     "sphinx_autodoc_typehints",
     "sphinx_copybutton",
     "typed_returns",
-    "nbsphinx",
+    "myst_nb",
 ]
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
@@ -63,7 +63,7 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["build", "**.ipynb_checkpoints"]
 
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext", ".ipynb": "myst-nb"}
 add_function_parentheses = True
 
 # -- Options for HTML output -------------------------------------------------
@@ -86,29 +86,16 @@ napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 todo_include_todos = False
 
-# binder
-nbsphinx_highlight_language = "python3"
-nbsphinx_execute_arguments = [
-    "--InlineBackend.figure_formats={'png', 'pdf'}",  # correct figure resize
-    "--InlineBackend.rc={'figure.dpi': 96}",
-]
-nbsphinx_prolog = r"""
-{% set docname = 'docs/source/' + env.doc2path(env.docname, base=None) %}
-.. raw:: html
-
-    <div class="note">
-      Interactive version
-      <a href="https://mybinder.org/v2/gh/msmdev/pygpcca/{{ env.config.release|e }}?filepath={{ docname|e }}"><img alt="Binder badge" src="https://mybinder.org/badge_logo.svg" style="vertical-align:text-bottom">
-      </a>
-    </div>
-"""  # noqa: E501
+# myst-nb
+myst_heading_anchors = 2
+nb_execution_mode = "off"
+nb_mime_priority_overrides = [("spelling", "text/plain", 0)]
 
 # spelling
 spelling_lang = "en_US"
 spelling_warning = True
 spelling_word_list_filename = "spelling_wordlist.txt"
 spelling_add_pypi_package_names = True
-spelling_show_suggestions = True
 # see: https://pyenchant.github.io/pyenchant/api/enchant.tokenize.html
 spelling_filters = ["enchant.tokenize.URLFilter", "enchant.tokenize.EmailFilter"]
 
