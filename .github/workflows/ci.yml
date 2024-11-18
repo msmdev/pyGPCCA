@@ -51,6 +51,7 @@ jobs:
                 conda install petsc slepc petsc4py slepc4py mpi4py
 
         -   name: Test
+            shell: bash -el {0}
             run: |
                 python -m pytest --cov --cov-append --cov-report=term-missing --cov-config=tox.ini --ignore docs/ -vv
 
