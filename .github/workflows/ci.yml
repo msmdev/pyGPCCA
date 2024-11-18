@@ -37,7 +37,6 @@ jobs:
                 python-version: ${{ matrix.python }}
                 auto-update-conda: true
                 auto-activate-base: true
-                activate-environment: ""
                 channels: conda-forge,defaults
 
         -   name: Install pip dependencies
