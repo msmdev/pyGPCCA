@@ -61,4 +61,5 @@ jobs:
                 fail_ci_if_error: false
                 files: ./coverage.xml
                 name: ${{ matrix.os }}-${{ matrix.python }}-${{ matrix.slepc }}
+                token: ${{ secrets.CODECOV_TOKEN }}
                 verbose: true
