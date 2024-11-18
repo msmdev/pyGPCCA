@@ -42,7 +42,7 @@ jobs:
         -   name: Install pip dependencies
             run: |
                 python -m pip install --upgrade pip
-                pip install tox codecov
+                pip install '.[test]'
 
         -   name: Install conda dependencies
             if: ${{ matrix.slepc == 'slepc' }}
@@ -52,7 +52,7 @@ jobs:
 
         -   name: Test
             run: |
-                tox -e py${{ matrix.python }}-${{ matrix.slepc }} -vv
+                python -m pytest --cov --cov-append --cov-report=term-missing --cov-config=tox.ini --ignore docs/ -vv
 
         -   name: Upload coverage
             uses: codecov/codecov-action@v3
