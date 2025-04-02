@@ -31,7 +31,7 @@ from itertools import combinations
 
 import pytest
 
-from scipy.linalg import lu, pinv, eigvals, hilbert, subspace_angles
+from scipy.linalg import lu, pinv, hilbert, subspace_angles
 from scipy.sparse import issparse, csr_matrix
 import numpy as np
 
@@ -543,8 +543,8 @@ class TestGPCCAMatlabUnit:
         )
         assert_allclose(EA, 1.0, atol=5)
 
-        l1 = sort_evals(eigvals(R_i))
-        l2 = sort_evals(eigvals(RR))
+        l1 = sort_evals(np.linalg.eigvals(R_i))
+        l2 = sort_evals(np.linalg.eigvals(RR))
 
         EL = np.true_divide(np.abs(l1 - l2), eps * np.abs(l1))
         assert_allclose(EL, 1.0, atol=5)
@@ -792,7 +792,6 @@ class TestCustom:
     @pytest.mark.parametrize("method", ["krylov", "brandts"])
     def test_P_i(self, P_i: np.ndarray, method: str):
         if method == "krylov":
-            pytest.importorskip("mpi4py")
             pytest.importorskip("petsc4py")
             pytest.importorskip("slepc4py")
 
@@ -827,7 +826,6 @@ class TestCustom:
         method: str,
     ):
         if method == "krylov":
-            pytest.importorskip("mpi4py")
             pytest.importorskip("petsc4py")
             pytest.importorskip("slepc4py")
 
@@ -912,7 +910,6 @@ class TestCustom:
         method: str,
     ):
         if method == "krylov":
-            pytest.importorskip("mpi4py")
             pytest.importorskip("petsc4py")
             pytest.importorskip("slepc4py")
 

@@ -42,7 +42,7 @@ setup(
             "slepc4py>=3.18.0",
         ],
         dev=["pre-commit>=2.9.0", "bump2version"],
-        test=["tox>=3.20.1"],
+        test=["pytest", "pytest-cov", "pytest-mock", "codecov"],
         docs=[
             line.strip()
             for line in (Path("docs") / "requirements.txt").read_text("utf-8").splitlines()

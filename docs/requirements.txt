@@ -1,9 +1,7 @@
 -r ../requirements.txt
-nbsphinx>=0.8
-sphinx>=5
-sphinx-autodoc-annotation
-sphinx-autodoc-typehints>=1.10.3
+myst-nb
+sphinx>=8
 sphinx-copybutton
-sphinx_last_updated_by_git
+sphinx_autodoc_typehints
 sphinx_rtd_theme
 sphinxcontrib-spelling
