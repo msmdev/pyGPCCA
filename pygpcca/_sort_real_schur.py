@@ -42,7 +42,7 @@ def sort_real_schur(
     Q: ArrayLike, R: ArrayLike, z: Literal["LM", "LR"], b: float, inplace: bool = False
 ) -> Tuple[ArrayLike, ArrayLike, List[float]]:
     r"""
-    Partially or completely sort the real Schur form `R` and  Schur vectors `Q` of a square matrix `A`.
+    Sort the real Schur form `R` and Schur vectors `Q` of a square matrix `A`, partially or completely.
 
     The diagonal blocks of `R` will be ordered with respect to a target `z`.
 
@@ -82,7 +82,7 @@ def sort_real_schur(
         - R : quasi-triangular real `(n, n)` Schur matrix `R` such that :math:`AQ = QR`
           with the diagonal blocks ordered with respect to the target `z`.
         - ap : A list `ap` warns for inaccuracy of the solution, if an entry of `ap` exceeds one.
-    """  # noqa: D401
+    """
     eps = np.finfo(R.dtype).eps
     if not np.all(np.abs(np.tril(R, -2)) <= 100 * eps):
         raise ValueError("R is not block-triangular.")
@@ -320,7 +320,7 @@ def swaplist(p: Union[ArrayLike, List[float]], s: List[int], z: Literal["LM", "L
     k = 0
     v: List[int] = []
     srtd = 0  # Number of sorted eigenvalues.
-    q = list(np.diff(s))  # Compute block sizes.
+    q = list(map(int, np.diff(s)))  # Compute block sizes.
     q_orig = list(q)  # debug
     fini = False
     while not fini:
