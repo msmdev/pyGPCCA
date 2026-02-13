@@ -39,6 +39,25 @@ def assert_allclose(actual, desired, rtol=1.0e-5, atol=1.0e-8, err_msg="", verbo
     return assert_allclose_np(actual, desired, rtol=rtol, atol=atol, err_msg=err_msg, verbose=True)
 
 
+def normalize_conj_pairs(eigenvalues: np.ndarray) -> np.ndarray:
+    """Normalize conjugate pair ordering so positive imaginary part always comes first.
+
+    The ordering of eigenvalues within complex conjugate pairs from a Schur
+    decomposition is not guaranteed by LAPACK and may vary across scipy/numpy
+    versions. This function ensures a canonical ordering for testing purposes.
+    """
+    result = eigenvalues.copy()
+    i = 0
+    while i < len(result) - 1:
+        if abs(result[i].imag) > 1e-10 and np.isclose(result[i], np.conj(result[i + 1])):
+            if result[i].imag < 0:
+                result[i], result[i + 1] = result[i + 1], result[i]
+            i += 2
+        else:
+            i += 1
+    return result
+
+
 def get_known_input(Tc: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     assert not np.allclose(Tc, 0.0), "Tc doesn't seem to be a count matrix."
     assert Tc.dtype == np.float64, "Expected double precision"
