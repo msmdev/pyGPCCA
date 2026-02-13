@@ -38,14 +38,13 @@ if not sys.warnoptions:
     warnings.simplefilter("always", category=UserWarning)  # Change the filter in this process
     os.environ["PYTHONWARNINGS"] = "always::UserWarning"  # Also affect subprocesses
 
-from scipy.linalg import schur, rsf2csf, subspace_angles
+from scipy.linalg import schur, rsf2csf, subspace_angles, get_lapack_funcs
 from scipy.sparse import issparse, spmatrix, csr_matrix, isspmatrix_csr
 import numpy as np
 
 from pygpcca._types import ArrayLike
 from pygpcca.utils._docs import d
 from pygpcca.utils._checks import assert_petsc_real_scalar_type
-from pygpcca._sort_real_schur import sort_real_schur
 from pygpcca.utils._constants import EPS, DEFAULT_SCHUR_METHOD, NO_PETSC_SLEPC_FOUND_MSG
 
 try:
@@ -106,7 +105,7 @@ def _check_conj_split(eigenvalues: ArrayLike) -> bool:
     """
     last_eigenvalue, second_last_eigenvalue = eigenvalues[-1], eigenvalues[-2]
     splits_block = False
-    if last_eigenvalue.imag > EPS:
+    if abs(last_eigenvalue.imag) > EPS:
         splits_block = not np.isclose(last_eigenvalue, np.conj(second_last_eigenvalue))
 
     return splits_block
@@ -221,7 +220,7 @@ def sorted_krylov_schur(
     eigenvalues_error
         Array of shape `(k,)` containing the error, based on the residual
         norm, of the `i`th eigenpair at index `i`.
-    """  # noqa: D205, D400
+    """
     # We like to thank A. Sikorski and M. Weber for pointing us to SLEPc for partial Schur decompositions of
     # sparse matrices.
     # Further parts of sorted_krylov_schur were developed based on the function krylov_schur
@@ -306,8 +305,8 @@ def sorted_brandts_schur(P: ArrayLike, k: int, z: Literal["LM", "LR"] = "LM") ->
     """
     Compute a sorted Schur decomposition.
 
-    This function uses :mod:`scipy` for the decomposition and Brandts'
-    method (see [Brandts02]_) for the sorting.
+    This function uses :mod:`scipy` for the Schur decomposition and
+    LAPACK's ``DGEES``/``DTRSEN`` for eigenvalue reordering.
 
     Parameters
     ----------
@@ -326,21 +325,40 @@ def sorted_brandts_schur(P: ArrayLike, k: int, z: Literal["LM", "LR"] = "LM") ->
     eigenvalues
         %(eigenvalues_k)s
     """
-    # Make a Schur decomposition of P.
+    n = P.shape[0]
+
+    # Step 1: unsorted Schur decomposition.
     R, Q = schur(P, output="real")
 
-    # Sort the Schur matrix and vectors.
-    Q, R, ap = sort_real_schur(Q, R, z=z, b=k)
-
-    # Warnings
-    if np.any(np.array(ap) > 1.0):
-        warnings.warn("Reordering of Schur matrix was inaccurate.", stacklevel=2)
-
-    # compute eigenvalues
+    # Step 2: read eigenvalues from R's 1x1 and 2x2 diagonal blocks.
     T, _ = rsf2csf(R, Q)
-    eigenvalues = np.diag(T)[:k]
+    evals = np.diag(T)
 
-    return R, Q, eigenvalues
+    # Step 3: build boolean select array for top-k eigenvalues.
+    if z == "LM":
+        moduli = np.abs(evals)
+        threshold = np.sort(moduli)[::-1][min(k, n) - 1]
+        select = (moduli >= threshold - 1e-10).astype(np.int32)
+    elif z == "LR":
+        reals = np.real(evals)
+        threshold = np.sort(reals)[::-1][min(k, n) - 1]
+        select = (reals >= threshold - 1e-10).astype(np.int32)
+    else:
+        raise ValueError(f"Unknown sorting criterion `{z!r}`.")
+
+    # Step 4: LAPACK DTRSEN reorders the Schur form.
+    (trsen,) = get_lapack_funcs(("trsen",), (R,))
+    Rs, Qs, wr, wi, sdim, s, sep, info = trsen(
+        select, R, Q, job="N", lwork=max(1, n), liwork=1,
+    )
+    if info != 0:
+        raise RuntimeError(f"LAPACK DTRSEN failed with info={info}")
+
+    # Step 5: eigenvalues from sorted Schur form.
+    Ts, _ = rsf2csf(Rs, Qs)
+    eigenvalues = np.diag(Ts)[: max(k, sdim)]
+
+    return Rs, Qs, eigenvalues
 
 
 @d.dedent
