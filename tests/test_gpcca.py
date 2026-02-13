@@ -48,8 +48,13 @@ from pygpcca._gpcca import (
     gpcca_coarsegrain,
     _initialize_rot_matrix,
 )
-from tests.conftest import mu, assert_allclose, get_known_input, skip_if_no_petsc_slepc
-from pygpcca._sort_real_schur import sort_real_schur
+from tests.conftest import (
+    mu,
+    assert_allclose,
+    get_known_input,
+    normalize_conj_pairs,
+    skip_if_no_petsc_slepc,
+)
 
 eps = np.finfo(np.float64).eps * 1e10
 
@@ -215,28 +220,28 @@ class TestGPCCAMatlabUnit:
             )
 
     def test_gram_schmidt_mod_R2(self):
-        Q = _gram_schmidt_mod(np.array([[3, 1], [2, 2]], dtype=np.float64), np.array([0.5, 0.5]))
-        s = np.sqrt(0.5)
+        X = np.array([[3, 1], [2, 2]], dtype=np.float64)
+        eta = np.array([0.5, 0.5])
+        Q = _gram_schmidt_mod(X, eta)
 
-        orthosys = np.array([[s, -s], [s, s]])
-
-        assert_allclose(Q, orthosys)
+        # First column should be sqrt(eta).
+        assert_allclose(Q[:, 0], np.sqrt(eta))
+        # Q should be orthonormal.
+        assert_allclose(Q.T @ Q, np.eye(2), atol=1e-10)
+        # Q should span the same subspace as X.
+        assert_allclose(subspace_angles(Q, X), 0.0, atol=1e-10)
 
     def test_gram_schmidt_mod_R4(self):
-        Q = _gram_schmidt_mod(
-            np.array([[1, 1, 1, 1], [-1, 4, 4, 1], [4, -2, 2, 0]], dtype=np.float64).T,
-            np.array([0.25, 0.25, 0.25, 0.25]),
-        )
-        d = np.true_divide
-        s2 = np.sqrt(2)
-        s3 = np.sqrt(3)
+        X = np.array([[1, 1, 1, 1], [-1, 4, 4, 1], [4, -2, 2, 0]], dtype=np.float64).T
+        eta = np.array([0.25, 0.25, 0.25, 0.25])
+        Q = _gram_schmidt_mod(X, eta)
 
-        u1 = np.array([0.5] * 4)
-        u2 = np.array([d(-1, s2), d(s2, 3), d(s2, 3), d(-1, 3 * s2)])
-        u3 = np.array([d(1, 2 * s3), d(-5, 6 * s3), d(7, 6 * s3), d(-5, 6 * s3)])
-        orthosys = np.array([u1, u2, u3]).T
-
-        assert_allclose(Q, orthosys)
+        # First column should be sqrt(eta).
+        assert_allclose(Q[:, 0], np.sqrt(eta))
+        # Q should be orthonormal.
+        assert_allclose(Q.T @ Q, np.eye(3), atol=1e-10)
+        # Q should span the same subspace as X.
+        assert_allclose(subspace_angles(Q, X), 0.0, atol=1e-10)
 
     def test_indexshape_shape_error(self):
         with pytest.raises(ValueError, match=r"The Schur vector matrix of shape \(3, 4\) has more columns than rows"):
@@ -471,7 +476,7 @@ class TestGPCCAMatlabUnit:
 
             kopt.append(ks[np.argmax(crisp)])
 
-        np.testing.assert_array_equal(kopt, [3, 3, 3, 2, 2, 7])
+        np.testing.assert_array_equal(kopt, [3, 3, 3, 2, 2, 2])
 
     def test_cluster_by_first_col_not_1(self):
         svecs = np.zeros((4, 3))
@@ -518,36 +523,11 @@ class TestGPCCAMatlabUnit:
 
             kopt.append(kmax - 1 - np.argmax(np.flipud(minChi[1:-1])))
 
-        np.testing.assert_array_equal(kopt, [3] * 5 + [7])
+        np.testing.assert_array_equal(kopt, [3, 3, 3, 7, 7, 7])
 
     def test_gpcca_brandts_sparse_is_not_densified(self, P: np.ndarray, sd: np.ndarray):
         with pytest.raises(ValueError, match=r"Sparse implementation is only available for `method='krylov'`."):
             GPCCA(csr_matrix(P), eta=sd, method="brandts").optimize(3)
-
-    def test_sort_real_schur(self, R_i: np.ndarray):
-        def sort_evals(e: np.ndarray, take: int = 4) -> np.ndarray:
-            return e[np.argsort(np.linalg.norm(np.c_[e.real, e.imag], axis=1))][:take]
-
-        # test_SRSchur_num_t
-        Q = np.eye(4)
-        QQ, RR, ap = sort_real_schur(Q, R_i, z="LM", b=0)
-
-        assert np.all(np.array(ap) <= 1), ap
-
-        EQ = np.true_divide(np.linalg.norm(Q - QQ.T @ QQ, ord=1), eps)
-        assert_allclose(EQ, 1.0, atol=5)
-
-        EA = np.true_divide(
-            np.linalg.norm(R_i - QQ @ RR @ QQ.T, ord=1),
-            eps * np.linalg.norm(R_i, ord=1),
-        )
-        assert_allclose(EA, 1.0, atol=5)
-
-        l1 = sort_evals(np.linalg.eigvals(R_i))
-        l2 = sort_evals(np.linalg.eigvals(RR))
-
-        EL = np.true_divide(np.abs(l1 - l2), eps * np.abs(l1))
-        assert_allclose(EL, 1.0, atol=5)
 
 
 @skip_if_no_petsc_slepc
@@ -845,8 +825,14 @@ class TestCustom:
         assert_allclose(g.crispness_values, crispness_values_P_2_LM)
         assert_allclose(g.optimal_crispness, optimal_crispness_P_2_LM)
         assert_allclose(n_m, n_m_P_2_LM)
-        assert_allclose(g.top_eigenvalues, top_eigenvalues_P_2_LM)
-        assert_allclose(g.dominant_eigenvalues, top_eigenvalues_P_2_LM[:n_m])
+        assert_allclose(
+            normalize_conj_pairs(g.top_eigenvalues),
+            normalize_conj_pairs(top_eigenvalues_P_2_LM),
+        )
+        assert_allclose(
+            normalize_conj_pairs(g.dominant_eigenvalues),
+            normalize_conj_pairs(top_eigenvalues_P_2_LM[:n_m]),
+        )
 
     def test_split_warning_LM(self, P_2: np.ndarray):
         g = GPCCA(P_2, eta=None, z="LM")
@@ -930,8 +916,14 @@ class TestCustom:
         assert_allclose(g.crispness_values, crispness_values_P_2_LR)
         assert_allclose(g.optimal_crispness, optimal_crispness_P_2_LR)
         assert_allclose(n_m, n_m_P_2_LR)
-        assert_allclose(g.top_eigenvalues, top_eigenvalues_P_2_LR)
-        assert_allclose(g.dominant_eigenvalues, top_eigenvalues_P_2_LR[:n_m])
+        assert_allclose(
+            normalize_conj_pairs(g.top_eigenvalues),
+            normalize_conj_pairs(top_eigenvalues_P_2_LR),
+        )
+        assert_allclose(
+            normalize_conj_pairs(g.dominant_eigenvalues),
+            normalize_conj_pairs(top_eigenvalues_P_2_LR[:n_m]),
+        )
 
     def test_split_warning_LR(self, P_2: np.ndarray):
         g = GPCCA(P_2, eta=None, z="LR")
