@@ -48,7 +48,13 @@ from pygpcca._gpcca import (
     gpcca_coarsegrain,
     _initialize_rot_matrix,
 )
-from tests.conftest import mu, assert_allclose, get_known_input, skip_if_no_petsc_slepc
+from tests.conftest import (
+    mu,
+    assert_allclose,
+    get_known_input,
+    normalize_conj_pairs,
+    skip_if_no_petsc_slepc,
+)
 from pygpcca._sort_real_schur import sort_real_schur
 
 eps = np.finfo(np.float64).eps * 1e10
@@ -845,8 +851,14 @@ class TestCustom:
         assert_allclose(g.crispness_values, crispness_values_P_2_LM)
         assert_allclose(g.optimal_crispness, optimal_crispness_P_2_LM)
         assert_allclose(n_m, n_m_P_2_LM)
-        assert_allclose(g.top_eigenvalues, top_eigenvalues_P_2_LM)
-        assert_allclose(g.dominant_eigenvalues, top_eigenvalues_P_2_LM[:n_m])
+        assert_allclose(
+            normalize_conj_pairs(g.top_eigenvalues),
+            normalize_conj_pairs(top_eigenvalues_P_2_LM),
+        )
+        assert_allclose(
+            normalize_conj_pairs(g.dominant_eigenvalues),
+            normalize_conj_pairs(top_eigenvalues_P_2_LM[:n_m]),
+        )
 
     def test_split_warning_LM(self, P_2: np.ndarray):
         g = GPCCA(P_2, eta=None, z="LM")
@@ -930,8 +942,14 @@ class TestCustom:
         assert_allclose(g.crispness_values, crispness_values_P_2_LR)
         assert_allclose(g.optimal_crispness, optimal_crispness_P_2_LR)
         assert_allclose(n_m, n_m_P_2_LR)
-        assert_allclose(g.top_eigenvalues, top_eigenvalues_P_2_LR)
-        assert_allclose(g.dominant_eigenvalues, top_eigenvalues_P_2_LR[:n_m])
+        assert_allclose(
+            normalize_conj_pairs(g.top_eigenvalues),
+            normalize_conj_pairs(top_eigenvalues_P_2_LR),
+        )
+        assert_allclose(
+            normalize_conj_pairs(g.dominant_eigenvalues),
+            normalize_conj_pairs(top_eigenvalues_P_2_LR[:n_m]),
+        )
 
     def test_split_warning_LR(self, P_2: np.ndarray):
         g = GPCCA(P_2, eta=None, z="LR")

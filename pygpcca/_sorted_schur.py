@@ -106,7 +106,7 @@ def _check_conj_split(eigenvalues: ArrayLike) -> bool:
     """
     last_eigenvalue, second_last_eigenvalue = eigenvalues[-1], eigenvalues[-2]
     splits_block = False
-    if last_eigenvalue.imag > EPS:
+    if abs(last_eigenvalue.imag) > EPS:
         splits_block = not np.isclose(last_eigenvalue, np.conj(second_last_eigenvalue))
 
     return splits_block
@@ -221,7 +221,7 @@ def sorted_krylov_schur(
     eigenvalues_error
         Array of shape `(k,)` containing the error, based on the residual
         norm, of the `i`th eigenpair at index `i`.
-    """  # noqa: D205, D400
+    """
     # We like to thank A. Sikorski and M. Weber for pointing us to SLEPc for partial Schur decompositions of
     # sparse matrices.
     # Further parts of sorted_krylov_schur were developed based on the function krylov_schur
