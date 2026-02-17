@@ -32,12 +32,14 @@ from itertools import combinations
 import pytest
 
 from scipy.linalg import lu, pinv, hilbert, subspace_angles
+from scipy.optimize import approx_fprime
 from scipy.sparse import issparse, csr_matrix
 import numpy as np
 
 from pygpcca._gpcca import (
     GPCCA,
     _do_schur,
+    _jacobian,
     _opt_soft,
     _objective,
     _gpcca_core,
@@ -45,6 +47,7 @@ from pygpcca._gpcca import (
     _indexsearch,
     _cluster_by_isa,
     _gram_schmidt_mod,
+    _perturb_rotation,
     gpcca_coarsegrain,
     _initialize_rot_matrix,
 )
@@ -987,6 +990,177 @@ class TestCustom:
         )
         with pytest.raises(ValueError, match=r"Clustering wasn't successful. Try different cluster numbers."):
             g.optimize([3, P_2.shape[0]])
+
+
+class TestGradientOptimization:
+    """Tests for gradient-based optimization and multi-start."""
+
+    @pytest.mark.parametrize("m", [3, 5])
+    def test_jacobian_vs_finite_differences(self, m: int):
+        """Verify _jacobian matches scipy.optimize.approx_fprime.
+
+        The ISA initialization (``_initialize_rot_matrix``) places alpha at
+        a degenerate point where multiple rows of ``dummy`` achieve the same
+        maximum in ``_fill_matrix``, making ``argmax`` — and therefore the
+        gradient — ill-defined. This is analogous to ``d|x|/dx`` at ``x=0``.
+        The test evaluates the Jacobian at a randomly perturbed alpha away
+        from this singularity, where the ``argmax`` gaps are stable under
+        finite-difference perturbations.
+        """
+        rng = np.random.default_rng(42)
+        block_size = 300 // m
+        n = block_size * m
+        P = np.zeros((n, n))
+        coupling = 0.01
+        for b in range(m):
+            s, e = b * block_size, (b + 1) * block_size
+            block = rng.dirichlet(np.ones(block_size), size=block_size)
+            P[s:e, s:e] = block * (1 - coupling)
+            for b2 in range(m):
+                if b2 != b:
+                    s2, e2 = b2 * block_size, (b2 + 1) * block_size
+                    P[s:e, s2:e2] = coupling / (m - 1) / block_size
+        P = P / P.sum(axis=1, keepdims=True)
+
+        g = GPCCA(P, eta=None, z="LM", method="brandts")
+        g._do_schur_helper(m)
+        svecs = g._p_X[:, :m]
+
+        # Perturb away from the ISA initialization to avoid the argmax
+        # degeneracy (where the Jacobian is not well-defined).
+        rot_matrix = _initialize_rot_matrix(svecs)
+        alpha = rot_matrix[1:, 1:].ravel().copy()
+        alpha += rng.normal(0, 0.1, size=alpha.shape)
+
+        jac_analytical = _jacobian(alpha, svecs)
+        jac_fd = approx_fprime(alpha, _objective, 1e-7, svecs)
+
+        rel_err = np.abs(jac_analytical - jac_fd) / np.maximum(
+            np.abs(jac_fd), 1e-10
+        )
+        assert np.max(rel_err) < 1e-3, (
+            f"m={m}: Jacobian max relative error "
+            f"{np.max(rel_err):.2e} exceeds 1e-3"
+        )
+
+    @pytest.mark.parametrize("mu_val", [0, 100, 1000])
+    def test_cg_vs_nelder_mead(self, mu_val: int):
+        """CG produces crispness close to Nelder-Mead on well-separated spectra."""
+        m = 3
+        P, sd = get_known_input(mu(mu_val))
+        X, _, _ = _do_schur(P, eta=sd, m=m)
+        svecs = X[:, :m]
+
+        A_nm = _initialize_rot_matrix(svecs)
+        _, chi_nm, fopt_nm = _opt_soft(svecs, A_nm, method="Nelder-Mead")
+
+        A_cg = _initialize_rot_matrix(svecs)
+        _, chi_cg, fopt_cg = _opt_soft(svecs, A_cg, method="CG")
+
+        crisp_nm = (m - fopt_nm) / m
+        crisp_cg = (m - fopt_cg) / m
+
+        assert crisp_cg >= crisp_nm - 0.05, (
+            f"mu={mu_val}: CG crispness ({crisp_cg:.4f}) "
+            f"much worse than NM ({crisp_nm:.4f})"
+        )
+
+        assert_allclose(chi_cg.sum(axis=1), 1.0, atol=1e-10)
+        assert np.all(chi_cg >= -1e-8)
+
+    @pytest.mark.parametrize(
+        "method", ["Nelder-Mead", "L-BFGS-B", "BFGS", "CG"]
+    )
+    def test_all_methods_produce_valid_memberships(self, method: str):
+        """All optimization methods produce valid membership matrices."""
+        m = 3
+        P, sd = get_known_input(mu(0))
+        X, _, _ = _do_schur(P, eta=sd, m=m)
+        svecs = X[:, :m]
+
+        A = _initialize_rot_matrix(svecs)
+        rot_matrix, chi, fopt = _opt_soft(svecs, A, method=method)
+
+        assert_allclose(chi.sum(axis=1), 1.0, atol=1e-10)
+        assert np.all(chi >= -1e-8), f"{method}: min(chi)={chi.min():.2e}"
+        crispness = (m - fopt) / m
+        assert crispness > 0, f"{method}: non-positive crispness {crispness}"
+
+    def test_gpcca_optimize_with_cg(self):
+        """GPCCA.optimize() works with CG through the full pipeline."""
+        P, sd = get_known_input(mu(0))
+        g = GPCCA(P, eta=sd, z="LM", method="brandts")
+        g.optimize(3, method="CG")
+
+        chi = g.memberships
+        assert chi is not None
+        assert chi.shape[1] == 3
+        assert_allclose(chi.sum(axis=1), 1.0, atol=1e-10)
+
+    def test_invalid_method_raises(self):
+        """Invalid optimization method raises ValueError."""
+        P, sd = get_known_input(mu(0))
+        X, _, _ = _do_schur(P, eta=sd, m=3)
+        svecs = X[:, :3]
+        A = _initialize_rot_matrix(svecs)
+
+        with pytest.raises(
+            ValueError, match="Invalid optimization method"
+        ):
+            _opt_soft(svecs, A, method="invalid")
+
+    def test_perturb_rotation_stays_on_manifold(self):
+        """Perturbed rotation matrices preserve orthogonality."""
+        rng = np.random.default_rng(0)
+        m = 5
+        P, sd = get_known_input(mu(0))
+        X, _, _ = _do_schur(P, eta=sd, m=m)
+        svecs = X[:, :m]
+        rot_matrix = _initialize_rot_matrix(svecs)
+
+        for eps in [0.05, 0.1, 0.5]:
+            rot_p = _perturb_rotation(rot_matrix, eps, rng)
+            # Shape preserved
+            assert rot_p.shape == rot_matrix.shape
+            # First row unchanged (only [1:, 1:] block is perturbed)
+            assert_allclose(rot_p[0, :], rot_matrix[0, :])
+            assert_allclose(rot_p[1:, 0], rot_matrix[1:, 0])
+            # The [1:, 1:] block should still be related by an
+            # orthogonal transformation, so det should be ±1
+            R_block = rot_p[1:, 1:] @ np.linalg.pinv(rot_matrix[1:, 1:])
+            assert abs(abs(np.linalg.det(R_block)) - 1.0) < 1e-10
+
+    def test_multi_start_improves_or_matches_single(self):
+        """Multi-start with CG achieves crispness >= single start."""
+        m = 5
+        P, sd = get_known_input(mu(0))
+
+        g1 = GPCCA(P, eta=sd, z="LM", method="brandts")
+        g1.optimize(m, method="CG", n_starts=1)
+
+        g10 = GPCCA(P, eta=sd, z="LM", method="brandts")
+        g10.optimize(m, method="CG", n_starts=10, seed=42)
+
+        # Multi-start picks the best, so crispness >= single start
+        assert g10._crispness >= g1._crispness - 1e-10
+
+        # Both produce valid memberships
+        assert_allclose(g10.memberships.sum(axis=1), 1.0, atol=1e-10)
+        assert np.all(g10.memberships >= -1e-8)
+
+    def test_multi_start_deterministic_with_seed(self):
+        """Same seed produces identical results."""
+        m = 5
+        P, sd = get_known_input(mu(0))
+
+        g1 = GPCCA(P, eta=sd, z="LM", method="brandts")
+        g1.optimize(m, method="CG", n_starts=5, seed=123)
+
+        g2 = GPCCA(P, eta=sd, z="LM", method="brandts")
+        g2.optimize(m, method="CG", n_starts=5, seed=123)
+
+        assert_allclose(g1.memberships, g2.memberships)
+        assert_allclose(g1._crispness, g2._crispness)
 
 
 class TestUtils:
