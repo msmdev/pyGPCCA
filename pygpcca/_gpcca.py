@@ -45,7 +45,7 @@ __credits__ = [
 ]
 
 
-from typing import Dict, List, Tuple, Union, Literal, Callable, Optional, TYPE_CHECKING
+from typing import Dict, List, Tuple, Union, Literal, Callable, Optional, NamedTuple, TYPE_CHECKING
 
 try:
     from functools import cached_property  # type: ignore[attr-defined]
@@ -68,9 +68,9 @@ if not sys.warnoptions:
     warnings.simplefilter("always", category=UserWarning)  # Change the filter in this process
     os.environ["PYTHONWARNINGS"] = "always::UserWarning"  # Also affect subprocesses
 
-from scipy.linalg import subspace_angles
+from scipy.linalg import expm, subspace_angles
 from scipy.sparse import issparse, spmatrix
-from scipy.optimize import fmin
+from scipy.optimize import fmin, minimize
 import numpy as np
 import scipy.sparse as sp
 
@@ -361,6 +361,51 @@ def _initialize_rot_matrix(X: ArrayLike) -> ArrayLike:
     return np.linalg.pinv(X[index, :])
 
 
+def _perturb_rotation(
+    rot_matrix: ArrayLike,
+    epsilon: float,
+    rng: np.random.Generator,
+) -> ArrayLike:
+    """Perturb a rotation matrix on the SO(k) manifold.
+
+    Generates a random skew-symmetric matrix S of shape ``(k, k)``
+    (where ``k = m - 1``) and applies ``expm(epsilon * S)`` to the
+    cropped rotation matrix ``rot_matrix[1:, 1:]``. This produces
+    a perturbation that lives on the natural manifold of the
+    optimization variable.
+
+    Parameters
+    ----------
+    rot_matrix
+        Initial rotation matrix of shape ``(m, m)``.
+    epsilon
+        Angular scale of the perturbation. Small values (0.1-0.5)
+        stay near the original; large values (1.0-2.0) explore
+        more broadly.
+    rng
+        NumPy random generator for reproducibility.
+
+    Returns
+    -------
+    rot_perturbed
+        Perturbed rotation matrix of shape ``(m, m)``.
+    """
+    m = rot_matrix.shape[0]
+    k = m - 1
+
+    # Random skew-symmetric matrix -> element of so(k)
+    S = rng.standard_normal((k, k))
+    S = (S - S.T) / 2.0
+
+    # Rotation near identity on SO(k)
+    R = expm(epsilon * S)
+
+    rot_perturbed = rot_matrix.copy()
+    rot_perturbed[1:, 1:] = R @ rot_matrix[1:, 1:]
+
+    return rot_perturbed
+
+
 @d.dedent
 def _indexsearch(X: ArrayLike) -> ArrayLike:
     """
@@ -477,7 +522,98 @@ def _objective(alpha: ArrayLike, X: ArrayLike) -> float:
 
 
 @d.dedent
-def _opt_soft(X: ArrayLike, rot_matrix: ArrayLike) -> Tuple[ArrayLike, ArrayLike, float]:
+def _jacobian(alpha: ArrayLike, X: ArrayLike) -> ArrayLike:
+    r"""
+    Compute the Jacobian of the objective function via backpropagation through :func:`_fill_matrix`.
+
+    The objective is :math:`f(\alpha) = m - \mathrm{trace}(S(A(\alpha)))` where
+    :math:`A(\alpha)` is the full rotation matrix after :func:`_fill_matrix`.
+    The free parameters :math:`\alpha` are the flattened entries of
+    ``rot_matrix[1:, 1:]``.
+
+    :func:`_fill_matrix` introduces dependencies between matrix entries:
+
+    1. Row-sum constraint: ``A[r, 0] = -sum(A[r, 1:])`` for ``r >= 1``
+    2. Max condition: ``A[0, j] = max_i(-X[:, 1:] @ A[1:, :])[:, j]``
+    3. Rescaling: ``A = A / sum(A[0, :])``
+
+    The published gradient (below Eq. 16 in [Roeblitz13]_) assumes
+    independent entries and omits the chain rule through these
+    transformations. This implementation backpropagates correctly
+    through all three steps.
+
+    Parameters
+    ----------
+    alpha
+        Vector of shape `((m - 1) ^ 2,)` containing the flattened and
+        cropped rotation matrix ``rot_matrix[1:, 1:]``.
+    X
+        %(Q_sort)s
+
+    Returns
+    -------
+    Jacobian vector of shape `((m - 1) ^ 2,)`, the gradient of
+    :math:`f = m - \mathrm{trace}(S)` with respect to ``alpha``.
+    """  # noqa: D205, D400
+    n, m = X.shape
+    k = m - 1
+
+    if alpha.shape[0] != k**2:
+        raise ValueError(
+            "The shape of alpha doesn't match with the shape of X: "
+            f"It is not a ({k}^2,)-vector, but of dimension {alpha.shape}. X is of shape `{X.shape}`."
+        )
+
+    # --- Forward pass via _fill_matrix ---
+    B = np.reshape(alpha, (k, k))
+
+    rot_mat = np.zeros((m, m), dtype=np.float64)
+    rot_mat[1:, 1:] = B
+    result = _fill_matrix(rot_mat, X, _return_intermediates=True)
+    A = result.rot_matrix
+    A_pre = result.A_pre
+    argmax_indices = result.argmax_indices
+    s = result.scale
+
+    # --- Backward pass ---
+    # Step 1 (backward): df/dA where f = m - trace(diag(1/A[0,:]) @ A^T @ A).
+    # For i > 0:  df/dA[i,j] = -2 * A[i,j] / A[0,j]
+    # For i == 0: df/dA[0,j] = ||A[:,j]||^2 / A[0,j]^2 - 2
+    dfdA = np.zeros((m, m), dtype=np.float64)
+    for j in range(m):
+        col_norm_sq = np.sum(A[:, j] ** 2)
+        dfdA[0, j] = col_norm_sq / A[0, j] ** 2 - 2.0
+        dfdA[1:, j] = -2.0 * A[1:, j] / A[0, j]
+
+    # Step 2 (backward): backprop through rescaling A = A_pre / s.
+    # Direct part: dfdA_pre[i,j] = dfdA[i,j] / s
+    # Through s = sum(A_pre[0,:]): dfdA_pre[0,c] += (-1/s) * sum_{i,j} dfdA[i,j] * A[i,j]
+    dfdA_pre = dfdA / s
+    dfdA_pre[0, :] += -np.sum(dfdA * A) / s
+
+    # Step 3 (backward): backprop through max condition.
+    # A_pre[0,j] = max_i(dummy[i,j]) = dummy[argmax_j, j]
+    # dummy[i,j] = -sum_{r} X[i, r+1] * A_pre[r+1, j]
+    # So d(A_pre[0,j])/d(A_pre[r+1, c]) = -X[argmax_j, r+1] if c == j, else 0
+    dfdA_pre_lower = dfdA_pre[1:, :].copy()
+    for j in range(m):
+        i_max = argmax_indices[j]
+        dfdA_pre_lower[:, j] += dfdA_pre[0, j] * (-X[i_max, 1:])
+
+    # Step 4 (backward): backprop through row-sum constraint.
+    # A_pre[r, 0] = -sum_c B[r-1, c], so d(A_pre[r,0])/d(B[r-1,c]) = -1
+    dfdB = dfdA_pre_lower[:, 1:].copy()
+    dfdB += -dfdA_pre_lower[:, 0:1]
+
+    return dfdB.ravel()
+
+
+@d.dedent
+def _opt_soft(
+    X: ArrayLike,
+    rot_matrix: ArrayLike,
+    method: str = "Nelder-Mead",
+) -> Tuple[ArrayLike, ArrayLike, float]:
     r"""
     Optimize the G-PCCA rotation matrix such that the memberships are
     exclusively non-negative and compute the membership matrix.
@@ -517,8 +653,23 @@ def _opt_soft(X: ArrayLike, rot_matrix: ArrayLike) -> Tuple[ArrayLike, ArrayLike
     # Now reshape rot_crop_matrix into a linear vector alpha.
     k = m - 1
     alpha = np.reshape(rot_crop_matrix, k**2)
-    # TODO: Implement Gauss Newton Optimization to speed things up esp. for m > 10
-    alpha, fopt, _, _, _ = fmin(_objective, alpha, args=(X,), full_output=True, disp=False)
+
+    if method == "Nelder-Mead":
+        alpha, fopt, _, _, _ = fmin(_objective, alpha, args=(X,), full_output=True, disp=False)
+    elif method in ("L-BFGS-B", "BFGS", "CG"):
+        kwargs: Dict = {"method": method, "jac": _jacobian}
+        if method == "L-BFGS-B":
+            kwargs["bounds"] = [(-1, 1)] * k**2
+        else:
+            kwargs["options"] = {"disp": False}
+        result = minimize(_objective, alpha, args=(X,), **kwargs)
+        alpha = result.x
+        fopt = result.fun
+    else:
+        raise ValueError(
+            f"Invalid optimization method `{method!r}`. "
+            f"Valid options are: 'Nelder-Mead', 'L-BFGS-B', 'BFGS', 'CG'."
+        )
 
     # Now reshape alpha into a (k,k)-matrix.
     rot_crop_matrix = np.reshape(alpha, (k, k))
@@ -548,7 +699,25 @@ def _opt_soft(X: ArrayLike, rot_matrix: ArrayLike) -> Tuple[ArrayLike, ArrayLike
 
 
 @d.dedent
-def _fill_matrix(rot_matrix: ArrayLike, X: ArrayLike) -> ArrayLike:
+class _FillMatrixResult(NamedTuple):
+    """Intermediates from :func:`_fill_matrix` needed by the Jacobian."""
+
+    rot_matrix: ArrayLike
+    """Feasible rotation matrix of shape ``(m, m)``."""
+    A_pre: ArrayLike
+    """Pre-scaling rotation matrix of shape ``(m, m)``."""
+    argmax_indices: ArrayLike
+    """Row indices of the maximum in each column, shape ``(m,)``."""
+    scale: float
+    """Scaling factor ``sum(A_pre[0, :])``."""
+
+
+@d.dedent
+def _fill_matrix(
+    rot_matrix: ArrayLike,
+    X: ArrayLike,
+    _return_intermediates: bool = False,
+) -> Union[ArrayLike, _FillMatrixResult]:
     """
     Make the rotation matrix feasible.
 
@@ -558,10 +727,14 @@ def _fill_matrix(rot_matrix: ArrayLike, X: ArrayLike) -> ArrayLike:
         (Infeasible) rotation matrix of shape `(m, m)`.
     X
         %(Q_sort)s
+    _return_intermediates
+        If ``True``, return a :class:`_FillMatrixResult` containing
+        intermediates needed by the Jacobian backward pass.
 
     Returns
     -------
-    Feasible rotation matrix of shape `(m, m)`.
+    Feasible rotation matrix of shape `(m, m)`, or a
+    :class:`_FillMatrixResult` if ``_return_intermediates`` is ``True``.
     """
     n, m = X.shape
 
@@ -576,10 +749,13 @@ def _fill_matrix(rot_matrix: ArrayLike, X: ArrayLike) -> ArrayLike:
 
     # Compute first row of A by maximum condition.
     dummy = -np.dot(X[:, 1:], rot_matrix[1:, :])
+    argmax_indices = np.argmax(dummy, axis=0)
     rot_matrix[0, :] = np.max(dummy, axis=0)
 
     # Reskale rot_mat to be in the feasible set.
-    rot_matrix = rot_matrix / np.sum(rot_matrix[0, :])
+    scale = np.sum(rot_matrix[0, :])
+    A_pre = rot_matrix.copy() if _return_intermediates else None
+    rot_matrix = rot_matrix / scale
 
     # Make sure, that there are no zero or negative elements in the first row of A.
     if np.any(rot_matrix[0, :] == 0):
@@ -587,6 +763,13 @@ def _fill_matrix(rot_matrix: ArrayLike, X: ArrayLike) -> ArrayLike:
     if np.min(rot_matrix[0, :]) < 0:
         raise ValueError("First row of rotation matrix has elements < 0.")
 
+    if _return_intermediates:
+        return _FillMatrixResult(
+            rot_matrix=rot_matrix,
+            A_pre=A_pre,
+            argmax_indices=argmax_indices,
+            scale=scale,
+        )
     return rot_matrix
 
 
@@ -629,7 +812,13 @@ def _cluster_by_isa(X: ArrayLike) -> Tuple[ArrayLike, float]:
 
 
 @d.dedent
-def _gpcca_core(X: ArrayLike) -> Tuple[ArrayLike, ArrayLike, float]:
+def _gpcca_core(
+    X: ArrayLike,
+    method: str = "Nelder-Mead",
+    n_starts: int = 1,
+    perturbation_scale: float = 0.1,
+    seed: Optional[int] = None,
+) -> Tuple[ArrayLike, ArrayLike, float]:
     r"""
     Core of the G-PCCA spectral clustering method with optimized memberships [Reuter18]_, [Reuter19]_.
 
@@ -641,6 +830,26 @@ def _gpcca_core(X: ArrayLike) -> Tuple[ArrayLike, ArrayLike, float]:
     ----------
     X
         %(Q_sort)s
+    method
+        Optimization method for the rotation matrix. Valid options are:
+
+        - ``'Nelder-Mead'`` - derivative-free simplex method (default).
+        - ``'L-BFGS-B'`` - gradient-based with bounds, recommended for ``m > 10``.
+        - ``'BFGS'`` - gradient-based without bounds.
+        - ``'CG'`` - conjugate gradient.
+    n_starts
+        Number of optimization runs. The first run always uses the
+        deterministic ISA initialization. Subsequent runs perturb the
+        initial rotation matrix on the SO(k) manifold. The result
+        with the best crispness is returned. Set to ``1`` to disable
+        perturbation (fully deterministic, backward compatible).
+    perturbation_scale
+        Angular scale for the rotation perturbation (only used when
+        ``n_starts > 1``). Recommended range is 0.05-0.2; larger
+        values risk producing degenerate solutions.
+    seed
+        Random seed for reproducibility of the perturbations
+        (only used when ``n_starts > 1``).
 
     Returns
     -------
@@ -655,14 +864,57 @@ def _gpcca_core(X: ArrayLike) -> Tuple[ArrayLike, ArrayLike, float]:
     """
     m = np.shape(X)[1]
 
-    rot_matrix = _initialize_rot_matrix(X)
+    rot_matrix_init = _initialize_rot_matrix(X)
 
-    rot_matrix, chi, fopt = _opt_soft(X, rot_matrix)
+    if n_starts <= 1:
+        # Single run: fully backward compatible, no randomness.
+        rot_matrix, chi, fopt = _opt_soft(
+            X, rot_matrix_init, method=method
+        )
+        crispness = (m - fopt) / m
+        return chi, rot_matrix, crispness
 
-    # calculate crispness of the decomposition of the state space into m clusters
-    crispness = (m - fopt) / m
+    # Multi-start: run from deterministic init + perturbed inits,
+    # keep the result with the best crispness.
+    rng = np.random.default_rng(seed)
+    best_chi, best_rot, best_fopt = None, None, np.inf
 
-    return chi, rot_matrix, crispness
+    for i in range(n_starts):
+        if i == 0:
+            rot_start = rot_matrix_init
+        else:
+            rot_start = _perturb_rotation(
+                rot_matrix_init, perturbation_scale, rng
+            )
+        try:
+            rot_i, chi_i, fopt_i = _opt_soft(
+                X, rot_start, method=method
+            )
+        except ValueError:
+            # Perturbation led to infeasible solution; skip.
+            continue
+
+        # For perturbed starts, check that every cluster is the argmax
+        # for at least one row. A degenerate chi where one column is
+        # never dominant leads to empty clusters on discretization.
+        # The deterministic start (i=0) is always accepted to guarantee
+        # we return a result even if perturbed starts all fail.
+        if i > 0:
+            assignments = np.argmax(chi_i, axis=1)
+            if len(set(assignments)) < m:
+                continue
+
+        if fopt_i < best_fopt:
+            best_chi, best_rot, best_fopt = chi_i, rot_i, fopt_i
+
+    if best_chi is None:
+        raise ValueError(
+            "All optimization starts failed. "
+            "Try reducing `perturbation_scale`."
+        )
+
+    crispness = (m - best_fopt) / m
+    return best_chi, best_rot, crispness
 
 
 @d.dedent
@@ -706,6 +958,7 @@ def gpcca_coarsegrain(
     eta: Optional[ArrayLike] = None,
     z: Literal["LM", "LR"] = "LM",
     method: str = DEFAULT_SCHUR_METHOD,
+    optimization_method: str = "Nelder-Mead",
 ) -> ArrayLike:
     r"""
     Coarse-grain the transition matrix `P` into `m` sets using G-PCCA [Reuter18]_, [Reuter19]_.
@@ -727,6 +980,9 @@ def gpcca_coarsegrain(
     %(method)s
         See the `installation <https://pygpcca.readthedocs.io/en/latest/installation.html>`_ instructions
         for more information.
+    optimization_method
+        Optimization method for the rotation matrix. Valid options are
+        ``'Nelder-Mead'`` (default), ``'L-BFGS-B'``, ``'BFGS'``, ``'CG'``.
 
     Returns
     -------
@@ -737,7 +993,7 @@ def gpcca_coarsegrain(
     If you use this code or parts of it, please cite [Reuter19]_.
     """
     # Matlab: Pc = pinv(chi'*diag(eta)*chi)*(chi'*diag(eta)*P*chi)
-    chi = GPCCA(P, eta=eta, z=z, method=method).optimize(m).memberships
+    chi = GPCCA(P, eta=eta, z=z, method=method).optimize(m, method=optimization_method).memberships
 
     return _coarsegrain(P, eta=eta, chi=chi)
 
@@ -904,6 +1160,10 @@ class GPCCA:
     def optimize(
         self,
         m: Union[int, Tuple[int, int], List[int], Dict[str, int]],
+        method: str = "Nelder-Mead",
+        n_starts: int = 1,
+        perturbation_scale: float = 0.1,
+        seed: Optional[int] = None,
     ) -> "GPCCA":
         r"""
         Full G-PCCA spectral clustering method with optimized memberships [Reuter18]_, [Reuter19]_.
@@ -930,6 +1190,28 @@ class GPCCA:
 
             See :meth:`minChi` for selection of good (potentially optimal)
             number of clusters.
+        method
+            Optimization method for the rotation matrix. Valid options are:
+
+            - ``'Nelder-Mead'`` - derivative-free simplex method (default).
+            - ``'L-BFGS-B'`` - gradient-based with bounds, recommended for
+              ``m > 10``.
+            - ``'BFGS'`` - gradient-based without bounds.
+            - ``'CG'`` - conjugate gradient.
+        n_starts
+            Number of optimization runs. The first run uses the
+            deterministic ISA initialization; subsequent runs perturb
+            the initial rotation matrix on the SO(k) manifold. The
+            result with the best crispness is returned. Set to ``1``
+            to disable perturbation (fully deterministic, backward
+            compatible).
+        perturbation_scale
+            Angular scale for the rotation perturbation (only used
+            when ``n_starts > 1``). Recommended range is 0.05-0.2;
+            larger values risk producing degenerate solutions.
+        seed
+            Random seed for reproducibility of the perturbations
+            (only used when ``n_starts > 1``).
 
         Returns
         -------
@@ -1035,7 +1317,13 @@ class GPCCA:
 
             # Reduce X according to m and make a work copy.
             # Xm = np.copy(X[:, :m])
-            chi, rot_matrix, crispness = _gpcca_core(self._p_X[:, :m])
+            chi, rot_matrix, crispness = _gpcca_core(
+                self._p_X[:, :m],
+                method=method,
+                n_starts=n_starts,
+                perturbation_scale=perturbation_scale,
+                seed=seed,
+            )
             # check if we have at least m dominant sets. If less than m, we warn.
             nmeta = np.count_nonzero(chi.sum(axis=0))
             if m > nmeta:
